@@ -1,0 +1,4 @@
+git+https://bitbucket.org/cmelab/cme_utils.git
+git+https://github.com/mikemhenry/foyer.git@mike/plankton 
+git+https://github.com/mikemhenry/mbuild.git@mike/plankton
+pytest
