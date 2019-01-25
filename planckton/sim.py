@@ -100,7 +100,7 @@ class Simulation:
             integrator.randomize_velocities(seed=42)
             integrator_mode.set_params(dt=0.0001)
             try:
-                hoomd.run_upto(self.n_steps+1, limit_multiple=self.gsd_write)
+                hoomd.run_upto(self.n_steps + 1, limit_multiple=self.gsd_write)
             except hoomd.WalltimeLimitReached:
                 pass
             finally:
