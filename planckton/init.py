@@ -42,7 +42,6 @@ class Pack:
     def pack(self):
         L = self._calculate_L()
         L *= 5  # Extra factor to make packing faster, will shrink it out
-        print(L)
         box = mb.packing.fill_box(
             self.compound,
             n_compounds=self.n_compounds,
@@ -56,9 +55,9 @@ class Pack:
             self.out_file,
             overwrite=True,
             forcefield_files=self.ff_file,
-            ref_mass=32.06,
-            ref_energy=1.046,
-            ref_distance=0.35635948725613575,
+            ref_mass=32.06,  # amu
+            ref_energy=1.046,  # kJ/mol
+            ref_distance=0.35635948725613575,  # nm
         )
 
     def _calculate_L(self):
@@ -96,9 +95,9 @@ def test_typing(compound_file, ff_file):
 
 
 if __name__ == "__main__":
-    compound_file = "compounds/itic_typed.mol2"
-    ff_file = "compounds/gaff.4fxml"
+    compound_file = "compounds/P3HT_16_typed.mol2"
+    ff_file = "force_fields/gaff/opv_gaff.xml"
     # test_typing(compound_file, ff_file)
     itic = Compound(compound_file)
-    packer = Pack(itic, 50, 1)
+    packer = Pack(itic, 5, 1.0, ff_file=ff_file)
     packer.pack()

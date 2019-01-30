@@ -1,0 +1,4 @@
+-e git+git@bitbucket.org:mikemhenry/cme_utils.git@acf5a910e7fb11f8aad04d9ec87a145648f1c6c3#egg=cme_utils
+-e git+git@github.com:mikemhenry/mbuild.git@08fa43f3741b425afc9145c4d6b97580b7b75166#egg=mbuild
+-e git+git@bitbucket.org:mikemhenry/planckton.git@10b705146460a78778acf265f61cf222620f2a50#egg=planckton
+pytest

@@ -122,4 +122,3 @@ setup(
         'upload': UploadCommand,
     },
 )
-
