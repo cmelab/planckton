@@ -20,6 +20,7 @@ class Simulation:
         shrink_time=1e6,
         shrink_factor=5,
         n_steps=1e3,
+        dt=0.0001,
         mode="gpu",
     ):
         self.input_xml = input_xml
@@ -31,6 +32,7 @@ class Simulation:
         self.shrink_time = shrink_time
         self.shrink_factor = shrink_factor
         self.n_steps = n_steps
+        self.dt = dt
         self.mode = mode
 
     def run(self):
@@ -48,7 +50,7 @@ class Simulation:
             hoomd.util.quiet_status()
             system = set_coeffs(self.input_xml, system, nl, self.e_factor)
             hoomd.util.unquiet_status()
-            integrator_mode = hoomd.md.integrate.mode_standard(dt=0.0001)
+            integrator_mode = hoomd.md.integrate.mode_standard(dt=self.dt)
             rigid = hoomd.group.rigid_center()
             nonrigid = hoomd.group.nonrigid()
             both_group = hoomd.group.union("both", rigid, nonrigid)
@@ -98,7 +100,7 @@ class Simulation:
             hoomd.run_upto(self.shrink_time)
             # After shrinking, reset velocities
             integrator.randomize_velocities(seed=42)
-            integrator_mode.set_params(dt=0.0001)
+            integrator_mode.set_params(dt=self.dt)
             try:
                 hoomd.run_upto(self.n_steps + 1, limit_multiple=self.gsd_write)
             except hoomd.WalltimeLimitReached:

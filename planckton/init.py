@@ -25,6 +25,7 @@ class Pack:
         density,
         ff_file="compounds/gaff.4fxml",
         out_file="init.hoomdxml",
+        remove_hydrogen_atoms=False,
     ):
         if not isinstance(compound, (list, set)):
             self.compound = [compound]
@@ -38,9 +39,22 @@ class Pack:
         self.density = density
         self.ff_file = ff_file
         self.out_file = out_file
+        self.remove_hydrogen_atoms = remove_hydrogen_atoms
+
+    def _remove_hydrogen(self):
+        for subcompound in self.compound:
+            for atom in subcompound.particles():
+                if atom.name in ["_hc", "_ha", "_h1", "_h4"]:
+                    # NOTE: May not be a comprehensive list of
+                    # all hydrogen types.
+                    subcompound.remove(atom)
 
     def pack(self):
         L = self._calculate_L()
+
+        if self.remove_hydrogen_atoms:
+            self._remove_hydrogen()
+
         L *= 5  # Extra factor to make packing faster, will shrink it out
         box = mb.packing.fill_box(
             self.compound,
@@ -95,7 +109,7 @@ def test_typing(compound_file, ff_file):
 
 
 if __name__ == "__main__":
-    compound_file = "compounds/P3HT_16_typed.mol2"
+    compound_file = "compounds/itic_typed.mol2"
     ff_file = "force_fields/gaff/opv_gaff.xml"
     # test_typing(compound_file, ff_file)
     itic = Compound(compound_file)
