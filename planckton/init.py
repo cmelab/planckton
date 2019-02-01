@@ -1,6 +1,7 @@
 import mbuild as mb
 import parmed as pmd
 import numpy as np
+from planckton.utils import base_units
 
 
 class Compound(mb.Compound):
@@ -51,6 +52,7 @@ class Pack:
 
     def pack(self):
         L = self._calculate_L()
+        units = base_units.base_units()
 
         if self.remove_hydrogen_atoms:
             self._remove_hydrogen()
