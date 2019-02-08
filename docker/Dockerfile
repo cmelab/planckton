@@ -2,10 +2,13 @@ FROM ubuntu:16.04
 
 ENV CONDA_DIR="/opt/conda"
 ENV PATH="$CONDA_DIR/bin:$PATH"
+ENV LC_ALL=C.UTF-8
+ENV LANG=C.UTF-8
+
 
 # Install conda
-RUN CONDA_VERSION="4.5.11" && \
-    CONDA_MD5_CHECKSUM="e1045ee415162f944b6aebfe560b8fee" && \
+RUN CONDA_VERSION="4.5.12" && \
+    CONDA_MD5_CHECKSUM="866ae9dff53ad0874e1d1a60b1ad1ef8" && \
     \
     apt update && \
     apt install --no-install-recommends -y wget tar ca-certificates bzip2 && \
@@ -30,7 +33,7 @@ RUN CONDA_VERSION="4.5.11" && \
 
 # Install our software stack
 RUN apt update && \ 
-    apt install --no-install-recommends -y git && \
+    apt install --no-install-recommends -y git curl && \
     apt clean &&\
     rm -rf /var/lib/apt/lists/* && \ 
     conda install -y --only-deps -c omnia -c cmelab -c mosdef mbuild foyer python=3.6 && \
@@ -39,8 +42,7 @@ RUN apt update && \
     conda clean -tipsy && \
     pip install --no-cache-dir --upgrade git+https://bitbucket.org/cmelab/cme_utils.git git+https://github.com/mikemhenry/foyer.git@mike/plankton git+https://github.com/mikemhenry/mbuild.git@mike/plankton signac signac-flow
 
-# Install HOOMD
-# Runtime
+# CUDA Runtime
 ENV CUDA_VERSION=8.0.61
 ENV CUDA_PKG_VERSION=8-0=$CUDA_VERSION-1
 RUN apt-get update && apt-get install -y --no-install-recommends ca-certificates apt-transport-https gnupg-curl && \
@@ -73,7 +75,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends ca-certificates
     apt clean &&\
     rm -rf /var/lib/apt/lists/*
 
-# Devel
+# CUDA Devel
 RUN apt-get update && apt-get install -y --no-install-recommends \
     cuda-core-$CUDA_PKG_VERSION \
     cuda-misc-headers-$CUDA_PKG_VERSION \
@@ -93,17 +95,17 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     apt clean && \
     rm -rf /var/lib/apt/lists/*
 
-#Hoomd
+# CUDA Hoomd
 ENV SOFTWARE_ROOT=/opt/hoomd
 ENV PYTHONPATH=$PYTHONPATH:${SOFTWARE_ROOT}/lib/python
 RUN apt-get update && apt-get install -y --no-install-recommends git cmake && \
     apt clean && \
     rm -rf /var/lib/apt/lists/* && \
     pip --no-cache-dir install numpy && \
-    export HOOMD_TAG=v2.3.5 && \
+    export HOOMD_TAG=v2.4.2 && \
     git clone --recursive https://bitbucket.org/glotzer/hoomd-blue && \
     cd hoomd-blue && \
-    git checkout  $HOOMD_TAG && \
+    git checkout $HOOMD_TAG && \
     mkdir build && \
     cd build && \
     export CXX="$(command -v g++)" && \
