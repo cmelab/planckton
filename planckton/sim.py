@@ -19,6 +19,7 @@ class Simulation:
         log_write=1e5,
         shrink_time=1e6,
         shrink_factor=5,
+        shrink_kT_reduced=10,
         n_steps=1e3,
         dt=0.0001,
         mode="gpu",
@@ -31,6 +32,7 @@ class Simulation:
         self.log_write = log_write
         self.shrink_time = shrink_time
         self.shrink_factor = shrink_factor
+        self.shrink_kT_reduced = shrink_kT_reduced
         self.n_steps = n_steps
         self.dt = dt
         self.mode = mode
@@ -56,7 +58,7 @@ class Simulation:
             both_group = hoomd.group.union("both", rigid, nonrigid)
             all_particles = hoomd.group.all()
             integrator = hoomd.md.integrate.nvt(
-                group=both_group, tau=self.tau, kT=self.kT
+                group=both_group, tau=self.tau, kT=self.shrink_kT_reduced
             )
             hoomd.dump.gsd(
                 filename="trajectory.gsd",
@@ -98,7 +100,8 @@ class Simulation:
             )
             hoomd.update.box_resize(L=size_variant)
             hoomd.run_upto(self.shrink_time)
-            # After shrinking, reset velocities
+            # After shrinking, reset velocities and change temp
+            integrator.set_params(kT=self.kT)
             integrator.randomize_velocities(seed=42)
             integrator_mode.set_params(dt=self.dt)
             try:

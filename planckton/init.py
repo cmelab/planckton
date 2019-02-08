@@ -71,9 +71,9 @@ class Pack:
             self.out_file,
             overwrite=True,
             forcefield_files=self.ff_file,
-            ref_mass=32.06,  # amu
-            ref_energy=1.046,  # kJ/mol
-            ref_distance=0.35635948725613575,  # nm
+            ref_mass=units["mass"],  # amu
+            ref_energy=units["energy"],  # kJ/mol
+            ref_distance=units["distance"],  # nm
         )
 
     def _calculate_L(self):
