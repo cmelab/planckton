@@ -5,6 +5,9 @@ bridges/
 *.mol2
 *.hoomdxml
 *.simg
+*.gsd
+*.xml
+*.json
 # Created by https://www.gitignore.io/api/vim,python
 
 ### Python ###

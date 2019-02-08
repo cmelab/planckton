@@ -108,12 +108,3 @@ def test_typing(compound_file, ff_file):
         ref_energy=1.046,
         ref_distance=0.35635948725613575,
     )
-
-
-if __name__ == "__main__":
-    compound_file = "compounds/itic_typed.mol2"
-    ff_file = "force_fields/gaff/opv_gaff.xml"
-    # test_typing(compound_file, ff_file)
-    itic = Compound(compound_file)
-    packer = Pack(itic, 5, 1.0, ff_file=ff_file)
-    packer.pack()

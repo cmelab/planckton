@@ -110,15 +110,3 @@ class Simulation:
                 hoomd.deprecated.dump.xml(
                     group=hoomd.group.all(), filename="final.xml", all=True
                 )
-
-
-if __name__ == "__main__":
-    my_sim = Simulation(
-        "init.hoomdxml",
-        kT=3.0,
-        gsd_write=1e3,
-        log_write=1e3,
-        shrink_time=1e3,
-        n_steps=1e5,
-    )
-    my_sim.run()
