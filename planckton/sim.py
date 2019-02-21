@@ -23,6 +23,7 @@ class Simulation:
         n_steps=1e3,
         dt=0.0001,
         mode="gpu",
+        target_length=None,
     ):
         self.input_xml = input_xml
         self.e_factor = e_factor
@@ -36,6 +37,7 @@ class Simulation:
         self.n_steps = n_steps
         self.dt = dt
         self.mode = mode
+        self.target_length = None
 
     def run(self):
         if hoomd.context.exec_conf is None:
@@ -94,16 +96,21 @@ class Simulation:
                 phase=0,
             )
             integrator.randomize_velocities(seed=42)
-            desired_box_dim = system.box.Lx / self.shrink_factor
+
+            if self.target_length == None:
+                self.target_length = system.box.Lx
             size_variant = hoomd.variant.linear_interp(
-                [(0, system.box.Lx), (self.shrink_time, desired_box_dim)], zero=0
+                [(0, system.box.Lx), (self.shrink_time, self.target_length)], zero=0
             )
-            hoomd.update.box_resize(L=size_variant)
+            box_resize = hoomd.update.box_resize(L=size_variant)
             hoomd.run_upto(self.shrink_time)
+            box_resize.disable()
+
             # After shrinking, reset velocities and change temp
             integrator.set_params(kT=self.kT)
             integrator.randomize_velocities(seed=42)
             integrator_mode.set_params(dt=self.dt)
+
             try:
                 hoomd.run_upto(self.n_steps + 1, limit_multiple=self.gsd_write)
             except hoomd.WalltimeLimitReached:

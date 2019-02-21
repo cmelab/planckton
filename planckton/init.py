@@ -41,6 +41,7 @@ class Pack:
         self.ff_file = ff_file
         self.out_file = out_file
         self.remove_hydrogen_atoms = remove_hydrogen_atoms
+        self.L = self._calculate_L()
 
     def _remove_hydrogen(self):
         for subcompound in self.compound:
@@ -50,14 +51,21 @@ class Pack:
                     # all hydrogen types.
                     subcompound.remove(atom)
 
-    def pack(self):
-        L = self._calculate_L()
+    def pack(self, box_expand_factor=5):
+        """
+        Optional:
+            box_expand_factor - float, Default = 5
+            Expand the box before packing for faster
+            packing.
+        """
         units = base_units.base_units()
 
         if self.remove_hydrogen_atoms:
             self._remove_hydrogen()
 
-        L *= 5  # Extra factor to make packing faster, will shrink it out
+        L = (
+            self.L * box_expand_factor
+        )  # Extra factor to make packing faster, will shrink it out
         box = mb.packing.fill_box(
             self.compound,
             n_compounds=self.n_compounds,
