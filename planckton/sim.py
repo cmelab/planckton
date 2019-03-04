@@ -37,7 +37,7 @@ class Simulation:
         self.n_steps = n_steps
         self.dt = dt
         self.mode = mode
-        self.target_length = None
+        self.target_length = target_length
 
     def run(self):
         if hoomd.context.exec_conf is None:
