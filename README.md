@@ -18,6 +18,7 @@ pip install -r requirements.txt
 pip install .
 pip install gsd signac
 conda install numpy=1.15.2
+conda install -c omnia -c mosdef mbuild
 pytest # Run tests
 ```
 
