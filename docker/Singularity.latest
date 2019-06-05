@@ -1,2 +1,2 @@
 BootStrap: docker
-From: cmelab/planckton:beta
+From: cmelab/planckton:0.0.3

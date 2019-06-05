@@ -3,7 +3,7 @@ version: 2
 jobs:
   build:
     docker:
-      - image: cmelab/planckton:0.0.2
+      - image: cmelab/planckton:0.0.3
 
     working_directory: ~/repo
 
