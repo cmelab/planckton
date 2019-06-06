@@ -38,9 +38,9 @@ RUN apt update && \
     rm -rf /var/lib/apt/lists/* && \ 
     conda install -y --only-deps -c omnia -c cmelab -c mosdef foyer python=3.6 && \
     conda install -y -c glotzer freud signac signac-flow gsd && \
-    conda install -y -c omnia -c mosdef mbuild openmm=7.2 && \
+    conda install -y -c omnia -c mosdef openmm=7.2 && \
     conda clean -tipsy && \
-    pip install --no-cache-dir --upgrade git+https://bitbucket.org/cmelab/cme_utils.git git+https://github.com/mikemhenry/foyer.git@mike/plankton signac signac-flow
+    pip install --no-cache-dir --upgrade git+https://github.com/mikemhenry/mbuild.git@fix/dont_update_port_with_box_fill git+https://bitbucket.org/cmelab/cme_utils.git git+https://github.com/mikemhenry/foyer.git@mike/plankton signac signac-flow
 
 # CUDA Runtime
 ENV CUDA_VERSION=8.0.61
