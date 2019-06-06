@@ -102,8 +102,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends git cmake && \
     apt clean && \
     rm -rf /var/lib/apt/lists/* && \
     pip --no-cache-dir install numpy && \
-    export HOOMD_TAG=v2.4.2 && \
-    git clone --recursive https://bitbucket.org/glotzer/hoomd-blue && \
+    export HOOMD_TAG=v2.6.0 && \
+    git clone --recursive https://github.com/glotzerlab/hoomd-blue.git && \
     cd hoomd-blue && \
     git checkout $HOOMD_TAG && \
     mkdir build && \
