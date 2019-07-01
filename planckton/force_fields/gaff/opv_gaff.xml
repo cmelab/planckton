@@ -584,6 +584,8 @@
   <Proper type1="cp" type2="ca" type3="cp" type4="ca" k1="15.167" periodicity1="2" phase1="3.141592653589"/>
   <Proper type1="cd" type2="cc" type3="ce" type4="ca" k1="16.736" periodicity1="2" phase1="3.141592653589"/>
   <Proper type1="ss" type2="cc" type3="ce" type4="ca" k1="4.6024" periodicity1="2" phase1="3.141592653589"/>
+  <Proper type1="ss" type2="cc" type3="h4" type4="ca" k1="4.6024" periodicity1="2" phase1="3.141592653589"/>
+  <Proper type1="cd" type2="cc" type3="h4" type4="ca" k1="16.736" periodicity1="2" phase1="3.141592653589"/>
   <Improper type1="na" type2="ca" type3="c3" type4="ca" k1="4.6024" periodicity1="2" phase1="3.141592653589"/>
   <Improper type1="ca" type2="cp" type3="ca" type4="na" k1="4.6024" periodicity1="2" phase1="3.141592653589"/>
   <Improper type1="cp" type2="ca" type3="ca" type4="cp" k1="4.6024" periodicity1="2" phase1="3.141592653589"/>
@@ -648,6 +650,7 @@
   <Improper type1="ca" type2="ca" type3="ca" type4="os" k1="4.6024" periodicity1="2" phase1="3.141592653589"/>
   <Improper type1="ca" type2="ca" type3="c3" type4="cp" k1="4.6024" periodicity1="2" phase1="3.141592653589"/>
   <Improper type1="ca" type2="cp" type3="c3" type4="cp" k1="4.6024" periodicity1="2" phase1="3.141592653589"/>
+  <Improper type1="c" type2="o" type3="cc" type4="os" k1="43.932" periodicity1="2" phase1="3.141592653589"/>
  </PeriodicTorsionForce>
  <NonbondedForce coulomb14scale="0.833333" lj14scale="0.5">
   <Atom type="na" charge="0" sigma="0.32499985237759577" epsilon="0.7112800000000001"/>
