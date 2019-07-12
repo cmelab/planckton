@@ -83,6 +83,7 @@
   <Bond class1="c" class2="os" length="0.1358" k="327021.44"/>
   <Bond class1="cd" class2="f" length="0.1341" k="307775.04000000004"/>
   <Bond class1="ca" class2="os" length="0.137" k="315138.88"/>
+  <Bond class1="cc" class2="f" length="0.1341" k="307775.04000000004"/>
  </HarmonicBondForce>
  <HarmonicAngleForce>
   <Angle class1="cp" class2="ca" class3="na" angle="1.898743693244152" k="601.6592"/>
@@ -239,6 +240,12 @@
   <Angle class1="c3" class2="os" class3="ca" angle="2.0587903856519914" k="523.0"/>
   <Angle class1="c3" class2="ca" class3="cp" angle="2.105390676680228" k="530.5312"/>
   <Angle class1="cp" class2="ca" class3="cp" angle="1.9463911818235848" k="575.7184"/>
+  <Angle class1="cd" class2="c" class3="os" angle="1.9931660057770213" k="580.7392000000001"/>
+  <Angle class1="cd" class2="cc" class3="f" angle="2.115164520491394" k="563.1664"/>
+  <Angle class1="c" class2="cd" class3="cc" angle="2.117957047294584" k="544.7568"/>
+  <Angle class1="cc" class2="cc" class3="f" angle="2.0802579354515163" k="555.6352"/>
+  <Angle class1="cd" class2="cc" class3="cd" angle="2.0957913657942617" k="567.3504"/>
+  <Angle class1="cc" class2="cd" class3="cc" angle="2.0957913657942617" k="567.3504"/>
  </HarmonicAngleForce>
  <PeriodicTorsionForce>
   <Proper type1="cp" type2="ca" type3="na" type4="cp" k1="15.167" periodicity1="2" phase1="3.141592653589"/>
@@ -586,6 +593,24 @@
   <Proper type1="ss" type2="cc" type3="ce" type4="ca" k1="4.6024" periodicity1="2" phase1="3.141592653589"/>
   <Proper type1="ss" type2="cc" type3="h4" type4="ca" k1="4.6024" periodicity1="2" phase1="3.141592653589"/>
   <Proper type1="cd" type2="cc" type3="h4" type4="ca" k1="16.736" periodicity1="2" phase1="3.141592653589"/>
+  <Proper type1="ss" type2="cd" type3="cd" type4="ca" k1="4.6024" periodicity1="2" phase1="3.141592653589"/>
+  <Proper type1="ss" type2="cd" type3="c" type4="cc" k1="4.6024" periodicity1="2" phase1="3.141592653589"/>
+  <Proper type1="cc" type2="cc" type3="cc" type4="f" k1="16.736" periodicity1="2" phase1="3.141592653589"/>
+  <Proper type1="cd" type2="c" type3="os" type4="ss" k1="12.029" periodicity1="2" phase1="3.141592653589"/>
+  <Proper type1="cd" type2="cc" type3="f" type4="ss" k1="16.736" periodicity1="2" phase1="3.141592653589"/>
+  <Proper type1="os" type2="c" type3="cd" type4="c3" k1="11.296800000000001" periodicity1="2" phase1="3.141592653589"/>
+  <Proper type1="cd" type2="cc" type3="f" type4="c" k1="16.736" periodicity1="2" phase1="3.141592653589"/>
+  <Proper type1="cd" type2="cc" type3="cc" type4="c" k1="16.736" periodicity1="2" phase1="3.141592653589"/>
+  <Proper type1="cd" type2="c" type3="os" type4="cc" k1="12.029" periodicity1="2" phase1="3.141592653589"/>
+  <Proper type1="cd" type2="c" type3="o" type4="cc" k1="12.029" periodicity1="2" phase1="3.141592653589"/>
+  <Proper type1="cc" type2="cc" type3="cd" type4="f" k1="16.736" periodicity1="2" phase1="3.141592653589"/>
+  <Proper type1="cd" type2="cd" type3="cd" type4="cd" k1="16.736" periodicity1="2" phase1="3.141592653589"/>
+  <Proper type1="cd" type2="cc" type3="cd" type4="ss" k1="16.736" periodicity1="2" phase1="3.141592653589"/>
+  <Proper type1="cd" type2="cc" type3="cd" type4="cd" k1="16.736" periodicity1="2" phase1="3.141592653589"/>
+  <Proper type1="cd" type2="cc" type3="ca" type4="cc" k1="16.736" periodicity1="2" phase1="3.141592653589"/>
+  <Proper type1="cd" type2="cc" type3="ha" type4="cc" k1="16.736" periodicity1="2" phase1="3.141592653589"/>
+  <Proper type1="cd" type2="cc" type3="cd" type4="cc" k1="16.736" periodicity1="2" phase1="3.141592653589"/>
+  <Proper type1="cd" type2="cc" type3="ss" type4="cc" k1="16.736" periodicity1="2" phase1="3.141592653589"/>
   <Improper type1="na" type2="ca" type3="c3" type4="ca" k1="4.6024" periodicity1="2" phase1="3.141592653589"/>
   <Improper type1="ca" type2="cp" type3="ca" type4="na" k1="4.6024" periodicity1="2" phase1="3.141592653589"/>
   <Improper type1="cp" type2="ca" type3="ca" type4="cp" k1="4.6024" periodicity1="2" phase1="3.141592653589"/>
@@ -651,6 +676,14 @@
   <Improper type1="ca" type2="ca" type3="c3" type4="cp" k1="4.6024" periodicity1="2" phase1="3.141592653589"/>
   <Improper type1="ca" type2="cp" type3="c3" type4="cp" k1="4.6024" periodicity1="2" phase1="3.141592653589"/>
   <Improper type1="c" type2="o" type3="cc" type4="os" k1="43.932" periodicity1="2" phase1="3.141592653589"/>
+  <Improper type1="cd" type2="cc" type3="c" type4="ss" k1="4.6024" periodicity1="2" phase1="3.141592653589"/>
+  <Improper type1="c" type2="o" type3="cd" type4="os" k1="4.6024" periodicity1="2" phase1="3.141592653589"/>
+  <Improper type1="cc" type2="cd" type3="cc" type4="f" k1="4.6024" periodicity1="2" phase1="3.141592653589"/>
+  <Improper type1="cc" type2="cc" type3="cc" type4="cd" k1="4.6024" periodicity1="2" phase1="3.141592653589"/>
+  <Improper type1="c" type2="o" type3="cd" type4="os" k1="43.932" periodicity1="2" phase1="3.141592653589"/>
+  <Improper type1="cd" type2="cd" type3="cd" type4="ss" k1="4.6024" periodicity1="2" phase1="3.141592653589"/>
+  <Improper type1="cd" type2="cc" type3="cc" type4="ss" k1="4.6024" periodicity1="2" phase1="3.141592653589"/>
+  <Improper type1="cc" type2="cd" type3="cd" type4="ss" k1="4.6024" periodicity1="2" phase1="3.141592653589"/>
  </PeriodicTorsionForce>
  <NonbondedForce coulomb14scale="0.833333" lj14scale="0.5">
   <Atom type="na" charge="0" sigma="0.32499985237759577" epsilon="0.7112800000000001"/>
