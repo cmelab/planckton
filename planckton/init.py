@@ -1,6 +1,7 @@
+import numpy as np
+
 import mbuild as mb
 import parmed as pmd
-import numpy as np
 from planckton.utils import base_units
 
 
