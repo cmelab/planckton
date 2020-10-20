@@ -1,5 +1,6 @@
 # PlanckTon
 
+
 ## How to use
 
 ### Install
@@ -57,6 +58,7 @@ This repository is built to enable large sweeps exploring the self-assembly and 
 for mixtures of organic photovoltaic compounds under various conditions.
 To conduct these sweeps, multiple simulation tools are tied together 
 to reproducibly and accurately generate these structures.
+
 
 The simulations tools used here are:
 
