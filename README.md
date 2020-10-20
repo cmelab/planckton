@@ -1,5 +1,5 @@
 # PlanckTon
-
+[![CI](https://github.com/cmelab/planckton/workflows/CI/badge.svg?branch=master)](https://github.com/cmelab/planckton/actions?query=workflow%3ACI)
 
 ## How to use
 
