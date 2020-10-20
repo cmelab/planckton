@@ -1,0 +1,18 @@
+name: planckton
+channels:
+  - conda-forge
+  - mosdef
+  - omnia
+dependencies:
+  - python
+  - pip
+  - numpy
+  - foyer
+  - gsd
+  - mbuild
+  - hoomd
+  - openmm
+  - signac
+  - pip:
+    - pytest
+    - git+https://bitbucket.org/cmelab/cme_utils.git
