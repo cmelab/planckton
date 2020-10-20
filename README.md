@@ -29,7 +29,7 @@ You will also need to install [hoomd-blue](https://hoomd-blue.readthedocs.io/en/
 
 See example in `tests/test_sim.py`
 
-Also see [planckton-flow](https://bitbucket.org/cmelab/planckton-flow)
+Also see [planckton-flow](https://github.com/cmelab/planckton-flow)
 
 ### Add new compounds 
 
@@ -37,7 +37,7 @@ Also see [planckton-flow](https://bitbucket.org/cmelab/planckton-flow)
 ## How to develop
 
 * Fork repo
-* Add upstream `git remote add upstream git@bitbucket.org:cmelab/planckton.git`
+* Add upstream `git remote add upstream git@github.com:cmelab/planckton.git`
 * Code
 * Submit PR
 
