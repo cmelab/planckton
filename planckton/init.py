@@ -1,8 +1,9 @@
 import numpy as np
-
 import mbuild as mb
 import parmed as pmd
-from planckton.utils import base_units
+import unyt as u
+
+from planckton.utils.base_units import base_units, planckton_units
 
 
 class Compound(mb.Compound):
@@ -12,7 +13,9 @@ class Compound(mb.Compound):
         super(Compound, self).__init__()
         mb.load(path_to_mol2, compound=self)
         # Calculate mass of compound
-        self.mass = np.sum([atom.mass for atom in self.to_parmed().atoms])
+        # ParmEd uses amu
+        # TODO use ele?
+        self.mass = np.sum([a.mass for a in self.to_parmed().atoms]) * u.amu
         # We need to rename the atom types
         compound_pmd = pmd.load_file(path_to_mol2)
         for atom_pmd, atom_mb in zip(compound_pmd, self):
@@ -38,7 +41,14 @@ class Pack:
         else:
             self.n_compounds = n_compounds
 
-        self.density = density
+        if isinstance(density, u.unyt_quantity):
+            self.density = density
+        else:
+            self.density = (
+                    density *
+                    planckton_units["mass"] / planckton_units["length"]**3
+                    )
+
         self.ff_file = ff_file
         self.out_file = out_file
         self.remove_hydrogen_atoms = remove_hydrogen_atoms
@@ -59,18 +69,14 @@ class Pack:
             Expand the box before packing for faster
             packing.
         """
-        units = base_units.base_units()
 
         if self.remove_hydrogen_atoms:
             self._remove_hydrogen()
 
-        L = (
-            self.L * box_expand_factor
-        )  # Extra factor to make packing faster, will shrink it out
+        L = (self.L.value * box_expand_factor)
         box = mb.packing.fill_box(
             self.compound,
             n_compounds=self.n_compounds,
-            # box=[-L/2, -L/2, -L/2, L/2, L/2, L/2],
             box=[L, L, L],
             overlap=0.2,
             edge=0.5,
@@ -80,9 +86,9 @@ class Pack:
             self.out_file,
             overwrite=True,
             forcefield_files=self.ff_file,
-            ref_mass=units["mass"],  # amu
-            ref_energy=units["energy"],  # kJ/mol
-            ref_distance=units["distance"],  # nm
+            ref_mass=float(base_units["mass"]),  # amu
+            ref_energy=float(base_units["energy"]),  # kJ/mol
+            ref_distance=float(base_units["length"]),  # nm
             foyer_kwargs={"assert_dihedral_params": False}
         )
 
@@ -90,10 +96,9 @@ class Pack:
         total_mass = np.sum(
             [n * c.mass for c, n in zip(self.compound, self.n_compounds)]
         )
-        # Conversion from (amu/(g/cm^3))**(1/3) to ang
-        L = (total_mass / self.density) ** (1 / 3) * 1.1841763
-        L /= 10  # convert ang to nm
-        return L
+
+        L = (total_mass / self.density) ** (1 / 3)
+        return L.in_base('planckton')
 
 
 def test_typing(compound_file, ff_file):
