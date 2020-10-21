@@ -4,15 +4,16 @@ channels:
   - mosdef
   - omnia
 dependencies:
-  - python=3.7
-  - pip=20.2
-  - numpy=1.19
   - foyer=0.7.6
   - gsd=2.2.0
-  - mbuild=0.10.9
   - hoomd=2.9.3
+  - mbuild=0.10.9
+  - numpy=1.19
   - openmm=7.4.2
+  - pip=20.2
+  - python=3.7
   - signac=1.5.0
+  - unyt=2.8.0
   - pip:
     - pytest
     - git+https://bitbucket.org/cmelab/cme_utils.git
