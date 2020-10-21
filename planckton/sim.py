@@ -47,7 +47,9 @@ class Simulation:
         with hoomd.context.SimulationContext():
             # TODO Robust restart logic when reading in rigid bodies
             if os.path.isfile("restart.gsd"):
-                system = hoomd.init.read_gsd(filename=None, restart="restart.gsd")
+                system = hoomd.init.read_gsd(
+                        filename=None, restart="restart.gsd"
+                        )
             else:
                 system = init_wrapper(self.input_xml)
             nl = hoomd.md.nlist.cell()
