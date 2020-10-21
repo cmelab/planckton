@@ -93,9 +93,10 @@ class Pack:
         )
 
     def _calculate_L(self):
-        total_mass = np.sum(
-            [n * c.mass for c, n in zip(self.compound, self.n_compounds)]
-        )
+        total_mass = np.sum([
+            n * c.mass.in_base('planckton')
+            for c, n in zip(self.compound, self.n_compounds)
+            ]) * u.amu
 
         L = (total_mass / self.density) ** (1 / 3)
         return L.in_base('planckton')
