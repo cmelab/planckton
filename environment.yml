@@ -4,11 +4,14 @@ channels:
   - mosdef
   - omnia
 dependencies:
+  - jupyterlab
+  - nodejs>=10
   - foyer=0.7.6
   - gsd=2.2.0
   - hoomd=2.9.3
   - mbuild=0.10.9
   - numpy=1.19
+  - openbabel=3.1.1
   - openmm=7.4.2
   - pip=20.2
   - python=3.7
