@@ -3,7 +3,7 @@ import mbuild as mb
 import parmed as pmd
 import unyt as u
 
-from planckton.utils.base_units import base_units, planckton_units
+from planckton.utils.base_units import planckton_units
 
 
 class Compound(mb.Compound):
