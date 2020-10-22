@@ -88,9 +88,7 @@ class Pack:
             self.out_file,
             overwrite=True,
             forcefield_files=self.ff_file,
-            ref_mass=float(base_units["mass"]),  # amu
-            ref_energy=float(base_units["energy"]),  # kJ/mol
-            ref_distance=float(base_units["length"]),  # nm
+            auto_scale=True,
             foyer_kwargs={"assert_dihedral_params": False}
         )
 
