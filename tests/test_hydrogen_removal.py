@@ -11,7 +11,7 @@ def test_hydrogen_removal():
         pcbm,
         ff_file=FORCE_FIELD["opv_gaff"],
         n_compounds=2,
-        density=0.01,
+        density=6,
         out_file="test_init.hoomdxml",
         remove_hydrogen_atoms=True,
     )
@@ -33,7 +33,7 @@ def test_hydrogen_removal_and_sim():
         pcbm,
         ff_file=FORCE_FIELD["opv_gaff"],
         n_compounds=2,
-        density=0.01,
+        density=6,
         out_file="test_init.hoomdxml",
         remove_hydrogen_atoms=True,
     )
