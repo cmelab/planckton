@@ -16,3 +16,4 @@ dependencies:
   - pip:
     - pytest
     - git+https://bitbucket.org/cmelab/cme_utils.git
+    - git+https://github.com/cmelab/planckton@test-docker
