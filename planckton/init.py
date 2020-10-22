@@ -44,6 +44,8 @@ class Pack:
         if isinstance(density, u.unyt_quantity):
             self.density = density
         else:
+            # this is a breaking change
+            # TODO: need to document this!!
             self.density = (
                     density *
                     planckton_units["mass"] / planckton_units["length"]**3

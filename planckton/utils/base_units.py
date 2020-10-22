@@ -5,6 +5,8 @@ planckton_units = u.UnitSystem(
         )
 planckton_units['energy'] = 'kJ'
 
+# base units are for sulfur
+# TODO should we use autoscale option instead??
 base_units = {
         "avogadro": 6.022140857e23 / u.mol,
         "boltzmann": 1.38064852e-23 * u.J / u.K,
