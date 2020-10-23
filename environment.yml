@@ -15,5 +15,6 @@ dependencies:
   - signac=1.5.0
   - pip:
     - pytest
+    - pytest-cov
     - git+https://bitbucket.org/cmelab/cme_utils.git
     - git+https://github.com/cmelab/planckton@test-docker
