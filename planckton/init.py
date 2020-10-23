@@ -1,6 +1,7 @@
+import numpy as np
+
 import mbuild as mb
 import parmed as pmd
-import numpy as np
 from planckton.utils import base_units
 
 
@@ -82,6 +83,7 @@ class Pack:
             ref_mass=units["mass"],  # amu
             ref_energy=units["energy"],  # kJ/mol
             ref_distance=units["distance"],  # nm
+            foyer_kwargs={"assert_dihedral_params": False}
         )
 
     def _calculate_L(self):

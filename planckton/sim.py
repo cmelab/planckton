@@ -1,9 +1,10 @@
-import os
 import logging
-import hoomd.deprecated
-import hoomd.md
-import hoomd.dump
+import os
+
 import hoomd.data
+import hoomd.deprecated
+import hoomd.dump
+import hoomd.md
 from cme_utils.manip.convert_rigid import init_wrapper
 from cme_utils.manip.ff_from_foyer import set_coeffs
 
