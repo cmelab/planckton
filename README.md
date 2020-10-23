@@ -21,15 +21,21 @@ The simulation tools used by PlanckTon are:
 ## How to use
 
 ### Install
-To use PlanckTon in a prebuilt container (using [Docker](https://docs.docker.com/)), run:
+#### Using a container
+To use PlanckTon in a prebuilt container (using [Singularity](https://singularity.lbl.gov/)), run:
+```
+singularity pull docker:cmelab/planckton_cpu0.0.1
+singularity exec planckton_cpu0.0.1_latest.sif bash
+```
 
+**Or** using [Docker](https://docs.docker.com/), run:
 ```
 docker pull cmelab/planckton_cpu0.0.1:latest
 docker run -it cmelab/planckton_cpu0.0.1
 ```
 
-**Or** to create a local environment, run:
-
+#### Custom install
+To create a local environment with [conda](https://docs.conda.io/en/latest/miniconda.html), run:
 ```
 conda env create -f environment.yml
 conda activate planckton
@@ -51,14 +57,3 @@ Also see [planckton-flow](https://github.com/cmelab/planckton-flow)
 * Add this repository as upstream `git remote add upstream git@github.com:cmelab/planckton.git`
 * Modify the code and push to your fork
 * Submit a pull request (PR) ([how to create a PR](https://docs.github.com/en/free-pro-team@latest/github/collaborating-with-issues-and-pull-requests/creating-a-pull-request-from-a-fork))
-
-
-## Debug notes 
-
-`singularity exec --nv --bind $(pwd):/run/user/ planckton-test.simg python planckton/init.py`
-
-`singularity exec --nv --bind $(pwd):/run/user/ planckton-test.simg python planckton/sim.py`
-
-
-
-
