@@ -7,7 +7,19 @@ from planckton.utils.base_units import planckton_units
 
 
 class Compound(mb.Compound):
-    """ Wrapper class for mb.Compound"""
+    """
+    Wrapper class for mb.Compound
+
+    Parameters
+    ----------
+    path_to_mol2 : str
+        Path to the mol2 file to load
+
+    Attributes
+    ----------
+    mass : unyt.unyt_quantity
+        The mass of the compound in amus
+    """
 
     def __init__(self, path_to_mol2):
         super(Compound, self).__init__()
@@ -23,6 +35,43 @@ class Compound(mb.Compound):
 
 
 class Pack:
+    """
+    Convenience class for filling box and atomtyping
+
+    Parameters
+    ----------
+    compound : Compound or list of Compounds
+        Compound(s) to initialize in simulation
+    n_compounds : int or list of ints
+        Number(s) of compound(s) to initialize
+    density : float or unyt.unyt_quantity
+        Density of the system. If only a float is provided, the density is
+        assumed to be in planckton units (amu/nm^3).
+    ff_file : str
+        Foyer forcefield xml file to use for typing compounds
+        (default "compounds/gaff.4fxml")
+    out_file : str
+        Filename to write out the typed system (default "init.hoomdxml")
+    remove_hydrogen_atoms : bool
+        Whether to remove hydrogen atoms. (default False)
+
+    Attributes
+    ----------
+    compound : list of Compound(s)
+        Compound(s) in the system
+    n_compounds : list of int(s)
+        Number(s) of Compound(s) in the system
+    density : unyt.unyt_quantity
+        Density of the system with units
+    ff_file : str
+        Path to foyer forcefield xml
+    out_file : str
+        Path to where the hoomdxml where the initialized system will be written
+    remove_hydrogen_atoms : bool
+        Whether hydrogen atoms will be removed.
+    L : unyt.unyt_quantity
+        Length of the box with units
+    """
     def __init__(
         self,
         compound,
@@ -44,8 +93,6 @@ class Pack:
         if isinstance(density, u.unyt_quantity):
             self.density = density
         else:
-            # this is a breaking change
-            # TODO: need to document this!!
             self.density = (
                     density *
                     planckton_units["mass"] / planckton_units["length"]**3
