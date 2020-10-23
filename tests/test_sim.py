@@ -1,9 +1,10 @@
 import pytest
+import unyt as u
 from base_test import BaseTest
-from planckton.init import Compound, Pack
-from planckton.sim import Simulation
 from planckton.compounds import COMPOUND_FILE
 from planckton.force_fields import FORCE_FIELD
+from planckton.init import Compound, Pack
+from planckton.sim import Simulation
 
 
 class TestSimulations(BaseTest):
@@ -11,7 +12,10 @@ class TestSimulations(BaseTest):
     def test_simple_sim(self, compound_name):
         compound = Compound(COMPOUND_FILE[compound_name])
         packer = Pack(
-            compound, ff_file=FORCE_FIELD["opv_gaff"], n_compounds=2, density=0.01
+            compound,
+            ff_file=FORCE_FIELD["opv_gaff"],
+            n_compounds=2,
+            density=0.01 * u.gram / (u.cm ** 3),
         )
         packer.pack()
         my_sim = Simulation(

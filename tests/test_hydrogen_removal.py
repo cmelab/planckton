@@ -1,8 +1,9 @@
-from planckton.init import Compound, Pack
-from planckton.sim import Simulation
+from os import path, remove
+
 from planckton.compounds import COMPOUND_FILE
 from planckton.force_fields import FORCE_FIELD
-from os import path, remove
+from planckton.init import Compound, Pack
+from planckton.sim import Simulation
 
 
 def test_hydrogen_removal():
