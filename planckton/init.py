@@ -2,6 +2,7 @@ import numpy as np
 import mbuild as mb
 import parmed as pmd
 import unyt as u
+from unyt.exceptions import UnitConversionError
 
 from planckton.utils.base_units import planckton_units
 
@@ -91,6 +92,13 @@ class Pack:
             self.n_compounds = n_compounds
 
         if isinstance(density, u.unyt_quantity):
+            try:
+                # catch unit errors early
+                density.to(
+                        planckton_units["mass"] / planckton_units["length"]**3
+                        )
+            except UnitConversionError as e:
+                raise(e)
             self.density = density
         else:
             self.density = (
