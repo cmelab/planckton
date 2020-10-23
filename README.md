@@ -1,5 +1,5 @@
 # PlanckTon
-[![CI](https://github.com/cmelab/planckton/workflows/CI/badge.svg?branch=master)](https://github.com/cmelab/planckton/actions?query=workflow%3ACI)
+[![CI](https://github.com/cmelab/planckton/workflows/CI/badge.svg?branch=master)](https://github.com/cmelab/planckton/actions?query=workflow%3ACI) [![codecov](https://codecov.io/gh/cmelab/planckton/branch/master/graph/badge.svg?token=5KYVHWMT28)](https://codecov.io/gh/cmelab/planckton/)
 
 ## How to use
 
