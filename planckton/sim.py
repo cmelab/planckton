@@ -10,6 +10,66 @@ from cme_utils.manip.ff_from_foyer import set_coeffs
 
 
 class Simulation:
+    """
+    Convenience class for initializing and running a HOOMD simulation.
+
+    Parameters
+    ----------
+    input_xml : str
+        Hoomdxml file to use to initialize the simulation
+    kT : float
+        Dimensionless temperature at which to run the simulation
+    e_factor : float
+        Scaling parameter for particle interaction strengths, used to simulate
+        solvent (default 1.0)
+    tau : float
+        Thermostat coupling strength (default 5.0)
+    gsd_write : int
+        Period to write simulation snapshots to gsd file (default 1e6)
+    log_write : int
+        Period to write simulation data to the log file (default 1e5)
+    shrink_time : int
+        Number of timesteps over which to shrink the box (default 1e6)
+    shrink_kT_reduced : float
+        Dimensionless temperature to run the shrink step (default 10)
+    n_steps : int
+        Number of steps to run the simulation (default 1e3)
+    dt : float
+        Size of simulation timestep in simulation time units (default 0.0001)
+    mode : str
+        Mode flag passed to hoomd.context.initialize. Options are "cpu" and
+        "gpu". (default "gpu")
+    target_length : float
+        Target final box length for the shrink step. If None is provided, no
+        shrink step will be performed. (default None)
+
+    Attributes
+    ----------
+    input_xml : str
+        Hoomdxml file used to initialize the simulation
+    kT : float
+        Dimensionless temperature at the simulation is run
+    e_factor : float
+        Scaling parameter for particle interaction strengths
+    tau : float
+        Thermostat coupling strength
+    gsd_write : int
+        Period to write simulation snapshots to gsd file
+    log_write : int
+        Period to write simulation data to the log file
+    shrink_time : int
+        Number of timesteps over which to shrink the box
+    shrink_kT_reduced : float
+        Dimensionless temperature to run the shrink step
+    n_steps : int
+        Number of steps to run the simulation
+    dt : float
+        Size of simulation timestep in simulation time units
+    mode : str
+        Mode flag passed to hoomd.context.initialize.
+    target_length : float
+        Target final box length for the shrink step.
+    """
     def __init__(
         self,
         input_xml,
@@ -19,7 +79,6 @@ class Simulation:
         gsd_write=1e6,
         log_write=1e5,
         shrink_time=1e6,
-        shrink_factor=5,
         shrink_kT_reduced=10,
         n_steps=1e3,
         dt=0.0001,
@@ -33,7 +92,6 @@ class Simulation:
         self.gsd_write = gsd_write
         self.log_write = log_write
         self.shrink_time = shrink_time
-        self.shrink_factor = shrink_factor
         self.shrink_kT_reduced = shrink_kT_reduced
         self.n_steps = n_steps
         self.dt = dt
@@ -53,7 +111,7 @@ class Simulation:
             else:
                 system = init_wrapper(self.input_xml)
             nl = hoomd.md.nlist.cell()
-            logging.info("Setting coefs")
+            logging.info("Setting coeffs")
             hoomd.util.quiet_status()
             system = set_coeffs(self.input_xml, system, nl, self.e_factor)
             hoomd.util.unquiet_status()
@@ -88,7 +146,6 @@ class Simulation:
                 "pair_lj_energy",
                 "bond_harmonic_energy",
                 "angle_harmonic_energy",
-                "dihedral_table_energy",
             ]
             hoomd.analyze.log(
                 "trajectory.log",
