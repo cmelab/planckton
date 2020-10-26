@@ -1,19 +1,20 @@
-import hoomd.deprecated
-import hoomd.md
-import hoomd.dump
-import hoomd.data
-import os
 import json
-import numpy as np
-import scipy.spatial
-
-# import cme_utils
-# import cme_utils.manip
-# import cme_utils.manip.utilities
-from cme_utils.manip.utilities import loadMorphologyXML, writeMorphologyXML
-from cme_utils.manip.pbc import relative_pbc
+import os
 from collections import Counter
 
+import hoomd
+import hoomd.data
+import hoomd.md
+from hoomd.deprecated.init import read_xml
+import numpy as np
+from scipy.spatial import KDTree
+
+
+def relative_pbc(positions, origin, box):
+    box = np.array(box)
+    p = np.copy(positions)
+    p -= origin
+    return shift_pbc(p,box)[0]
 
 # TODO: I think hoomd can do this:
 # http://hoomd-blue.readthedocs.io/en/stable/module-hoomd-data.html?highlight=wrap#hoomd.data.boxdim.min_image
@@ -21,9 +22,8 @@ def pbc_min_image(p1, p2, axes):
     dr = p1 - p2
     for i, p in enumerate(dr):
         if abs(dr[i]) > axes[i] * 0.5:
-            p2[i] = (
-                p2[i] + np.sign(dr[i]) * axes[i]
-            )  # Use dr to decide if we need to add or subtract axis
+            p2[i] = (p2[i] + np.sign(dr[i]) * axes[i])
+            # Use dr to decide if we need to add or subtract axis
     return p2
 
 
@@ -44,17 +44,17 @@ def pbc_traslate(points, axes):
     ref_point = points[0]
     # Add our min vector to our point
     min_image_cords = [
-        pbc_min_image(ref_point, point, axes) for point in points[1:]
-    ]  # Skip over the first point since its our ref point
-    min_image_cords.insert(
-        0, ref_point
-    )  # Don't forget to add the ref point into the list of points
+            pbc_min_image(ref_point, point, axes) for point in points[1:]
+            ]
+    # Skip over the first point since its our ref point
+    min_image_cords.insert(0, ref_point)
+    # Don't forget to add the ref point into the list of points
     return min_image_cords
 
 
-def moit(
-    points, masses
-):  # TODO: Currently assumes center of mass is at origin, which is not currently checked, so moments will be wrong.
+def moit(points, masses):
+    # TODO: Currently assumes center of mass is at origin, which is not
+    # currently checked, so moments will be wrong.
     """Moment of Inertia Tensor
     Assumes center of mass is at origin
     Assumes 3xN array for points, 1xN for masses"""
@@ -77,18 +77,22 @@ class NonRigidElements:
 
 
 def set_topology(idx_map, old_snap, system):
-
     # Bonds
     new_bonds = [[idx_map[a], idx_map[b]] for (a, b) in old_snap.bonds.group]
-    bond_types = {b_id: b_type for (b_id, b_type) in enumerate(old_snap.bonds.types)}
+    bond_types = {
+            b_id: b_type for (b_id, b_type) in enumerate(old_snap.bonds.types)
+            }
     for bond, bond_id in zip(new_bonds, old_snap.bonds.typeid):
         system.bonds.add(bond_types[bond_id], bond[0], bond[1])
 
     # Angles
     new_angles = [
-        [idx_map[a], idx_map[b], idx_map[c]] for (a, b, c) in old_snap.angles.group
+        [idx_map[a], idx_map[b], idx_map[c]]
+        for (a, b, c) in old_snap.angles.group
     ]
-    angles_types = {a_id: a_type for (a_id, a_type) in enumerate(old_snap.angles.types)}
+    angles_types = {
+            a_id: a_type for (a_id, a_type) in enumerate(old_snap.angles.types)
+            }
     for angle, angle_id in zip(new_angles, old_snap.angles.typeid):
         system.angles.add(angles_types[angle_id], angle[0], angle[1], angle[2])
 
@@ -100,13 +104,13 @@ def set_topology(idx_map, old_snap, system):
     dihedrals_types = {
         d_id: d_type for (d_id, d_type) in enumerate(old_snap.dihedrals.types)
     }
-    for dihedrals, dihedrals_id in zip(new_dihedrals, old_snap.dihedrals.typeid):
+    for dihedral, dihedral_id in zip(new_dihedrals, old_snap.dihedrals.typeid):
         system.dihedrals.add(
-            dihedrals_types[dihedrals_id],
-            dihedrals[0],
-            dihedrals[1],
-            dihedrals[2],
-            dihedrals[3],
+            dihedrals_types[dihedral_id],
+            dihedral[0],
+            dihedral[1],
+            dihedral[2],
+            dihedral[3],
         )
 
     # Impropers
@@ -117,13 +121,13 @@ def set_topology(idx_map, old_snap, system):
     impropers_types = {
         i_id: i_type for (i_id, i_type) in enumerate(old_snap.impropers.types)
     }
-    for impropers, impropers_id in zip(new_impropers, old_snap.impropers.typeid):
+    for improper, improper_id in zip(new_impropers, old_snap.impropers.typeid):
         system.impropers.add(
-            impropers_types[impropers_id],
-            impropers[0],
-            impropers[1],
-            impropers[2],
-            impropers[3],
+            impropers_types[improper_id],
+            improper[0],
+            improper[1],
+            improper[2],
+            improper[3],
         )
 
     return system
@@ -131,15 +135,14 @@ def set_topology(idx_map, old_snap, system):
 
 def create_map(old_xyz, new_xyz, N_r_bodies):
 
-    my_tree = scipy.spatial.KDTree(np.vstack(old_xyz))
-    distance, old_index = my_tree.query(
-        np.vstack(new_xyz[N_r_bodies:])
-    )  # Need to slice out rigid body centers
-    assert [
-        k for k, v in Counter(old_index).items() if v > 1
-    ] == []  # Make sure there are no duplicatesp
-    old_to_new = {key: value + N_r_bodies for (value, key) in enumerate(old_index)}
-
+    my_tree = KDTree(np.vstack(old_xyz))
+    distance, old_index = my_tree.query(np.vstack(new_xyz[N_r_bodies:]))
+    # Need to slice out rigid body centers
+    assert [k for k, v in Counter(old_index).items() if v > 1] == []
+    # Make sure there are no duplicates
+    old_to_new = {
+            key: value + N_r_bodies for (value, key) in enumerate(old_index)
+            }
     return old_to_new
 
 
@@ -152,23 +155,28 @@ def init_wrapper(
 
     out_path, f_name = os.path.split(os.path.abspath(xmlfile))
     if restart_rigid:
-        system = continue_rigid(xmlfile, out_path, rigid_flex_xyz_file, rigid_json_file)
+        system = continue_rigid(
+                xmlfile, out_path, rigid_flex_xyz_file, rigid_json_file
+                )
         return system
 
-    system = hoomd.deprecated.init.read_xml(filename=xmlfile, wrap_coordinates=True)
+    system = read_xml(filename=xmlfile, wrap_coordinates=True)
     system = new_rigid(system, out_path)
     return system
 
 
 def continue_rigid(top_file, path, rigid_flex_xyz_file, rigid_json_file):
     """
-    top_file: hoomdxml file with all bond data
-    rigid_flex_zyz_file: hoomdxml with rigid centers and flex boides, no topo data
-    rigid_json_file: json file with rigid body info
+    top_file: str
+        hoomdxml file with all bond data
+    rigid_flex_zyz_file: str
+        hoomdxml with rigid centers and flex bodies, no topo data
+    rigid_json_file: str
+        json file with rigid body info
     """
 
     hoomd.context.initialize()
-    system_old = hoomd.deprecated.init.read_xml(top_file, wrap_coordinates=True)
+    system_old = read_xml(top_file, wrap_coordinates=True)
     snap_old = system_old.take_snapshot(all=True)
     xyz_old = snap_old.particles.position[:]
     r_bodies = set(snap_old.particles.body)
@@ -177,13 +185,14 @@ def continue_rigid(top_file, path, rigid_flex_xyz_file, rigid_json_file):
     N_r_bodies = len(r_bodies)
 
     hoomd.context.initialize()
-    system = hoomd.deprecated.init.read_xml(
-        path + "/" + rigid_flex_xyz_file, wrap_coordinates=True
-    )
+    system = read_xml(path + "/" + rigid_flex_xyz_file, wrap_coordinates=True)
     # Add missing particle types
-    missing_types = list(set(snap_old.particles.types) - set(system.particles.types))
+    missing_types = list(
+            set(snap_old.particles.types) - set(system.particles.types)
+            )
     [system.particles.types.add(missing_type) for missing_type in missing_types]
-    # Add other missing data in this dumb way since you can't add new types with system API
+    # Add other missing data in this dumb way since you can't add new types with
+    # system API
     snap = system.take_snapshot(all=True)
     snap.bonds.types = snap_old.bonds.types
     snap.angles.types = snap_old.angles.types
@@ -199,7 +208,9 @@ def continue_rigid(top_file, path, rigid_flex_xyz_file, rigid_json_file):
 
     for rbody in rigid_body_data:
         rigid.set_param(
-            str(rbody["r_type"]), positions=rbody["r_positions"], types=rbody["r_types"]
+            str(rbody["r_type"]),
+            positions=rbody["r_positions"],
+            types=rbody["r_types"]
         )
 
     rigid.create_bodies()
@@ -221,7 +232,7 @@ def new_rigid(system, path):
     snapshot = system.take_snapshot(all=True)
     snapshot_old = system.take_snapshot(all=True)
     nonrigid = hoomd.group.nonrigid()
-    # r_bodies is a list of rigid boides, 0, 1, 2,...
+    # r_bodies is a list of rigid bodies, 0, 1, 2,...
     r_bodies = set(snapshot.particles.body)
     # 4294967295 = -1 32-bit int
     r_bodies.discard(4294967295)
@@ -265,13 +276,11 @@ def new_rigid(system, path):
 
         for index in rigid_body_index:
             position = system.particles[int(index)].position
-            position = np.array(
-                [position]
-            )  # Add another array layer to make relative_pbc happy
+            position = np.array([position])
+            # Add another array layer to make relative_pbc happy
             orign = r_body_com[body_num]
-            r_con_pos.append(
-                relative_pbc(position, orign, axis)[0]
-            )  # remove extra array layer to make everything else happy
+            r_con_pos.append(relative_pbc(position, orign, axis)[0])
+            # remove extra array layer to make everything else happy
 
         r_body_list[idx].positions = r_con_pos
         r_body_list[idx].types = r_con_types
@@ -284,7 +293,7 @@ def new_rigid(system, path):
 
     unique_types = list(set(map(tuple, [my_RB.types for my_RB in r_body_list])))
     rigid_body_map = {
-        rb_types: "_R" + str(rb_id) for rb_id, rb_types in enumerate(unique_types)
+        rb_types: "_R" + str(i) for i, rb_type in enumerate(unique_types)
     }
     for my_RB in r_body_list:
         my_RB.type = rigid_body_map[tuple(my_RB.types)]
@@ -317,17 +326,6 @@ def new_rigid(system, path):
     with open(path + "/rigid_info.json", "w") as outfile:
         json.dump(rigid_bodies_info, outfile, indent=4)
 
-    # with open("rigid_info.json", 'r') as json_data:
-    #     rigid_body_data = json.load(json_data)
-    # print("rigid_info.json")
-    # for rbody in rigid_body_data:
-    #    print(rbody['r_type'])
-    # exit()
-
-    # print(rigid_body_info)
-    # print((rigid_body_map))
-
-    # exit()
     # Make snapshot of new system
     new_system = hoomd.data.make_snapshot(
         N=len(nonrigid) + len(r_bodies),
@@ -350,7 +348,9 @@ def new_rigid(system, path):
         system.particles[i].position = my_RB.com
         system.particles[i].moment_inertia = my_RB.moit
         system.particles[i].mass = my_RB.mass
-        rigid.set_param(my_RB.type, positions=my_RB.positions, types=my_RB.types)
+        rigid.set_param(
+                my_RB.type, positions=my_RB.positions, types=my_RB.types
+                )
     for i, my_f in enumerate(f_body_list, start=len(r_bodies)):
         system.particles[i].type = my_f.type
         system.particles[i].position = my_f.position
@@ -365,84 +365,5 @@ def new_rigid(system, path):
     old_to_new = create_map(old_sys_xyz, new_sys_xyz, len(r_bodies))
 
     # Use map to set bonds, angles, dihedrals, and impropers
-
     system = set_topology(old_to_new, snapshot_old, system)
     return system
-
-
-if __name__ == "__main__":
-    import cme_utils
-    from cme_utils.manip import builder
-    from cme_utils.manip import ff
-    from cme_utils.manip import hoomd_xml
-    from cme_utils.manip.convert_rigid import init_wrapper
-    from cme_utils.manip.initialize_system import (
-        interactions_from_xml_verbatim,
-        interactions_from_xml_tabulated,
-    )
-
-    e_factor = 1
-    model_file = "model.xml"
-    model_name = "ua_e"
-    # model_name = "p3ht"
-    dt = 0.001
-    T = 4
-    tauT = 5
-    infile = "rbdt-5-scaled.xml"
-    infile = "p3ht.hoomdxml"
-    infile = "n-test-GPU-dt0.0005-phi0.5-e0.8-P1.0-N100-T4.0/pre-rand.xml"
-
-    hoomd.context.initialize("--mode=cpu --notice-level=5")
-    hoomd.option.set_autotuner_params(enable=False)
-    system = init_wrapper(infile)
-    lj, bonds, angles, dihedrals, nl_c = interactions_from_xml_verbatim(
-        system, factor=e_factor, model_file=model_file, model_name=model_name
-    )
-    hoomd.md.integrate.mode_standard(dt=dt)
-    rigid = hoomd.group.rigid_center()
-    nonrigid = hoomd.group.nonrigid()
-    both_group = hoomd.group.union("both", rigid, nonrigid)
-    print(system.particles.types)
-
-    lj.pair_coeff.set(
-        system.particles.types,
-        [
-            i
-            for (i, v) in zip(
-                system.particles.types,
-                [_.startswith("_R") for _ in system.particles.types],
-            )
-            if v
-        ],
-        epsilon=0.0,
-        sigma=0.0,
-        r_cut=0,
-    )
-    int_rig = hoomd.md.integrate.nvt(group=hoomd.group.rigid_center(), kT=T, tau=tauT)
-    int_non = hoomd.md.integrate.nvt(group=hoomd.group.nonrigid(), kT=T, tau=tauT)
-    nl_c.reset_exclusions(exclusions=["bond", "angle", "dihedral", "body"])
-    hoomd.deprecated.dump.xml(
-        filename="start.hoomdxml",
-        group=hoomd.group.all(),
-        vis=True,
-        image=True,
-        velocity=True,
-    )
-    hoomd.dump.gsd(
-        "out.gsd",
-        1e2,
-        group=hoomd.group.all(),
-        overwrite=True,
-        truncate=False,
-        phase=0,
-        time_step=None,
-        static=["attribute", "momentum", "topology"],
-    )
-    hoomd.run(1e3)
-    hoomd.deprecated.dump.xml(
-        filename="final.hoomdxml",
-        group=hoomd.group.all(),
-        vis=True,
-        image=True,
-        velocity=True,
-    )
