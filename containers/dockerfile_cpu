@@ -1,0 +1,44 @@
+FROM ubuntu:20.04
+
+ENV CONDA_DIR="/opt/conda"
+ENV PATH="$CONDA_DIR/bin:$PATH"
+ENV LC_ALL=C.UTF-8
+ENV LANG=C.UTF-8
+
+# Install conda
+RUN CONDA_VERSION="4.8.3" && \
+    CONDA_MD5_CHECKSUM="d63adf39f2c220950a063e0529d4ff74" && \
+    \
+    apt update && \
+    apt install --no-install-recommends -y wget tar ca-certificates bzip2 curl git ssh-client && \
+    apt clean &&\
+    rm -rf /var/lib/apt/lists/* && \
+    \
+    mkdir -p "$CONDA_DIR" && \
+    wget "http://repo.continuum.io/miniconda/Miniconda3-py38_${CONDA_VERSION}-Linux-x86_64.sh" -O miniconda.sh && \
+    echo "$CONDA_MD5_CHECKSUM  miniconda.sh" | md5sum -c && \
+    bash miniconda.sh -f -b -p "$CONDA_DIR" && \
+    rm miniconda.sh && \
+    /opt/conda/bin/conda clean -tipsy && \
+    ln -s /opt/conda/etc/profile.d/conda.sh /etc/profile.d/conda.sh && \
+    echo ". /opt/conda/etc/profile.d/conda.sh" >> ~/.bashrc && \
+    echo "conda activate base" >> ~/.bashrc && \
+    \
+    conda update --all --yes && \
+    conda config --set auto_update_conda False && \
+    conda init bash
+
+# mount points for filesystems on clusters
+RUN mkdir -p /nfs \
+    mkdir -p /oasis \
+    mkdir -p /scratch \
+    mkdir -p /work \
+    mkdir -p /projects \
+    mkdir -p /home1
+
+COPY environment.yml /
+
+# build environment
+RUN conda env create -f environment.yml && \
+    conda init bash && \
+    /opt/conda/bin/conda clean -tipsy
