@@ -15,10 +15,10 @@ dependencies:
   - openmm=7.4.2
   - pip=20.2
   - python=3.7
+  - scipy=1.5.2
   - signac=1.5.0
   - unyt=2.8.0
   - pip:
     - pytest
     - pytest-cov
-    - git+https://bitbucket.org/cmelab/cme_utils.git
     - git+https://github.com/cmelab/planckton@test-docker
