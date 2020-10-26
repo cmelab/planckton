@@ -4,8 +4,6 @@ channels:
   - mosdef
   - omnia
 dependencies:
-  - jupyterlab
-  - nodejs>=10
   - foyer=0.7.6
   - gsd=2.2.0
   - hoomd=2.9.3
@@ -21,4 +19,4 @@ dependencies:
     - pytest
     - pytest-cov
     - git+https://bitbucket.org/cmelab/cme_utils.git
-    - git+https://github.com/cmelab/planckton@test-docker
+    - git+https://github.com/cmelab/planckton@unyt
