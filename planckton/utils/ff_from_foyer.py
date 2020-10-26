@@ -1,9 +1,11 @@
-import hoomd
-import hoomd.md
-import numpy as np
 import xml.etree.cElementTree as ET
 from collections import OrderedDict
 from itertools import tee
+
+import numpy as np
+
+import hoomd
+import hoomd.md
 
 
 def pairwise(iterable):
@@ -18,9 +20,9 @@ def parse_more_than_one_period(periods):
     # dihedral type
     flat_list.append(periods[0][0])
     # build flat list with all periods
-    for coefs in periods:
+    for coeffs in periods:
         # slice off repeated type
-        for parm in coefs[1:]:
+        for parm in coeffs[1:]:
             flat_list.append(parm)
     return flat_list
 
@@ -117,7 +119,7 @@ def set_coeffs(file_name, system, nl, e_factor=1.0, r_cut=2.5):
                     group.append(cur)
                     if len(group) > 1:
                         parsed_di = parse_more_than_one_period(group)
-                        my_coefs = OrderedDict(
+                        my_coeffs = OrderedDict(
                             [
                                 ("psi_k1", 0),
                                 ("period1", 0),
@@ -135,22 +137,24 @@ def set_coeffs(file_name, system, nl, e_factor=1.0, r_cut=2.5):
                         )
                         for _ in range(len(parsed_di[1:]) // 3):
                             for key, val in zip(
-                                my_coefs, parsed_di[1:][_ * 3 : _ * 3 + 3]
+                                my_coeffs, parsed_di[1:][_ * 3 : _ * 3 + 3]
                             ):
                                 key = key[:-1] + str(int(key[-1]) + _)
-                                my_coefs[key] = val
+                                my_coeffs[key] = val
                         dtable.dihedral_coeff.set(
-                            parsed_di[0], func=periodic_torsion_force, coeff=my_coefs
+                            parsed_di[0],
+                            func=periodic_torsion_force,
+                            coeff=my_coeffs
                         )
                     else:
                         # call set di here, only 1
-                        my_coefs = {
+                        my_coeffs = {
                             "psi_k1": cur[1],
                             "period1": cur[2],
                             "phase1": cur[3],
                         }
                         dtable.dihedral_coeff.set(
-                            cur[0], func=periodic_torsion_force, coeff=my_coefs
+                            cur[0], func=periodic_torsion_force, coeff=my_coeffs
                         )
                     group = []
             else:
@@ -164,7 +168,7 @@ def set_coeffs(file_name, system, nl, e_factor=1.0, r_cut=2.5):
                         "phase1": _next[3],
                     }
                     dtable.dihedral_coeff.set(
-                        _next[0], func=periodic_torsion_force, coeff=my_coefs
+                        _next[0], func=periodic_torsion_force, coeff=my_coeffs
                     )
 
     for atomID, atom in enumerate(system.particles):
@@ -193,7 +197,9 @@ def get_coeffs(file_name):
         for child in config:
             # First get the masses which are different
             if child.tag == "mass":
-                masses = [float(_) for _ in child.text.split("\n") if len(_) > 0]
+                masses = [
+                        float(_) for _ in child.text.split("\n") if len(_) > 0
+                        ]
             # Now the other coefficients
             if child.tag == "type":
                 types = [str(_) for _ in child.text.split("\n") if len(_) > 0]
