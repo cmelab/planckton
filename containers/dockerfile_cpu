@@ -40,5 +40,6 @@ COPY environment.yml /
 
 # build environment
 RUN conda env create -f environment.yml && \
-    conda init bash && \
-    /opt/conda/bin/conda clean -tipsy
+    /opt/conda/bin/conda clean -tipsy && \
+    rm /environment.yml && \
+    echo "conda activate planckton" >> ~/.bashrc
