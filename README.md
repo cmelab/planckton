@@ -30,7 +30,7 @@ singularity exec planckton_cpu_0.0.3.sif bash
 
 **Or** using [Docker](https://docs.docker.com/), run:
 ```
-docker pull cmelab/planckton_cpu:0.0.3:latest
+docker pull cmelab/planckton_cpu:0.0.3
 docker run -it cmelab/planckton_cpu:0.0.3
 ```
 
