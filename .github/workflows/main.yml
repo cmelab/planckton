@@ -11,7 +11,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     container: 
-      image: cmelab/planckton_cpu0.0.1
+    image: cmelab/planckton_cpu:0.0.2
 
     steps:
     - uses: actions/checkout@v2
@@ -19,7 +19,6 @@ jobs:
     - name: Run pytest with coverage report
       shell: bash -l {0}
       run: |
-          conda activate planckton
           python -m pytest --cov=./ --cov-report=xml
           
     - name: Upload coverage to Codecov
