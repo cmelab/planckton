@@ -1,29 +1,46 @@
 # PlanckTon
+[![CI](https://github.com/cmelab/planckton/workflows/CI/badge.svg?branch=master)](https://github.com/cmelab/planckton/actions?query=workflow%3ACI) [![codecov](https://codecov.io/gh/cmelab/planckton/branch/master/graph/badge.svg?token=5KYVHWMT28)](https://codecov.io/gh/cmelab/planckton/)
 
+PlanckTon enables exploration of the self-assembly and charge transport for mixtures of organic photovoltaic compounds under various conditions.
+To conduct these parameter sweeps, multiple simulation tools are tied together to reproducibly and accurately generate these structures.
+
+The simulation tools used by PlanckTon are:
+
+* [**mBuild**](https://github.com/mosdef-hub/mbuild) - builds compounds and initializes simulations
+
+* [**foyer**](https://foyer.mosdef.org/en/stable/) - manages force-field information
+
+* [**HOOMD-blue**](https://hoomd-blue.readthedocs.io/en/latest/) - runs the simulations
+
+* [**signac**](https://signac.io/) - manages and organizes the many variables that are run
+
+* [**signac-flow**](https://docs.signac.io/projects/flow/en/stable/) - manages workflows
+
+* [**MorphCT**](https://bitbucket.org/cmelab/morphct/src/master/) - calculates charge transport through the morphology
 
 ## How to use
 
 ### Install
-
-This will get less complicated when mBuild merges in a few PRs
-
+#### Using a container
+To use PlanckTon in a prebuilt container (using [Singularity](https://singularity.lbl.gov/)), run:
 ```
-git clone git@bitbucket.org:cmelab/planckton.git
-cd planckton
-conda create -n planckton
+singularity pull docker:cmelab/planckton_cpu0.0.1
+singularity exec planckton_cpu0.0.1_latest.sif bash
+```
+
+**Or** using [Docker](https://docs.docker.com/), run:
+```
+docker pull cmelab/planckton_cpu0.0.1:latest
+docker run -it cmelab/planckton_cpu0.0.1
+```
+
+#### Custom install
+To create a local environment with [conda](https://docs.conda.io/en/latest/miniconda.html), run:
+```
+conda env create -f environment.yml
 conda activate planckton
-conda install -y --only-deps -c omnia -c cmelab -c mosdef mbuild foyer python=3.5
-conda remove -y mbuild
-conda install -y -c omnia -c conda-forge openmm=7.2.2 hoomd numpy=1.15.2 python=3.6
-pip install -r requirements.txt
-pip install .
-pip install gsd signac
-conda install numpy=1.15.2
-conda install -c omnia -c mosdef mbuild
-pytest # Run tests
+pytest
 ```
-
-You will also need to install [hoomd-blue](https://hoomd-blue.readthedocs.io/en/stable/)
 
 ### Run simulations
 
@@ -36,40 +53,7 @@ Also see [planckton-flow](https://github.com/cmelab/planckton-flow)
 
 ## How to develop
 
-* Fork repo
-* Add upstream `git remote add upstream git@github.com:cmelab/planckton.git`
-* Code
-* Submit PR
-
-## Things to add
-
-* Make the jobs easier to restart
-** run up to
-** don't re-init
-** https://hoomd-blue.readthedocs.io/en/stable/restartable-jobs.html#temperature-ramp
-
-## Debug notes 
-
-`singularity exec --nv --bind $(pwd):/run/user/ planckton-test.simg python planckton/init.py`
-
-`singularity exec --nv --bind $(pwd):/run/user/ planckton-test.simg python planckton/sim.py`
-
-This repository is built to enable large sweeps exploring the self-assembly and charge transport 
-for mixtures of organic photovoltaic compounds under various conditions.
-To conduct these sweeps, multiple simulation tools are tied together 
-to reproducibly and accurately generate these structures.
-
-
-The simulations tools used here are:
-
-* **mbuild** - builds compounds and initializes simulations
-
-* **foyer** - selects the force-fields for the compounds
-
-* **hoomd** - runs the simulations
-
-* **signac** - manages and organizes the many variables that are run
-
-* **signac-flow** - manages workflows
-
-* **MorphCT** - determines charge transport through the morphology
+* Fork and clone this repo ([how to make a fork](https://docs.github.com/en/free-pro-team@latest/github/getting-started-with-github/fork-a-repo))
+* Add this repository as upstream `git remote add upstream git@github.com:cmelab/planckton.git`
+* Modify the code and push to your fork
+* Submit a pull request (PR) ([how to create a PR](https://docs.github.com/en/free-pro-team@latest/github/collaborating-with-issues-and-pull-requests/creating-a-pull-request-from-a-fork))
