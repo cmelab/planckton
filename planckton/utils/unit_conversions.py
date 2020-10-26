@@ -1,8 +1,9 @@
-from planckton.utils import base_units
+from planckton.utils.units import base_units
 
+
+units = base_units()
 
 def reduce_from_kelvin(T_SI, precision=2):
-    units = base_units.base_units()
     T = (units["avogadro"] * units["boltzmann"] * T_SI) / (
         units["kj_to_j"] * units["energy"]
     )
@@ -11,7 +12,6 @@ def reduce_from_kelvin(T_SI, precision=2):
 
 
 def kelvin_from_reduced(T_reduced, precision=0):
-    units = base_units.base_units()
     T_SI = (T_reduced * units["energy"] * units["kj_to_j"]) / (
         units["avogadro"] * units["boltzmann"]
     )
@@ -20,7 +20,6 @@ def kelvin_from_reduced(T_reduced, precision=0):
 
 
 def convert_to_real_time(dt, precision=3):
-    units = base_units.base_units()
     time_tau = units["mass"] * units["amu_to_kg"]
     time_tau *= (units["distance"] * units["nm_to_m"]) ** 2
     time_tau /= units["energy"] * units["kj_to_j"] / units["avogadro"]
