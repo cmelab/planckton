@@ -1,7 +1,7 @@
 from planckton.utils.units import base_units
 
 
-units = base_units()
+units = base_units
 
 def reduce_from_kelvin(T_SI, precision=2):
     T = (units["avogadro"] * units["boltzmann"] * T_SI) / (
