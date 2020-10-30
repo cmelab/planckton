@@ -70,16 +70,16 @@ class Pack:
         if self.remove_hydrogen_atoms:
             self._remove_hydrogen()
 
-        L = (
-            self.L * box_expand_factor
-        )  # Extra factor to make packing faster, will shrink it out
+        L = (self.L * box_expand_factor)
+        # Extra factor to make packing faster, will shrink it out
+        box = mb.Box([L,L,L])
         system = mb.packing.fill_box(
             self.compound,
             n_compounds=self.n_compounds,
-            # box=[-L/2, -L/2, -L/2, L/2, L/2, L/2],
-            box=[L, L, L],
+            box=box,
             overlap=0.2,
         )
+        system.box = box
         return system
 
     def _calculate_L(self):
