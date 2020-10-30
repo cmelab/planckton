@@ -54,10 +54,16 @@ class Pack:
 
     def pack(self, box_expand_factor=5):
         """
-        Optional:
-            box_expand_factor - float, Default = 5
-            Expand the box before packing for faster
-            packing.
+        Parameters
+        ----------
+        box_expand_factor : float
+            Factor by which to expand the box before packing for faster
+            packing. (default 5)
+
+        Returns
+        -------
+        system : mbuild.Compound
+            mbuild compound object of filled box
         """
         units = base_units.base_units()
 
@@ -67,24 +73,14 @@ class Pack:
         L = (
             self.L * box_expand_factor
         )  # Extra factor to make packing faster, will shrink it out
-        box = mb.packing.fill_box(
+        system = mb.packing.fill_box(
             self.compound,
             n_compounds=self.n_compounds,
             # box=[-L/2, -L/2, -L/2, L/2, L/2, L/2],
             box=[L, L, L],
             overlap=0.2,
-            edge=0.5,
-            fix_orientation=True,
         )
-        box.save(
-            self.out_file,
-            overwrite=True,
-            forcefield_files=self.ff_file,
-            ref_mass=units["mass"],  # amu
-            ref_energy=units["energy"],  # kJ/mol
-            ref_distance=units["distance"],  # nm
-            foyer_kwargs={"assert_dihedral_params": False}
-        )
+        return system
 
     def _calculate_L(self):
         total_mass = np.sum(
@@ -94,27 +90,3 @@ class Pack:
         L = (total_mass / self.density) ** (1 / 3) * 1.1841763
         L /= 10  # convert ang to nm
         return L
-
-
-def test_typing(compound_file, ff_file):
-    compound_mb = mb.load(compound_file)
-    compound_pmd = pmd.load_file(compound_file)
-    types_needed = set()
-    for atom_pmd, atom_mb in zip(compound_pmd, compound_mb):
-        atom_mb.name = "_{}".format(atom_pmd.type)
-        types_needed.add(atom_pmd.type)
-    box = mb.packing.fill_box(
-        compound_mb,
-        n_compounds=50,
-        box=[6.53, 6.53, 6.53],
-        overlap=0.2,
-        fix_orientation=False,
-    )
-    box.save(
-        "test_typing.hoomdxml",
-        overwrite=True,
-        forcefield_files="compounds/gaff.4fxml",
-        ref_mass=32.06,
-        ref_energy=1.046,
-        ref_distance=0.35635948725613575,
-    )
