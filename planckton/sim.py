@@ -4,6 +4,8 @@ import os
 import hoomd.data
 import hoomd.dump
 import hoomd.md
+from mbuild.formats.hoomd_simulation import create_hoomd_simulation
+
 from cme_utils.manip.convert_rigid import init_wrapper
 from cme_utils.manip.ff_from_foyer import set_coeffs
 
@@ -25,6 +27,7 @@ class Simulation:
         mode="gpu",
         target_length=None,
     ):
+        self.system = typed_system
         self.e_factor = e_factor # not used
         self.tau = tau
         self.kT = kT
@@ -39,15 +42,17 @@ class Simulation:
         self.target_length = target_length
 
     def run(self):
-        if hoomd.context.exec_conf is None:
+        hoomd_args = f"--single-mpi --mode={self.mode}"
+        sim = hoomd.context.initialize(hoomd_args)
+        with sim:
             hoomd_objects, ref_values = create_hoomd_simulation(
-                    typed_system,
+                    self.system,
                     auto_scale=True
                     )
-            #hoomd_args = f"--single-mpi --mode={self.mode}"
-            self.target_length /= ref_values.distance
+            snap = hoomd_objects[0]
+            if self.target_length is not None:
+                self.target_length /= ref_values.distance
 
-        with hoomd.context.current:
             integrator_mode = hoomd.md.integrate.mode_standard(dt=self.dt)
             all_particles = hoomd.group.all()
             integrator = hoomd.md.integrate.nvt(
@@ -88,9 +93,9 @@ class Simulation:
             integrator.randomize_velocities(seed=42)
 
             if self.target_length == None:
-                self.target_length = system.box.Lx # should be /scale_factor?
+                self.target_length = snap.box.Lx # should be /scale_factor?
             size_variant = hoomd.variant.linear_interp(
-                [(0, system.box.Lx), (self.shrink_time, self.target_length)],
+                [(0, snap.box.Lx), (self.shrink_time, self.target_length)],
                 zero=0
             )
             box_resize = hoomd.update.box_resize(L=size_variant)
