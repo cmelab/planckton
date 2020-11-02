@@ -1,7 +1,10 @@
-import numpy as np
+import os
 
+from foyer.forcefield import Forcefield
 import mbuild as mb
+import numpy as np
 import parmed as pmd
+
 from planckton.utils import base_units
 
 
@@ -13,6 +16,10 @@ class Compound(mb.Compound):
         mb.load(path_to_mol2, compound=self)
         # Calculate mass of compound
         self.mass = np.sum([atom.mass for atom in self.to_parmed().atoms])
+
+        # This helps to_parmed use resides to apply ff more quickly
+        self.name = os.path.basename(path_to_mol2).split(".")[0]
+
         # We need to rename the atom types
         compound_pmd = pmd.load_file(path_to_mol2)
         for atom_pmd, atom_mb in zip(compound_pmd, self):
@@ -26,7 +33,6 @@ class Pack:
         n_compounds,
         density,
         ff_file="compounds/gaff.4fxml",
-        out_file="init.hoomdxml",
         remove_hydrogen_atoms=False,
     ):
         if not isinstance(compound, (list, set)):
@@ -38,9 +44,9 @@ class Pack:
         else:
             self.n_compounds = n_compounds
 
+        self.residues = [comp.name for comp in compound]
         self.density = density
-        self.ff_file = ff_file
-        self.out_file = out_file
+        self.ff = Forcefield(FORCE_FIELD[ff_file])
         self.remove_hydrogen_atoms = remove_hydrogen_atoms
         self.L = self._calculate_L()
 
@@ -62,8 +68,8 @@ class Pack:
 
         Returns
         -------
-        system : mbuild.Compound
-            mbuild compound object of filled box
+        typed_system : ParmEd structure
+            ParmEd structure of filled box
         """
         units = base_units.base_units()
 
@@ -80,7 +86,13 @@ class Pack:
             overlap=0.2,
         )
         system.box = box
-        return system
+        pmd_system = system.to_parmed(residues=[self.residues])
+        typed_system = self.ff.apply(
+                pmd_system,
+                assert_angle_params=False,
+                assert_dihedral_params=False
+                )
+        return typed_system
 
     def _calculate_L(self):
         total_mass = np.sum(
