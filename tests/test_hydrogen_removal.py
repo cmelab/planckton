@@ -13,7 +13,6 @@ def test_hydrogen_removal():
         ff_file=FORCE_FIELD["opv_gaff"],
         n_compounds=2,
         density=0.01,
-        out_file="test_init.hoomdxml",
         remove_hydrogen_atoms=True,
     )
 
@@ -35,13 +34,12 @@ def test_hydrogen_removal_and_sim():
         ff_file=FORCE_FIELD["opv_gaff"],
         n_compounds=2,
         density=0.01,
-        out_file="test_init.hoomdxml",
         remove_hydrogen_atoms=True,
     )
 
-    packer.pack()
+    system = packer.pack()
     my_sim = Simulation(
-        "test_init.hoomdxml",
+        system,
         kT=3.0,
         gsd_write=1e2,
         log_write=1e2,

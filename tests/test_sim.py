@@ -17,9 +17,9 @@ class TestSimulations(BaseTest):
             n_compounds=2,
             density=0.01
         )
-        packer.pack()
+        system = packer.pack()
         my_sim = Simulation(
-            "init.hoomdxml",
+            system,
             kT=3.0,
             gsd_write=1e2,
             log_write=1e2,
@@ -27,5 +27,6 @@ class TestSimulations(BaseTest):
             n_steps=3e3,
             mode="cpu",
             shrink_time=1e3,
+            target_length=packer.L*10 # nm to A conversion
         )
         my_sim.run()
