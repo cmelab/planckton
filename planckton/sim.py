@@ -2,7 +2,6 @@ import logging
 import os
 
 import hoomd.data
-import hoomd.deprecated
 import hoomd.dump
 import hoomd.md
 from cme_utils.manip.convert_rigid import init_wrapper
@@ -12,6 +11,7 @@ from cme_utils.manip.ff_from_foyer import set_coeffs
 class Simulation:
     def __init__(
         self,
+        typed_system,
         kT,
         e_factor=1.0,
         tau=5.0,
@@ -25,41 +25,33 @@ class Simulation:
         mode="gpu",
         target_length=None,
     ):
-        self.e_factor = e_factor
+        self.e_factor = e_factor # not used
         self.tau = tau
         self.kT = kT
         self.gsd_write = gsd_write
         self.log_write = log_write
         self.shrink_time = shrink_time
-        self.shrink_factor = shrink_factor
+        self.shrink_factor = shrink_factor # this isn't used anywhere??
         self.shrink_kT_reduced = shrink_kT_reduced
         self.n_steps = n_steps
         self.dt = dt
-        self.mode = mode
+        self.mode = mode # not used
         self.target_length = target_length
 
     def run(self):
         if hoomd.context.exec_conf is None:
-            hoomd_args = f"--single-mpi --mode={self.mode}"
-            hoomd.context.initialize(hoomd_args)
-        with hoomd.context.SimulationContext():
-            # TODO Robust restart logic when reading in rigid bodies
-            if os.path.isfile("restart.gsd"):
-                system = hoomd.init.read_gsd(filename=None, restart="restart.gsd")
-            else:
-                system = init_wrapper(self.input_xml)
-            nl = hoomd.md.nlist.cell()
-            logging.info("Setting coefs")
-            hoomd.util.quiet_status()
-            system = set_coeffs(self.input_xml, system, nl, self.e_factor)
-            hoomd.util.unquiet_status()
+            hoomd_objects, ref_values = create_hoomd_simulation(
+                    typed_system,
+                    auto_scale=True
+                    )
+            #hoomd_args = f"--single-mpi --mode={self.mode}"
+            self.target_length /= ref_values.distance
+
+        with hoomd.context.current:
             integrator_mode = hoomd.md.integrate.mode_standard(dt=self.dt)
-            rigid = hoomd.group.rigid_center()
-            nonrigid = hoomd.group.nonrigid()
-            both_group = hoomd.group.union("both", rigid, nonrigid)
             all_particles = hoomd.group.all()
             integrator = hoomd.md.integrate.nvt(
-                group=both_group, tau=self.tau, kT=self.shrink_kT_reduced
+                group=all_particles, tau=self.tau, kT=self.shrink_kT_reduced
             )
             hoomd.dump.gsd(
                 filename="trajectory.gsd",
@@ -84,7 +76,6 @@ class Simulation:
                 "pair_lj_energy",
                 "bond_harmonic_energy",
                 "angle_harmonic_energy",
-                "dihedral_table_energy",
             ]
             hoomd.analyze.log(
                 "trajectory.log",
@@ -97,7 +88,7 @@ class Simulation:
             integrator.randomize_velocities(seed=42)
 
             if self.target_length == None:
-                self.target_length = system.box.Lx
+                self.target_length = system.box.Lx # should be /scale_factor?
             size_variant = hoomd.variant.linear_interp(
                 [(0, system.box.Lx), (self.shrink_time, self.target_length)],
                 zero=0
@@ -117,6 +108,3 @@ class Simulation:
                 pass
             finally:
                 gsd_restart.write_restart()
-                hoomd.deprecated.dump.xml(
-                    group=hoomd.group.all(), filename="final.xml", all=True
-                )
