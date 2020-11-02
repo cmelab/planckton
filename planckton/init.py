@@ -46,7 +46,7 @@ class Pack:
 
         self.residues = [comp.name for comp in compound]
         self.density = density
-        self.ff = Forcefield(FORCE_FIELD[ff_file])
+        self.ff = Forcefield(ff_file)
         self.remove_hydrogen_atoms = remove_hydrogen_atoms
         self.L = self._calculate_L()
 
