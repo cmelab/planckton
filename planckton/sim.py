@@ -12,7 +12,6 @@ from cme_utils.manip.ff_from_foyer import set_coeffs
 class Simulation:
     def __init__(
         self,
-        input_xml,
         kT,
         e_factor=1.0,
         tau=5.0,
@@ -26,7 +25,6 @@ class Simulation:
         mode="gpu",
         target_length=None,
     ):
-        self.input_xml = input_xml
         self.e_factor = e_factor
         self.tau = tau
         self.kT = kT
@@ -101,7 +99,8 @@ class Simulation:
             if self.target_length == None:
                 self.target_length = system.box.Lx
             size_variant = hoomd.variant.linear_interp(
-                [(0, system.box.Lx), (self.shrink_time, self.target_length)], zero=0
+                [(0, system.box.Lx), (self.shrink_time, self.target_length)],
+                zero=0
             )
             box_resize = hoomd.update.box_resize(L=size_variant)
             hoomd.run_upto(self.shrink_time)
