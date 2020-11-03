@@ -1,7 +1,7 @@
 from planckton.utils import unit_conversions
 
 
-def check_temperature_reduction():
+def test_temperature_reduction():
     # Compare conversion for SI (kelvin) to reduced kT
     T_reduced_true = 2.17
     T_SI = 273  # K
@@ -10,7 +10,7 @@ def check_temperature_reduction():
     assert reduced_error <= 0.001, "The error in the reduced kT is too high!"
 
 
-def check_temperature_to_SI_conversion():
+def test_temperature_to_SI_conversion():
     # Compare conversion for kT (reduced) to SI (kelvin)
     T_SI_true = 126  # K
     T_reduced = 1
@@ -19,7 +19,7 @@ def check_temperature_to_SI_conversion():
     assert SI_error <= 0.001, "The error in T (SI) is too high!"
 
 
-def check_dt_to_SI_conversion():
+def test_dt_to_SI_conversion():
     # Check real time
     timestep_true = 1.973  # fs
     dt_reduced = 0.001
@@ -29,6 +29,6 @@ def check_dt_to_SI_conversion():
 
 
 if __name__ == "__main__":
-    check_temperature_reduction()
-    check_temperature_to_SI_conversion()
-    check_dt_to_SI_conversion()
+    test_temperature_reduction()
+    test_temperature_to_SI_conversion()
+    test_dt_to_SI_conversion()
