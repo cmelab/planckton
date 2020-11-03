@@ -1,5 +1,7 @@
 from os import path, remove
 
+import unyt as u
+
 from planckton.compounds import COMPOUND_FILE
 from planckton.force_fields import FORCE_FIELD
 from planckton.init import Compound, Pack
@@ -13,7 +15,7 @@ def test_mixture():
         [pcbm, p3ht],
         ff_file=FORCE_FIELD["opv_gaff"],
         n_compounds=[2,3],
-        density=0.01,
+        density=0.01 * u.gram / (u.cm)**3
         out_file="test_init.hoomdxml",
     )
 
