@@ -1,11 +1,12 @@
 import pytest
+
 from base_test import BaseTest
 import unyt as u
 
-from planckton.init import Compound, Pack
-from planckton.sim import Simulation
 from planckton.compounds import COMPOUND_FILE
 from planckton.force_fields import FORCE_FIELD
+from planckton.init import Compound, Pack
+from planckton.sim import Simulation
 
 
 class TestSimulations(BaseTest):
