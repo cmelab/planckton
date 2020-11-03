@@ -9,5 +9,6 @@ comment:
 ignore:
     - "tests"
     - "planckton/compounds"
-    - "planckton/forcefields"
+    - "planckton/force_fields"
+    - "planckton/__version__.py"
 
