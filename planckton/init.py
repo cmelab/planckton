@@ -102,3 +102,4 @@ class Pack:
         L = (total_mass / self.density) ** (1 / 3) * 1.1841763
         L /= 10  # convert ang to nm
         return L
+
