@@ -17,7 +17,7 @@ class Compound(mb.Compound):
         # Calculate mass of compound
         self.mass = np.sum([atom.mass for atom in self.to_parmed().atoms])
 
-        # This helps to_parmed use resides to apply ff more quickly
+        # This helps to_parmed use residues to apply ff more quickly
         self.name = os.path.basename(path_to_mol2).split(".")[0]
 
         # We need to rename the atom types
@@ -44,7 +44,7 @@ class Pack:
         else:
             self.n_compounds = n_compounds
 
-        self.residues = [comp.name for comp in compound]
+        self.residues = [comp.name for comp in self.compound]
         self.density = density
         self.ff = Forcefield(ff_file)
         self.remove_hydrogen_atoms = remove_hydrogen_atoms
