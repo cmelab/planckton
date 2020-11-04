@@ -23,7 +23,7 @@ class TestSimulations(BaseTest):
             kT=3.0,
             gsd_write=1e2,
             log_write=1e2,
-            e_factor=0.5,
+            e_factor=1,
             n_steps=3e3,
             mode="cpu",
             shrink_time=1e3,

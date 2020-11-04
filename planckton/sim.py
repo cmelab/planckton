@@ -15,7 +15,7 @@ class Simulation:
         self,
         typed_system,
         kT,
-        e_factor=None,
+        e_factor=1.0,
         tau=5.0,
         gsd_write=1e6,
         log_write=1e5,
@@ -55,7 +55,7 @@ class Simulation:
             if self.target_length is not None:
                 self.target_length /= ref_values.distance
 
-            if self.e_factor is not None:
+            if self.e_factor != 1:
                 logging.info("Scaling coeffs by e_factor")
                 hoomd.util.quiet_status()
                 # catch all instances of LJ pair
