@@ -45,28 +45,46 @@ class Simulation:
         hoomd_args = f"--single-mpi --mode={self.mode}"
         sim = hoomd.context.initialize(hoomd_args)
         with sim:
+            hoomd.util.quiet_status()
             hoomd_objects, ref_values = create_hoomd_simulation(
                     self.system,
                     auto_scale=True
                     )
             snap = hoomd_objects[0]
+            hoomd.util.unquiet_status()
             if self.target_length is not None:
                 self.target_length /= ref_values.distance
 
             if self.e_factor is not None:
+                logging.info("Scaling coeffs by e_factor")
+                print("HECK")
+                hoomd.util.quiet_status()
                 # catch all instances of LJ pair
-                lj = [
+                ljtypes = [
                         i for i in hoomd_objects
                         if isinstance(i, hoomd.md.pair.lj)
                         or isinstance(i, hoomd.md.special_pair.lj)
                         ]
 
-                for ljtype in lj:
+                print("ljtypes", ljtypes)
+                for lj in ljtypes:
                     pair_list = lj.get_metadata()['pair_coeff'].get_metadata()
                     for pair_dict in pair_list:
                         # Scale the epsilon values by e_factor
-                        a, b, new_dict = set_coeffs(pair_dict, self.e_factor)
-                        ljtype.pair_coeff.set(a, b, **new_dict)
+                        print("pair_dict", pair_dict)
+                        try:
+                            a, b, new_dict = set_coeffs(
+                                    pair_dict,
+                                    self.e_factor
+                                    )
+                            lj.pair_coeff.set(a, b, **new_dict)
+                        except ValueError:
+                            # if the pair has not been defined,
+                            # it will not have a dictionary object
+                            # instead it will be a string (e.g. "ca-ca")
+                            # and will fail when trying to make the new_dict
+                            pass
+                hoomd.util.unquiet_status()
 
             integrator_mode = hoomd.md.integrate.mode_standard(dt=self.dt)
             all_particles = hoomd.group.all()
