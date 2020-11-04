@@ -57,7 +57,6 @@ class Simulation:
 
             if self.e_factor is not None:
                 logging.info("Scaling coeffs by e_factor")
-                print("HECK")
                 hoomd.util.quiet_status()
                 # catch all instances of LJ pair
                 ljtypes = [
@@ -66,12 +65,10 @@ class Simulation:
                         or isinstance(i, hoomd.md.special_pair.lj)
                         ]
 
-                print("ljtypes", ljtypes)
                 for lj in ljtypes:
                     pair_list = lj.get_metadata()['pair_coeff'].get_metadata()
                     for pair_dict in pair_list:
                         # Scale the epsilon values by e_factor
-                        print("pair_dict", pair_dict)
                         try:
                             a, b, new_dict = set_coeffs(
                                     pair_dict,
