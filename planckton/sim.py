@@ -7,7 +7,7 @@ import hoomd.md
 from mbuild.formats.hoomd_simulation import create_hoomd_simulation
 
 from cme_utils.manip.convert_rigid import init_wrapper
-from cme_utils.manip.ff_from_foyer import set_coeffs
+from planckton.utils.utils import set_coeffs
 
 
 class Simulation:
@@ -15,7 +15,7 @@ class Simulation:
         self,
         typed_system,
         kT,
-        e_factor=1.0,
+        e_factor=None,
         tau=5.0,
         gsd_write=1e6,
         log_write=1e5,
@@ -28,7 +28,7 @@ class Simulation:
         target_length=None,
     ):
         self.system = typed_system
-        self.e_factor = e_factor # not used
+        self.e_factor = e_factor
         self.tau = tau
         self.kT = kT
         self.gsd_write = gsd_write
@@ -52,6 +52,21 @@ class Simulation:
             snap = hoomd_objects[0]
             if self.target_length is not None:
                 self.target_length /= ref_values.distance
+
+            if self.e_factor is not None:
+                # catch all instances of LJ pair
+                lj = [
+                        i for i in hoomd_objects
+                        if isinstance(i, hoomd.md.pair.lj)
+                        or isinstance(i, hoomd.md.special_pair.lj)
+                        ]
+
+                for ljtype in lj:
+                    pair_list = lj.get_metadata()['pair_coeff'].get_metadata()
+                    for pair_dict in pair_list:
+                        # Scale the epsilon values by e_factor
+                        a, b, new_dict = set_coeffs(pair_dict, self.e_factor)
+                        ljtype.pair_coeff.set(a, b, **new_dict)
 
             integrator_mode = hoomd.md.integrate.mode_standard(dt=self.dt)
             all_particles = hoomd.group.all()
