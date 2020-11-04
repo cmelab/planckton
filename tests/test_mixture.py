@@ -17,17 +17,17 @@ def test_mixture():
         out_file="test_init.hoomdxml",
     )
 
-    packer.pack()
+    system = packer.pack()
     my_sim = Simulation(
-        "test_init.hoomdxml",
-        kT=3.0,
-        gsd_write=1e2,
-        log_write=1e2,
-        e_factor=0.5,
-        n_steps=3e3,
-        mode="cpu",
-        shrink_time=1e3,
-    )
+            system,
+            kT=3.0,
+            gsd_write=1e2,
+            log_write=1e2,
+            e_factor=0.5,
+            n_steps=3e3,
+            mode="cpu",
+            shrink_time=1e3,
+            )
     my_sim.run()
 
 
