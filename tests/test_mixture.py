@@ -14,7 +14,6 @@ def test_mixture():
         ff_file=FORCE_FIELD["opv_gaff"],
         n_compounds=[2,3],
         density=0.01,
-        out_file="test_init.hoomdxml",
     )
 
     system = packer.pack()
