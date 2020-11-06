@@ -101,6 +101,7 @@ setup(
     # entry_points={
     #     'console_scripts': ['mycli=mymodule:cli'],
     # },
+    package_data={'planckton': ['compounds', 'force_fields']},
     install_requires=REQUIRED,
     include_package_data=True,
     license="MIT",
