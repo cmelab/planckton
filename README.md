@@ -24,14 +24,14 @@ The simulation tools used by PlanckTon are:
 #### Using a container
 To use PlanckTon in a prebuilt container (using [Singularity](https://singularity.lbl.gov/)), run:
 ```
-singularity pull docker:cmelab/planckton_cpu0.0.1
-singularity exec planckton_cpu0.0.1_latest.sif bash
+singularity pull docker:cmelab/planckton_cpu:0.0.1
+singularity exec planckton_cpu_0.0.1.sif bash
 ```
 
 **Or** using [Docker](https://docs.docker.com/), run:
 ```
-docker pull cmelab/planckton_cpu0.0.1:latest
-docker run -it cmelab/planckton_cpu0.0.1
+docker pull cmelab/planckton_cpu:0.0.1
+docker run -it cmelab/planckton_cpu:0.0.1
 ```
 
 #### Custom install
