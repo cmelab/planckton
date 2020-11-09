@@ -27,6 +27,11 @@ To use PlanckTon in a prebuilt container (using [Singularity](https://singularit
 singularity pull docker://cmelab/planckton_cpu:0.0.1
 singularity exec planckton_cpu_0.0.1.sif bash
 ```
+You may need to also run:
+```
+conda init
+conda activate planckton
+```
 
 **Or** using [Docker](https://docs.docker.com/), run:
 ```
