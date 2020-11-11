@@ -49,4 +49,4 @@ RUN conda env create -f environment.yml && \
 ENV PYTHONPATH=/ignore/pythonpath
 # disable user site directories (https://docs.python.org/3/library/site.html#module-site)
 RUN conda activate planckton && \
-sed -i -e 's/ENABLE_USER_SITE = None/ENABLE_USER_SITE = False/g' `python3 -c 'import site; print(site.__file__)'`
+    sed -i -e 's/ENABLE_USER_SITE = None/ENABLE_USER_SITE = False/g' `python3 -c 'import site; print(site.__file__)'`
