@@ -5,6 +5,10 @@ ENV PATH="$CONDA_DIR/bin:$PATH"
 ENV LC_ALL=C.UTF-8
 ENV LANG=C.UTF-8
 
+# Make RUN commands use `bash --login`: -- fixes conda init
+# https://pythonspeed.com/articles/activate-conda-dockerfile/
+SHELL ["/bin/bash", "--login", "-c"]
+
 # Install conda
 RUN CONDA_VERSION="4.8.3" && \
     CONDA_MD5_CHECKSUM="d63adf39f2c220950a063e0529d4ff74" && \
@@ -28,7 +32,6 @@ RUN CONDA_VERSION="4.8.3" && \
     conda config --set auto_update_conda False && \
     conda init bash
 
-
 # mount points for filesystems on clusters
 RUN mkdir -p /nfs \
     mkdir -p /oasis \
@@ -39,14 +42,17 @@ RUN mkdir -p /nfs \
 
 COPY environment.yml /
 
-# build environment
-RUN conda env create -f environment.yml && \
-    conda init bash && \
-    /opt/conda/bin/conda clean -tipsy
-    
 # prevent python from loading packages from outside the container
 # default empty pythonpath
 ENV PYTHONPATH=/ignore/pythonpath
+
+# build environment
+RUN conda env create -f environment.yml
+
+RUN conda init bash && \
+    /opt/conda/bin/conda clean -tipsy && \
+    rm /environment.yml && \ 
+    echo "conda activate planckton" >> ~/.bashrc
+
 # disable user site directories (https://docs.python.org/3/library/site.html#module-site)
-RUN conda activate planckton && \
-    sed -i -e 's/ENABLE_USER_SITE = None/ENABLE_USER_SITE = False/g' `python3 -c 'import site; print(site.__file__)'`
+RUN sed -i -e 's/ENABLE_USER_SITE = None/ENABLE_USER_SITE = False/g' `python3 -c 'import site; print(site.__file__)'`
