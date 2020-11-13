@@ -40,25 +40,30 @@ RUN conda env create -f environment.yml && \
 
 # hoomd
 
-ENV SOFTWARE_ROOT=/opt/hoomd
-ENV PYTHONPATH=$PYTHONPATH:${SOFTWARE_ROOT}/lib/python
 ENV HOOMD_TAG=v2.9.3
 
-RUN source ~/.bashrc && \
-    apt-get update && apt-get install -y --no-install-recommends git cmake && \
+RUN . ~/.bashrc && \
+    apt update && apt install -y --no-install-recommends git cmake && \
     apt clean && \
     rm -rf /var/lib/apt/lists/* && \
     pip --no-cache-dir install numpy && \
     git clone --recursive https://github.com/glotzerlab/hoomd-blue.git && \
-    cd hoomd_blue && \
+    cd hoomd-blue && \
     git checkout $HOOMD_TAG && \
     mkdir build && \
     cd build && \
-    export CXX="$(command -v g++)" && \
-    export CC="$(command -v gcc)" && \
-    cmake ../ -DCMAKE_INSTALL_PREFIX=${SOFTWARE_ROOT}/lib/python \
+    cmake ../ -DENABLE_MPI=OFF \
               -DENABLE_CUDA=ON \
-              -DDISABLE_SQLITE=ON \
+              -DPYTHON_EXECUTABLE=$(command -v python) \
+              -DCMAKE_C_COMPILER=$(command -v gcc) \
+              -DCMAKE_CXX_COMPILER=$(command -v g++) \
+              -DCMAKE_INSTALL_PREFIX=$(python -c "import site; print(site.getsitepackages()[0])") \
+              -DBUILD_HPMC=OFF \
+              -DBUILD_JIT=OFF \ 
+              -DBUILD_METAL=OFF \ 
+              -DBUILD_DEM=OFF \
+              -DBUILD_CGCMM=OFF \
+              -DBUILD_MPCD=OFF \
               -DSINGLE_PRECISION=ON && \
     make -j$(nproc) && \
     make install
