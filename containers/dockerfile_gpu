@@ -1,5 +1,6 @@
 # use digest instead of tag nvidia/cuda:11.1-devel-ubuntu20.04
 FROM nvidia/cuda@sha256:768ceeaebb96bd35221aa43dfcb7b66eda5e293e5847c8bba18283be653d3525 
+SHELL ["/bin/bash", "--login", "-c"]
 
 # miniconda
 
@@ -23,7 +24,6 @@ RUN CONDA_VERSION="4.8.3" && \
     rm miniconda.sh && \
     /opt/conda/bin/conda clean -tipsy && \
     ln -s /opt/conda/etc/profile.d/conda.sh /etc/profile.d/conda.sh && \
-    echo ". /opt/conda/etc/profile.d/conda.sh" >> ~/.bashrc && \
     conda update --all --yes && \
     conda config --set auto_update_conda False && \
     conda init bash
@@ -44,7 +44,9 @@ ENV HOOMD_TAG=v2.9.3
 ENV DEBIAN_FRONTEND=noninteractive
 ENV TZ=Etc/UTC
 
-RUN apt update && apt install -y --no-install-recommends git cmake && \
+RUN source ~/.bashrc && \
+    conda activate planckton && \
+    apt update && apt install -y --no-install-recommends git cmake && \
     apt clean && \
     rm -rf /var/lib/apt/lists/* && \
     git clone --recursive https://github.com/glotzerlab/hoomd-blue.git && \
@@ -66,7 +68,7 @@ RUN apt update && apt install -y --no-install-recommends git cmake && \
               -DBUILD_CGCMM=OFF \
               -DBUILD_MPCD=OFF \
               -DSINGLE_PRECISION=ON && \
-    make -j$(nproc) && \
+    make && \
     make install
 
 # mount points for filesystems on clusters
