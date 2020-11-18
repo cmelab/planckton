@@ -8,6 +8,7 @@ dependencies:
   - openbabel
   - jupyterlab #
   - nodejs>=10 #
+  - openbabel
   - python=3.7
   - pip=20.2
   - numpy=1.19
@@ -21,5 +22,5 @@ dependencies:
     - pytest
     - pytest-cov
     - git+https://bitbucket.org/cmelab/cme_utils.git
-    - git+https://github.com/cmelab/planckton@test-docker
     - "--editable=git+https://github.com/rsdefever/GAFF-foyer.git#egg=gaff_foyer-master"
+    - git+https://github.com/cmelab/planckton@fix_setup
