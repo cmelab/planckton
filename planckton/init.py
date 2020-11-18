@@ -45,9 +45,10 @@ class Pack:
         Compound(s) to initialize in simulation
     n_compounds : int or list of ints
         Number(s) of compound(s) to initialize
-    density : float or unyt.unyt_quantity
-        Density of the system. If only a float is provided, the density is
-        assumed to be in planckton units (amu/nm^3).
+    density : unyt.unyt_quantity
+        Density of the system with units::
+            import unyt as u
+            1.0 * u.g / u.cm**3
     ff_file : str
         Foyer forcefield xml file to use for typing compounds
         (default "compounds/gaff.4fxml")
@@ -101,10 +102,7 @@ class Pack:
                 raise(e)
             self.density = density
         else:
-            self.density = (
-                    density *
-                    planckton_units["mass"] / planckton_units["length"]**3
-                    )
+            raise TypeError("density must be a unyt quantity")
 
         self.ff_file = ff_file
         self.out_file = out_file

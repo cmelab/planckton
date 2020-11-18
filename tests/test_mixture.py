@@ -15,7 +15,7 @@ def test_mixture():
         [pcbm, p3ht],
         ff_file=FORCE_FIELD["opv_gaff"],
         n_compounds=[2,3],
-        density=0.01 * u.gram / (u.cm)**3
+        density=0.01 * u.g / u.cm**3
         out_file="test_init.hoomdxml",
     )
 

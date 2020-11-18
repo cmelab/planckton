@@ -17,7 +17,7 @@ class TestSimulations(BaseTest):
             compound,
             ff_file=FORCE_FIELD["opv_gaff"],
             n_compounds=2,
-            density=0.01 * u.g / (u.cm**3)
+            density=0.01 * u.g / u.cm**3
         )
         packer.pack()
         my_sim = Simulation(
