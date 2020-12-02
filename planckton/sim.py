@@ -6,7 +6,7 @@ import hoomd.dump
 import hoomd.md
 from mbuild.formats.hoomd_simulation import create_hoomd_simulation
 
-from cme_utils.manip.convert_rigid import init_wrapper
+from planckton.utils.rigid import init_rigid
 from planckton.utils.utils import set_coeffs
 
 
@@ -16,6 +16,7 @@ class Simulation:
         typed_system,
         kT,
         e_factor=1.0,
+        rigid_system=None,
         tau=5.0,
         gsd_write=1e6,
         log_write=1e5,
@@ -29,6 +30,7 @@ class Simulation:
     ):
         self.system = typed_system
         self.e_factor = e_factor
+        self.rigid_system = rigid_system
         self.tau = tau
         self.kT = kT
         self.gsd_write = gsd_write
@@ -44,14 +46,21 @@ class Simulation:
     def run(self):
         hoomd_args = f"--single-mpi --mode={self.mode}"
         sim = hoomd.context.initialize(hoomd_args)
-        with sim:
-            hoomd.util.quiet_status()
-            hoomd_objects, ref_values = create_hoomd_simulation(
-                    self.system,
-                    auto_scale=True
+        if rigid_system is not None:
+            both, snap, sim, ref_values = init_rigid(
+                    self.rigid_system, self.system, sim
                     )
-            snap = hoomd_objects[0]
-            hoomd.util.unquiet_status()
+        else:
+            with sim:
+                hoomd.util.quiet_status()
+                hoomd_objects, ref_values = create_hoomd_simulation(
+                        self.system,
+                        auto_scale=True
+                        )
+                snap = hoomd_objects[0]
+                hoomd.util.unquiet_status()
+
+        with sim:
             if self.target_length is not None:
                 self.target_length /= ref_values.distance
 
@@ -60,7 +69,7 @@ class Simulation:
                 hoomd.util.quiet_status()
                 # catch all instances of LJ pair
                 ljtypes = [
-                        i for i in hoomd_objects
+                        i for i in sim.forces
                         if isinstance(i, hoomd.md.pair.lj)
                         or isinstance(i, hoomd.md.special_pair.lj)
                         ]
@@ -85,9 +94,16 @@ class Simulation:
 
             integrator_mode = hoomd.md.integrate.mode_standard(dt=self.dt)
             all_particles = hoomd.group.all()
-            integrator = hoomd.md.integrate.nvt(
-                group=all_particles, tau=self.tau, kT=self.shrink_kT_reduced
-            )
+            try:
+                integrator = hoomd.md.integrate.nvt(
+                    group=both, tau=self.tau, kT=self.shrink_kT_reduced
+                )
+            except NameError:
+                # both does not exist
+                integrator = hoomd.md.integrate.nvt(
+                    group=all_particles, tau=self.tau, kT=self.shrink_kT_reduced
+                )
+
             hoomd.dump.gsd(
                 filename="trajectory.gsd",
                 period=self.gsd_write,

@@ -1,6 +1,82 @@
 import numpy as np
 
 
+def init_rigid(system, typed_system, sim):
+    # Find conjugated rings and determine how many rigid bodies
+    # the system should have
+    system_mol = system.to_pybel()
+    rings = sorted(connect_rings(system_mol), key=lambda x: x[0])
+    n_bodies = len(rings)
+    with sim:
+        # Make an initial snapshot with only rigid bodies
+        #--the box length doesn't matter
+        init_snap = make_snapshot(N=n_bodies, particle_types=["_R"], box=hoomd.data.boxdim(L=10))
+
+        # Add the typed system to this snapshot
+        hoomd_objects, ref_values = create_hoomd_simulation(
+            typed_system, auto_scale=True, init_snap=init_snap
+        )
+        snap = hoomd_objects[0]
+
+        for i,ring in enumerate(rings):
+            # Indices of constituent particles
+            inds = ring + len(rings)
+
+            # Move the rigid body centers
+            snap.particles.position[i] = np.mean(snap.particles.position[inds], axis=0)
+
+            # Set body tags
+            snap.particles.body[i] = i
+            snap.particles.body[inds] = i * np.ones(len(ring))
+
+            # Moment of inertia tensor
+            snap.particles.moment_inertia[i] = moit(
+                snap.particles.position[inds],
+                snap.particles.mass[inds],
+                center=snap.particles.position[i]
+            )
+
+            # Mass
+            snap.particles.mass[i] = np.sum(snap.particles.mass[inds])
+
+        # Reinitialize with modified snapshot
+        sim.system_definition.initializeFromSnapshot(snap)
+
+        # Add body exclusions to neighborlist
+        nl = sim.neighbor_lists[0]
+        ex_list = nl.exclusions
+        ex_list.append('body')
+        sim.neighbor_lists[0].reset_exclusions(exclusions=ex_list)
+
+        # The next block assumes that there is only one type of rigid body
+        # in the system and assumes that all the rigid bodies are in the
+        # same orientation
+        # TODO: break out into separate function and allow for multiple types
+        rigid = hoomd.md.constrain.rigid()
+        r_pos = snap.particles.position[0]
+        const_pos = snap.particles.position[rings[0]+len(rings)]
+        const_pos -= r_pos
+        const_types = [
+                snap.particles.types[i]
+                for i in snap.particles.typeid[rings[0]+len(rings)]
+                ]
+        rigid.set_param(
+                "_R",
+                types=const_types,
+                positions=[tuple(i) for i in const_pos]
+                )
+        rigid.validate_bodies()
+
+        # add zero interactions for rigid body centers with all particles
+        lj = sim.forces[0]
+        lj.pair_coeff.set("_R", snap.particles.types, epsilon=0, sigma=0)
+
+        centers = hoomd.group.rigid_center()
+        nonrigid = hoomd.group.nonrigid()
+        both = hoomd.group.union("both", centers, nonrigid)
+    return both, snap, sim, ref_values
+
+
 def connect_rings(mol):
     """
     Get the particle indices of the conjugated particles in the system.
@@ -59,6 +135,7 @@ def _check_rings(rings):
     else:
         res = rings
     return res, connected
+
 
 def moit(points, masses, center=np.zeros(3)):
     """
