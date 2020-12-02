@@ -16,7 +16,7 @@ def test_mixture():
         density=0.01,
     )
 
-    system = packer.pack()
+    system, _ = packer.pack()
     my_sim = Simulation(
             system,
             kT=3.0,

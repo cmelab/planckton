@@ -37,7 +37,7 @@ def test_hydrogen_removal_and_sim():
         remove_hydrogen_atoms=True,
     )
 
-    system = packer.pack()
+    system, _ = packer.pack()
     my_sim = Simulation(
         system,
         kT=3.0,

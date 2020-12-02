@@ -17,7 +17,7 @@ class TestSimulations(BaseTest):
             n_compounds=2,
             density=0.01
         )
-        system = packer.pack()
+        system, _ = packer.pack()
         my_sim = Simulation(
             system,
             kT=3.0,
