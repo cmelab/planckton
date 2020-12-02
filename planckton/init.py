@@ -1,6 +1,6 @@
 import os
 
-from foyer.forcefield import Forcefield
+import foyer
 import mbuild as mb
 import numpy as np
 import parmed as pmd
@@ -11,19 +11,24 @@ from planckton.utils import base_units
 class Compound(mb.Compound):
     """ Wrapper class for mb.Compound"""
 
-    def __init__(self, path_to_mol2):
+    def __init__(self, input_str):
         super(Compound, self).__init__()
-        mb.load(path_to_mol2, compound=self)
+        if os.path.exists(input_str):
+            mb.load(input_str, compound=self)
+        else:
+            mb.load(input_str, smiles=True, compound=self)
+
         # Calculate mass of compound
         self.mass = np.sum([atom.mass for atom in self.to_parmed().atoms])
 
         # This helps to_parmed use residues to apply ff more quickly
         self.name = os.path.basename(path_to_mol2).split(".")[0]
 
+        # TODO: add logic to detect if this is necessary??
         # We need to rename the atom types
-        compound_pmd = pmd.load_file(path_to_mol2)
-        for atom_pmd, atom_mb in zip(compound_pmd, self):
-            atom_mb.name = "_{}".format(atom_pmd.type)
+        #compound_pmd = pmd.load_file(path_to_mol2)
+        #for atom_pmd, atom_mb in zip(compound_pmd, self):
+        #    atom_mb.name = "_{}".format(atom_pmd.type)
 
 
 class Pack:
@@ -32,7 +37,7 @@ class Pack:
         compound,
         n_compounds,
         density,
-        ff_file="compounds/gaff.4fxml",
+        ff=foyer.forcefields.load_GAFF(),
         remove_hydrogen_atoms=False,
     ):
         if not isinstance(compound, (list, set)):
@@ -46,7 +51,7 @@ class Pack:
 
         self.residues = [comp.name for comp in self.compound]
         self.density = density
-        self.ff = Forcefield(ff_file)
+        self.ff = ff
         self.remove_hydrogen_atoms = remove_hydrogen_atoms
         self.L = self._calculate_L()
 
@@ -70,6 +75,8 @@ class Pack:
         -------
         typed_system : ParmEd structure
             ParmEd structure of filled box
+        system : mbuild.Compound
+            Compound containing filled box
         """
         units = base_units.base_units()
 
@@ -84,6 +91,7 @@ class Pack:
             n_compounds=self.n_compounds,
             box=box,
             overlap=0.2,
+            fix_orientation=True
         )
         system.box = box
         pmd_system = system.to_parmed(residues=[self.residues])
@@ -92,7 +100,7 @@ class Pack:
                 assert_angle_params=False,
                 assert_dihedral_params=False
                 )
-        return typed_system
+        return typed_system, system
 
     def _calculate_L(self):
         total_mass = np.sum(
