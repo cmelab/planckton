@@ -56,7 +56,7 @@ class Simulation:
                 self.target_length /= ref_values.distance
 
             if self.e_factor != 1:
-                logging.info("Scaling coeffs by e_factor")
+                logging.info("Scaling LJ coeffs by e_factor")
                 hoomd.util.quiet_status()
                 # catch all instances of LJ pair
                 ljtypes = [
