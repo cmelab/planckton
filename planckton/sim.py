@@ -40,7 +40,7 @@ class Simulation:
         self.shrink_kT_reduced = shrink_kT_reduced
         self.n_steps = n_steps
         self.dt = dt
-        self.mode = mode  # not used
+        self.mode = mode
         self.target_length = target_length
 
     def run(self):
