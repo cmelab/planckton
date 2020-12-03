@@ -46,7 +46,7 @@ class Simulation:
     def run(self):
         hoomd_args = f"--single-mpi --mode={self.mode}"
         sim = hoomd.context.initialize(hoomd_args)
-        if rigid_system is not None:
+        if self.rigid_system is not None:
             both, snap, sim, ref_values = init_rigid(
                     self.rigid_system, self.system, sim
                     )
