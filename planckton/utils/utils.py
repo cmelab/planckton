@@ -1,4 +1,3 @@
-
 def set_coeffs(pair_dict, e_factor):
     """
     Given an e_factor and a dictionary of pair parameters (e.g. from
@@ -24,5 +23,5 @@ def set_coeffs(pair_dict, e_factor):
     new_dict = dict(pair_dict)
     a = new_dict.pop("typei")
     b = new_dict.pop("typej")
-    new_dict['epsilon'] *= e_factor
-    return a,b,new_dict
+    new_dict["epsilon"] *= e_factor
+    return a, b, new_dict

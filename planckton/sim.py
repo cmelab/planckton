@@ -36,11 +36,11 @@ class Simulation:
         self.gsd_write = gsd_write
         self.log_write = log_write
         self.shrink_time = shrink_time
-        self.shrink_factor = shrink_factor # this isn't used anywhere??
+        self.shrink_factor = shrink_factor  # this isn't used anywhere??
         self.shrink_kT_reduced = shrink_kT_reduced
         self.n_steps = n_steps
         self.dt = dt
-        self.mode = mode # not used
+        self.mode = mode  # not used
         self.target_length = target_length
 
     def run(self):
@@ -48,15 +48,14 @@ class Simulation:
         sim = hoomd.context.initialize(hoomd_args)
         if self.rigid_system is not None:
             both, snap, sim, ref_values = init_rigid(
-                    self.rigid_system, self.system, sim
-                    )
+                self.rigid_system, self.system, sim
+            )
         else:
             with sim:
                 hoomd.util.quiet_status()
                 hoomd_objects, ref_values = create_hoomd_simulation(
-                        self.system,
-                        auto_scale=True
-                        )
+                    self.system, auto_scale=True
+                )
                 snap = hoomd_objects[0]
                 hoomd.util.unquiet_status()
 
@@ -69,20 +68,20 @@ class Simulation:
                 hoomd.util.quiet_status()
                 # catch all instances of LJ pair
                 ljtypes = [
-                        i for i in sim.forces
-                        if isinstance(i, hoomd.md.pair.lj)
-                        or isinstance(i, hoomd.md.special_pair.lj)
-                        ]
+                    i
+                    for i in sim.forces
+                    if isinstance(i, hoomd.md.pair.lj)
+                    or isinstance(i, hoomd.md.special_pair.lj)
+                ]
 
                 for lj in ljtypes:
-                    pair_list = lj.get_metadata()['pair_coeff'].get_metadata()
+                    pair_list = lj.get_metadata()["pair_coeff"].get_metadata()
                     for pair_dict in pair_list:
                         # Scale the epsilon values by e_factor
                         try:
                             a, b, new_dict = set_coeffs(
-                                    pair_dict,
-                                    self.e_factor
-                                    )
+                                pair_dict, self.e_factor
+                            )
                             lj.pair_coeff.set(a, b, **new_dict)
                         except ValueError:
                             # if the pair has not been defined,
@@ -139,10 +138,10 @@ class Simulation:
             integrator.randomize_velocities(seed=42)
 
             if self.target_length == None:
-                self.target_length = snap.box.Lx # should be /scale_factor?
+                self.target_length = snap.box.Lx  # should be /scale_factor?
             size_variant = hoomd.variant.linear_interp(
                 [(0, snap.box.Lx), (self.shrink_time, self.target_length)],
-                zero=0
+                zero=0,
             )
             box_resize = hoomd.update.box_resize(L=size_variant)
             hoomd.run_upto(self.shrink_time)

@@ -9,8 +9,10 @@ def init_rigid(system, typed_system, sim):
     n_bodies = len(rings)
     with sim:
         # Make an initial snapshot with only rigid bodies
-        #--the box length doesn't matter
-        init_snap = make_snapshot(N=n_bodies, particle_types=["_R"], box=hoomd.data.boxdim(L=10))
+        # --the box length doesn't matter
+        init_snap = make_snapshot(
+            N=n_bodies, particle_types=["_R"], box=hoomd.data.boxdim(L=10)
+        )
 
         # Add the typed system to this snapshot
         hoomd_objects, ref_values = create_hoomd_simulation(
@@ -18,12 +20,14 @@ def init_rigid(system, typed_system, sim):
         )
         snap = hoomd_objects[0]
 
-        for i,ring in enumerate(rings):
+        for i, ring in enumerate(rings):
             # Indices of constituent particles
             inds = ring + len(rings)
 
             # Move the rigid body centers
-            snap.particles.position[i] = np.mean(snap.particles.position[inds], axis=0)
+            snap.particles.position[i] = np.mean(
+                snap.particles.position[inds], axis=0
+            )
 
             # Set body tags
             snap.particles.body[i] = i
@@ -33,7 +37,7 @@ def init_rigid(system, typed_system, sim):
             snap.particles.moment_inertia[i] = moit(
                 snap.particles.position[inds],
                 snap.particles.mass[inds],
-                center=snap.particles.position[i]
+                center=snap.particles.position[i],
             )
 
             # Mass
@@ -45,7 +49,7 @@ def init_rigid(system, typed_system, sim):
         # Add body exclusions to neighborlist
         nl = sim.neighbor_lists[0]
         ex_list = nl.exclusions
-        ex_list.append('body')
+        ex_list.append("body")
         sim.neighbor_lists[0].reset_exclusions(exclusions=ex_list)
 
         # The next block assumes that there is only one type of rigid body
@@ -54,17 +58,15 @@ def init_rigid(system, typed_system, sim):
         # TODO: break out into separate function and allow for multiple types
         rigid = hoomd.md.constrain.rigid()
         r_pos = snap.particles.position[0]
-        const_pos = snap.particles.position[rings[0]+len(rings)]
+        const_pos = snap.particles.position[rings[0] + len(rings)]
         const_pos -= r_pos
         const_types = [
-                snap.particles.types[i]
-                for i in snap.particles.typeid[rings[0]+len(rings)]
-                ]
+            snap.particles.types[i]
+            for i in snap.particles.typeid[rings[0] + len(rings)]
+        ]
         rigid.set_param(
-                "_R",
-                types=const_types,
-                positions=[tuple(i) for i in const_pos]
-                )
+            "_R", types=const_types, positions=[tuple(i) for i in const_pos]
+        )
         rigid.validate_bodies()
 
         # add zero interactions for rigid body centers with all particles
@@ -98,7 +100,7 @@ def connect_rings(mol):
     # http://openbabel.org/dev-api/classOpenBabel_1_1OBRing.shtml
     # pybel indices start at 1, so they are shifted to match every
     # other python library
-    rings = [set(np.array(ring._path)-1) for ring in mol.OBMol.GetSSSR()]
+    rings = [set(np.array(ring._path) - 1) for ring in mol.OBMol.GetSSSR()]
 
     # Iterate through rings until they are all connected
     connected = False
@@ -111,20 +113,21 @@ def connect_rings(mol):
         ring_arrs.append(np.array([*ring]))
     return ring_arrs
 
+
 def _check_rings(rings):
     # if not all rings are disjoint, then some must still share particles
     connected = all(
         [
             ringi.isdisjoint(ringj)
-            for i,ringi in enumerate(rings[:-1])
-            for ringj in rings[i+1:]
+            for i, ringi in enumerate(rings[:-1])
+            for ringj in rings[i + 1 :]
         ]
     )
     if not connected:
         conjugated = [
             set(sorted(ringi.union(ringj)))
-            for i,ringi in enumerate(rings[:-1])
-            for ringj in rings[i+1:]
+            for i, ringi in enumerate(rings[:-1])
+            for ringj in rings[i + 1 :]
             if not ringi.isdisjoint(ringj)
         ]
 

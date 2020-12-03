@@ -87,23 +87,21 @@ class Pack:
         if self.remove_hydrogen_atoms:
             self._remove_hydrogen()
 
-        L = (self.L * box_expand_factor)
+        L = self.L * box_expand_factor
         # Extra factor to make packing faster, will shrink it out
-        box = mb.Box([L,L,L])
+        box = mb.Box([L, L, L])
         system = mb.packing.fill_box(
             self.compound,
             n_compounds=self.n_compounds,
             box=box,
             overlap=0.2,
-            fix_orientation=True
+            fix_orientation=True,
         )
         system.box = box
         pmd_system = system.to_parmed(residues=[self.residues])
         typed_system = self.ff.apply(
-                pmd_system,
-                assert_angle_params=False,
-                assert_dihedral_params=False
-                )
+            pmd_system, assert_angle_params=False, assert_dihedral_params=False
+        )
         return typed_system, system
 
     def _calculate_L(self):
@@ -114,4 +112,3 @@ class Pack:
         L = (total_mass / self.density) ** (1 / 3) * 1.1841763
         L /= 10  # convert ang to nm
         return L
-
