@@ -24,11 +24,14 @@ class Compound(mb.Compound):
         # This helps to_parmed use residues to apply ff more quickly
         self.name = os.path.basename(input_str).split(".")[0]
 
-        # TODO: add logic to detect if this is necessary??
-        # We need to rename the atom types
-        #compound_pmd = pmd.load_file(path_to_mol2)
-        #for atom_pmd, atom_mb in zip(compound_pmd, self):
-        #    atom_mb.name = "_{}".format(atom_pmd.type)
+        if self.name.endswith("typed"):
+            # This is a hack to allow the old ff and typed files to work
+            # We need to rename the atom types
+            # TODO : test that gafffoyer and foyeroplsaa get same results and
+            # remove this logic
+            compound_pmd = pmd.load_file(input_str)
+            for atom_pmd, atom_mb in zip(compound_pmd, self):
+                atom_mb.name = "_{}".format(atom_pmd.type)
 
 
 class Pack:
