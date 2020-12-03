@@ -11,7 +11,7 @@ def test_mixture():
     p3ht = Compound(COMPOUND_FILE["P3HT"])
     packer = Pack(
         [pcbm, p3ht],
-        ff_file=FORCE_FIELD["opv_gaff"],
+        ff=FORCE_FIELD["opv_gaff"],
         n_compounds=[2,3],
         density=0.01,
     )

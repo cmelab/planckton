@@ -13,7 +13,7 @@ class TestSimulations(BaseTest):
         compound = Compound(COMPOUND_FILE[compound_name])
         packer = Pack(
             compound,
-            ff_file=FORCE_FIELD["opv_gaff"],
+            ff=FORCE_FIELD["opv_gaff"],
             n_compounds=2,
             density=0.01
         )

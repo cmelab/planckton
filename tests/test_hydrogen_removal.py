@@ -10,7 +10,7 @@ def test_hydrogen_removal():
     pcbm = Compound(COMPOUND_FILE["PCBM"])
     packer = Pack(
         pcbm,
-        ff_file=FORCE_FIELD["opv_gaff"],
+        ff=FORCE_FIELD["opv_gaff"],
         n_compounds=2,
         density=0.01,
         remove_hydrogen_atoms=True,
@@ -31,7 +31,7 @@ def test_hydrogen_removal_and_sim():
     pcbm = Compound(COMPOUND_FILE["PCBM"])
     packer = Pack(
         pcbm,
-        ff_file=FORCE_FIELD["opv_gaff"],
+        ff=FORCE_FIELD["opv_gaff"],
         n_compounds=2,
         density=0.01,
         remove_hydrogen_atoms=True,
