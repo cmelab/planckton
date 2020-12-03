@@ -22,7 +22,7 @@ class Compound(mb.Compound):
         self.mass = np.sum([atom.mass for atom in self.to_parmed().atoms])
 
         # This helps to_parmed use residues to apply ff more quickly
-        self.name = os.path.basename(path_to_mol2).split(".")[0]
+        self.name = os.path.basename(input_str).split(".")[0]
 
         # TODO: add logic to detect if this is necessary??
         # We need to rename the atom types
