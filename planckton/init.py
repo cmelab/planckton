@@ -5,6 +5,7 @@ import mbuild as mb
 import numpy as np
 import parmed as pmd
 
+from planckton.force_fields import FORCE_FIELD
 from planckton.utils import base_units
 
 
@@ -40,7 +41,7 @@ class Pack:
         compound,
         n_compounds,
         density,
-        ff=foyer.forcefields.load_GAFF(),
+        ff=FORCE_FIELD["opv_gaff"],
         remove_hydrogen_atoms=False,
     ):
         if not isinstance(compound, (list, set)):
