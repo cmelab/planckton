@@ -48,10 +48,20 @@ class Simulation:
     def run(self):
         hoomd_args = f"--single-mpi --mode={self.mode}"
         sim = hoomd.context.initialize(hoomd_args)
-        if self.rigid_system is not None:
+        if (self.rigid_inds is not None) and (self.rigid_typeids is not None):
             both, snap, sim, ref_values = init_rigid(
                 self.rigid_inds, self.rigid_typeids, self.system, sim
             )
+        elif (self.rigid_inds is not None) or (self.rigid_typeids is not None):
+            vals = [
+                    (self.rigid_inds,"rigid_inds"),
+                    (self.rigid_typeids, "rigid_typeids")
+                    ]
+            ok_val = [i[1] for i in vals if i[0] is not None][0]
+            raise ValueError(
+                "Please provide rigid_inds and rigid_typeids"
+                f"--Only {ok_val} was provided."
+                )
         else:
             with sim:
                 hoomd.util.quiet_status()
