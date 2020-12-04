@@ -7,6 +7,7 @@ import parmed as pmd
 
 from planckton.force_fields import FORCE_FIELD
 from planckton.utils import base_units
+from planckton.utils.rigid import connect_rings
 
 
 class Compound(mb.Compound):
@@ -66,7 +67,9 @@ class Pack:
         self.ff = ff
         self.remove_hydrogen_atoms = remove_hydrogen_atoms
         self.L = self._calculate_L()
-
+        self.rigid_inds = []
+        self.rigid_types = []
+        self.rigid_typeids = []
 
     def _remove_hydrogen(self):
         # TODO - not implemented with rigid
@@ -105,6 +108,18 @@ class Pack:
             overlap=0.2,
             fix_orientation=True,
         )
+
+        # Calculate the rigid_inds in the packed system
+        if any([comp.rigid_inds for comp in self.compound]):
+            particle_count = 0
+            for comp,n in zip(self.compound, self.n_compounds):
+                if comp.rigid_inds is not None:
+                    for i in range(n):
+                        for rigid in comp.rigid_inds:
+                            self.rigid_inds.append(rigid+particle_count)
+                        particle_count += comp.n_particles
+                else:
+                    particle_count += n * comp.n_particles
 
         system.box = box
         pmd_system = system.to_parmed(residues=[self.residues])
