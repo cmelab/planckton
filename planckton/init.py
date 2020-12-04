@@ -68,7 +68,6 @@ class Pack:
         self.remove_hydrogen_atoms = remove_hydrogen_atoms
         self.L = self._calculate_L()
         self.rigid_inds = []
-        self.rigid_types = []
         self.rigid_typeids = []
 
     def _remove_hydrogen(self):
@@ -112,12 +111,15 @@ class Pack:
         # Calculate the rigid_inds in the packed system
         if any([comp.rigid_inds for comp in self.compound]):
             particle_count = 0
+            rigid_count = 0
             for comp,n in zip(self.compound, self.n_compounds):
                 if comp.rigid_inds is not None:
-                    for i in range(n):
-                        for rigid in comp.rigid_inds:
+                    for _ in range(n):
+                        for i,rigid in enumerate(comp.rigid_inds):
                             self.rigid_inds.append(rigid+particle_count)
+                            self.rigid_typeids.append(i+rigid_count)
                         particle_count += comp.n_particles
+                    rigid_count += len(comp.rigid_inds)
                 else:
                     particle_count += n * comp.n_particles
 
