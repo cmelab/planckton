@@ -4,7 +4,7 @@ from mbuild.formats.hoomd_simulation import create_hoomd_simulation
 import numpy as np
 
 
-def init_rigid(system, typed_system, sim):
+def init_rigid(typed_system, sim, rigid_inds):
     # Find conjugated rings and determine how many rigid bodies
     # the system should have
     system_mol = system.to_pybel()
@@ -127,7 +127,7 @@ def _check_rings(rings):
         ]
     )
     if not connected:
-        conjugated = [
+        new_rings = [
             set(sorted(ringi.union(ringj)))
             for i, ringi in enumerate(rings[:-1])
             for ringj in rings[i + 1 :]
@@ -136,11 +136,20 @@ def _check_rings(rings):
 
         # this ends up adding each connected ring twice, so the next
         # section fixes that
-        res = []
-        [res.append(i) for i in conjugated if i not in res]
+        conjugated = []
+        for i in new_rings:
+            if i not in conjugated:
+                conjugated.append(i)
+
+        # Add any disjoint rings that are already fully connected
+        for i in rings:
+            disjoint = [i.isdisjoint(j) for j in conjugated]
+            if all(disjoint):
+                if sorted(i) not in conjugated:
+                    conjugated.append(set(sorted(i)))
     else:
-        res = rings
-    return res, connected
+        conjugated = rings
+    return conjugated, connected
 
 
 def moit(points, masses, center=np.zeros(3)):
