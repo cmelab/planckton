@@ -12,7 +12,7 @@ from planckton.utils import base_units
 class Compound(mb.Compound):
     """ Wrapper class for mb.Compound"""
 
-    def __init__(self, input_str):
+    def __init__(self, input_str, rigid=False):
         super(Compound, self).__init__()
         if os.path.exists(input_str):
             mb.load(input_str, compound=self)
@@ -24,6 +24,14 @@ class Compound(mb.Compound):
 
         # This helps to_parmed use residues to apply ff more quickly
         self.name = os.path.basename(input_str).split(".")[0]
+
+        if rigid:
+            # Find conjugated rings and determine how many rigid bodies
+            # the compound should have
+            mol = self.to_pybel()
+            self.rigid_inds = sorted(connect_rings(mol), key=lambda x: x[0])
+        else:
+            self.rigid_inds = None
 
         if self.name.endswith("typed"):
             # This is a hack to allow the old ff and typed files to work
@@ -59,7 +67,9 @@ class Pack:
         self.remove_hydrogen_atoms = remove_hydrogen_atoms
         self.L = self._calculate_L()
 
+
     def _remove_hydrogen(self):
+        # TODO - not implemented with rigid
         for subcompound in self.compound:
             for atom in subcompound.particles():
                 if atom.name in ["_hc", "_ha", "_h1", "_h4"]:
@@ -79,8 +89,6 @@ class Pack:
         -------
         typed_system : ParmEd structure
             ParmEd structure of filled box
-        system : mbuild.Compound
-            Compound containing filled box
         """
         units = base_units.base_units()
 
@@ -97,12 +105,13 @@ class Pack:
             overlap=0.2,
             fix_orientation=True,
         )
+
         system.box = box
         pmd_system = system.to_parmed(residues=[self.residues])
         typed_system = self.ff.apply(
             pmd_system, assert_angle_params=False, assert_dihedral_params=False
         )
-        return typed_system, system
+        return typed_system
 
     def _calculate_L(self):
         total_mass = np.sum(
