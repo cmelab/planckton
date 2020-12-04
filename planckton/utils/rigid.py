@@ -76,8 +76,8 @@ def init_rigid(rigid_inds, rigid_typeids, typed_system, sim):
                     ]
             rigid.set_param(
                     f"_R{i}",
-                    types=const_types,
-                    positions=[tuple(i) for i in const_pos]
+                    types=body_types,
+                    positions=[tuple(i) for i in body_pos]
                     )
         rigid.validate_bodies()
 
