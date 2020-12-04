@@ -4,18 +4,20 @@ from mbuild.formats.hoomd_simulation import create_hoomd_simulation
 import numpy as np
 
 
-def init_rigid(typed_system, sim, rigid_inds):
-    # Find conjugated rings and determine how many rigid bodies
-    # the system should have
-    system_mol = system.to_pybel()
-    rings = sorted(connect_rings(system_mol), key=lambda x: x[0])
-    n_bodies = len(rings)
+def init_rigid(rigid_inds, rigid_typeids, typed_system, sim):
+    # Determine how many rigid bodies the system should have
+    n_bodies = len(rigid_inds)
     with sim:
-        # Make an initial snapshot with only rigid bodies
-        # --the box length doesn't matter
+        # Make an initial snapshot with only general rigid body centers
+        # --the box length doesn't matter and specific types are added after
         init_snap = make_snapshot(
             N=n_bodies, particle_types=["_R"], box=hoomd.data.boxdim(L=10)
         )
+        # set the rigid types and typeids
+        init_snap.particles.types = [
+                f"_R{i}" for i in range(max(rigid_typeids)+1)
+                ]
+        init_snap.particles.typeid[:] = rigid_typeids
 
         # Add the typed system to this snapshot
         hoomd_objects, ref_values = create_hoomd_simulation(
@@ -23,9 +25,9 @@ def init_rigid(typed_system, sim, rigid_inds):
         )
         snap = hoomd_objects[0]
 
-        for i, ring in enumerate(rings):
+        for i, ring in enumerate(rigid_inds):
             # Indices of constituent particles
-            inds = ring + len(rings)
+            inds = ring + n_bodies
 
             # Move the rigid body centers
             snap.particles.position[i] = np.mean(
@@ -55,26 +57,38 @@ def init_rigid(typed_system, sim, rigid_inds):
         ex_list.append("body")
         sim.neighbor_lists[0].reset_exclusions(exclusions=ex_list)
 
-        # The next block assumes that there is only one type of rigid body
-        # in the system and assumes that all the rigid bodies are in the
-        # same orientation
-        # TODO: break out into separate function and allow for multiple types
+        # Set the body types for each rigid body type
         rigid = hoomd.md.constrain.rigid()
-        r_pos = snap.particles.position[0]
-        const_pos = snap.particles.position[rings[0] + len(rings)]
-        const_pos -= r_pos
-        const_types = [
-            snap.particles.types[i]
-            for i in snap.particles.typeid[rings[0] + len(rings)]
-        ]
-        rigid.set_param(
-            "_R", types=const_types, positions=[tuple(i) for i in const_pos]
-        )
+        for i in range(max(rigid_typeids)+1):
+            # particles indices of the first instance center and constituent
+            # body for this rigid type
+            first_center = np.where(snap.particles.typeid == i)[0][0]
+            first_body = rigid_inds[rigid_typeids.index(i)]
+
+            center_pos = snap.particles.position[first_center]
+            # body indices must be shifted by the added center particles
+            body_pos = snap.particles.position[first_body + n_bodies]
+            body_pos -= center_pos
+
+            body_types = [
+                    snap.particles.types[i]
+                    for i in snap.particles.typeid[first_body + n_bodies]
+                    ]
+            rigid.set_param(
+                    f"_R{i}",
+                    types=const_types,
+                    positions=[tuple(i) for i in const_pos]
+                    )
         rigid.validate_bodies()
 
         # add zero interactions for rigid body centers with all particles
         lj = sim.forces[0]
-        lj.pair_coeff.set("_R", snap.particles.types, epsilon=0, sigma=0)
+        lj.pair_coeff.set(
+                [f"_R{i}" for i in range(max(rigid_typeids)+1)],
+                snap.particles.types,
+                epsilon=0,
+                sigma=0
+                )
 
         centers = hoomd.group.rigid_center()
         nonrigid = hoomd.group.nonrigid()
