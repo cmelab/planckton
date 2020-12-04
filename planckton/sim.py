@@ -16,7 +16,8 @@ class Simulation:
         typed_system,
         kT,
         e_factor=1.0,
-        rigid_system=None,
+        rigid_inds=None,
+        rigid_typeids=None,
         tau=5.0,
         gsd_write=1e6,
         log_write=1e5,
@@ -30,7 +31,8 @@ class Simulation:
     ):
         self.system = typed_system
         self.e_factor = e_factor
-        self.rigid_system = rigid_system
+        self.rigid_inds = rigid_inds
+        self.rigid_typeids = rigid_typeids
         self.tau = tau
         self.kT = kT
         self.gsd_write = gsd_write
@@ -48,7 +50,7 @@ class Simulation:
         sim = hoomd.context.initialize(hoomd_args)
         if self.rigid_system is not None:
             both, snap, sim, ref_values = init_rigid(
-                self.rigid_system, self.system, sim
+                self.rigid_inds, self.rigid_typeids, self.system, sim
             )
         else:
             with sim:
