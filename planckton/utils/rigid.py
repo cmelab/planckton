@@ -20,10 +20,12 @@ def init_rigid(rigid_inds, rigid_typeids, typed_system, sim):
         init_snap.particles.typeid[:] = rigid_typeids
 
         # Add the typed system to this snapshot
+        hoomd.util.quiet_status()
         hoomd_objects, ref_values = create_hoomd_simulation(
             typed_system, auto_scale=True, init_snap=init_snap
         )
         snap = hoomd_objects[0]
+        hoomd.util.unquiet_status()
 
         for i, ring in enumerate(rigid_inds):
             # Indices of constituent particles
