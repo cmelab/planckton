@@ -43,6 +43,28 @@ class Compound(mb.Compound):
             for atom_pmd, atom_mb in zip(compound_pmd, self):
                 atom_mb.name = "_{}".format(atom_pmd.type)
 
+    def visualize_rigid(self):
+        if self.rigid_inds == None:
+            raise AttributeError("Can't visualize non-rigid compound.")
+
+        name_array = np.empty(self.n_particles,dtype=str)
+        color_dict = {}
+        color_list = ['orange','blue','yellow','purple','red','green']
+        for i,body in enumerate(self.rigid_inds):
+            r_name = chr(i+65)
+            name_array[body] = r_name
+            color_dict[r_name] = color_list[i % len(color_list)]
+
+        clone = mb.clone(self)
+        for i,p in enumerate(clone.particles()):
+            if name_array[i] != "":
+                p.name = name_array[i]
+            else:
+                p.name = "X"
+                color_dict["X"] = 'grey'
+
+        clone.visualize(color_scheme=color_dict).show()
+
 
 class Pack:
     def __init__(
