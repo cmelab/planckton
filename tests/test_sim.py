@@ -14,7 +14,7 @@ class TestSimulations(BaseTest):
         packer = Pack(
             compound, ff=FORCE_FIELD["opv_gaff"], n_compounds=2, density=0.01
         )
-        system, _ = packer.pack()
+        system = packer.pack()
         my_sim = Simulation(
             system,
             kT=3.0,
