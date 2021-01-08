@@ -1,5 +1,8 @@
 # PlanckTon
-[![CI](https://github.com/cmelab/planckton/workflows/CI/badge.svg?branch=master)](https://github.com/cmelab/planckton/actions?query=workflow%3ACI) [![codecov](https://codecov.io/gh/cmelab/planckton/branch/master/graph/badge.svg?token=5KYVHWMT28)](https://codecov.io/gh/cmelab/planckton/)
+[![CI](https://github.com/cmelab/planckton/workflows/CI/badge.svg?branch=master)](https://github.com/cmelab/planckton/actions?query=workflow%3ACI) 
+[![codecov](https://codecov.io/gh/cmelab/planckton/branch/master/graph/badge.svg?token=5KYVHWMT28)](https://codecov.io/gh/cmelab/planckton/)
+[![License](https://img.shields.io/badge/license-GPLv3-green.svg)](LICENSE.md)
+[![Contributors](https://img.shields.io/github/contributors-anon/cmelab/planckton.svg?style=flat)](https://github.com/cmelab/planckton/graphs/contributors)
 
 PlanckTon enables exploration of the self-assembly and charge transport for mixtures of organic photovoltaic compounds under various conditions.
 To conduct these parameter sweeps, multiple simulation tools are tied together to reproducibly and accurately generate these structures.
