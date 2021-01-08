@@ -1,7 +1,9 @@
-import numpy as np
-
+from ele import element_from_symbol
+from ele.exceptions import ElementError
 import mbuild as mb
+import numpy as np
 import parmed as pmd
+
 from planckton.utils import base_units
 
 
@@ -12,11 +14,22 @@ class Compound(mb.Compound):
         super(Compound, self).__init__()
         mb.load(path_to_mol2, compound=self)
         # Calculate mass of compound
-        self.mass = np.sum([atom.mass for atom in self.to_parmed().atoms])
+        self.set_elements()
+        self.mass = np.sum([p.element.mass for p in self.particles()])
+
         # We need to rename the atom types
+        # This is only necessary when using opv-gaff forcefield
         compound_pmd = pmd.load_file(path_to_mol2)
         for atom_pmd, atom_mb in zip(compound_pmd, self):
             atom_mb.name = "_{}".format(atom_pmd.type)
+
+    def set_elements(self):
+        for p in self.particles():
+            try:
+                p.element = element_from_symbol(p.name)
+            except ElementError:
+                # This is a hack for our typed mol2 files
+                p.element = element_from_symbol(p.name.strip("0123456789"))
 
 
 class Pack:
