@@ -41,8 +41,11 @@ class Pack:
         compound,
         n_compounds,
         density,
-        ff=FORCE_FIELD["opv_gaff"],
-        remove_hydrogen_atoms=False,
+        ff = FORCE_FIELD["opv_gaff"],
+        remove_hydrogen_atoms = False,
+        foyer_kwargs = {
+            "assert_dihedral_params":False
+            }
     ):
         if not isinstance(compound, (list, set)):
             self.compound = [compound]
@@ -58,6 +61,7 @@ class Pack:
         self.ff = ff
         self.remove_hydrogen_atoms = remove_hydrogen_atoms
         self.L = self._calculate_L()
+        self.foyer_kwargs = foyer_kwargs
 
     def _remove_hydrogen(self):
         # TODO - not implemented with rigid
@@ -99,9 +103,7 @@ class Pack:
 
         system.box = box
         pmd_system = system.to_parmed(residues=[self.residues])
-        typed_system = self.ff.apply(
-            pmd_system, assert_angle_params=False, assert_dihedral_params=False
-        )
+        typed_system = self.ff.apply(pmd_system, **self.foyer_kwargs)
         return typed_system
 
     def _calculate_L(self):
