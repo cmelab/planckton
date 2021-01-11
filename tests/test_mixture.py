@@ -11,15 +11,14 @@ def test_mixture():
     p3ht = Compound(COMPOUND_FILE["P3HT"])
     packer = Pack(
         [pcbm, p3ht],
-        ff_file=FORCE_FIELD["opv_gaff"],
-        n_compounds=[2,3],
+        ff=FORCE_FIELD["opv_gaff"],
+        n_compounds=[2, 3],
         density=0.01,
-        out_file="test_init.hoomdxml",
     )
 
-    packer.pack()
+    system = packer.pack()
     my_sim = Simulation(
-        "test_init.hoomdxml",
+        system,
         kT=3.0,
         gsd_write=1e2,
         log_write=1e2,

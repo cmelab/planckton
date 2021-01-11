@@ -2,17 +2,17 @@ import logging
 import os
 
 import hoomd.data
-import hoomd.deprecated
 import hoomd.dump
 import hoomd.md
-from cme_utils.manip.convert_rigid import init_wrapper
-from cme_utils.manip.ff_from_foyer import set_coeffs
+from mbuild.formats.hoomd_simulation import create_hoomd_simulation
+
+from planckton.utils.utils import set_coeffs
 
 
 class Simulation:
     def __init__(
         self,
-        input_xml,
+        typed_system,
         kT,
         e_factor=1.0,
         tau=5.0,
@@ -26,14 +26,13 @@ class Simulation:
         mode="gpu",
         target_length=None,
     ):
-        self.input_xml = input_xml
+        self.system = typed_system
         self.e_factor = e_factor
         self.tau = tau
         self.kT = kT
         self.gsd_write = gsd_write
         self.log_write = log_write
         self.shrink_time = shrink_time
-        self.shrink_factor = shrink_factor
         self.shrink_kT_reduced = shrink_kT_reduced
         self.n_steps = n_steps
         self.dt = dt
@@ -41,28 +40,60 @@ class Simulation:
         self.target_length = target_length
 
     def run(self):
-        if hoomd.context.exec_conf is None:
-            hoomd_args = f"--single-mpi --mode={self.mode}"
-            hoomd.context.initialize(hoomd_args)
-        with hoomd.context.SimulationContext():
-            # TODO Robust restart logic when reading in rigid bodies
-            if os.path.isfile("restart.gsd"):
-                system = hoomd.init.read_gsd(filename=None, restart="restart.gsd")
-            else:
-                system = init_wrapper(self.input_xml)
-            nl = hoomd.md.nlist.cell()
-            logging.info("Setting coefs")
+        hoomd_args = f"--single-mpi --mode={self.mode}"
+        sim = hoomd.context.initialize(hoomd_args)
+
+        with sim:
             hoomd.util.quiet_status()
-            system = set_coeffs(self.input_xml, system, nl, self.e_factor)
-            hoomd.util.unquiet_status()
-            integrator_mode = hoomd.md.integrate.mode_standard(dt=self.dt)
-            rigid = hoomd.group.rigid_center()
-            nonrigid = hoomd.group.nonrigid()
-            both_group = hoomd.group.union("both", rigid, nonrigid)
-            all_particles = hoomd.group.all()
-            integrator = hoomd.md.integrate.nvt(
-                group=both_group, tau=self.tau, kT=self.shrink_kT_reduced
+            hoomd_objects, ref_values = create_hoomd_simulation(
+                self.system, auto_scale=True
             )
+            snap = hoomd_objects[0]
+            hoomd.util.unquiet_status()
+
+            if self.target_length is not None:
+                self.target_length /= ref_values.distance
+
+            if self.e_factor != 1:
+                logging.info("Scaling LJ coeffs by e_factor")
+                hoomd.util.quiet_status()
+                # catch all instances of LJ pair
+                ljtypes = [
+                    i
+                    for i in sim.forces
+                    if isinstance(i, hoomd.md.pair.lj)
+                    or isinstance(i, hoomd.md.special_pair.lj)
+                ]
+
+                for lj in ljtypes:
+                    pair_list = lj.get_metadata()["pair_coeff"].get_metadata()
+                    for pair_dict in pair_list:
+                        # Scale the epsilon values by e_factor
+                        try:
+                            a, b, new_dict = set_coeffs(
+                                pair_dict, self.e_factor
+                            )
+                            lj.pair_coeff.set(a, b, **new_dict)
+                        except ValueError:
+                            # if the pair has not been defined,
+                            # it will not have a dictionary object
+                            # instead it will be a string (e.g. "ca-ca")
+                            # and will fail when trying to make the new_dict
+                            pass
+                hoomd.util.unquiet_status()
+
+            integrator_mode = hoomd.md.integrate.mode_standard(dt=self.dt)
+            all_particles = hoomd.group.all()
+            try:
+                integrator = hoomd.md.integrate.nvt(
+                    group=both, tau=self.tau, kT=self.shrink_kT_reduced
+                )
+            except NameError:
+                # both does not exist
+                integrator = hoomd.md.integrate.nvt(
+                    group=all_particles, tau=self.tau, kT=self.shrink_kT_reduced
+                )
+
             hoomd.dump.gsd(
                 filename="trajectory.gsd",
                 period=self.gsd_write,
@@ -86,7 +117,6 @@ class Simulation:
                 "pair_lj_energy",
                 "bond_harmonic_energy",
                 "angle_harmonic_energy",
-                "dihedral_table_energy",
             ]
             hoomd.analyze.log(
                 "trajectory.log",
@@ -99,9 +129,10 @@ class Simulation:
             integrator.randomize_velocities(seed=42)
 
             if self.target_length == None:
-                self.target_length = system.box.Lx
+                self.target_length = snap.box.Lx
             size_variant = hoomd.variant.linear_interp(
-                [(0, system.box.Lx), (self.shrink_time, self.target_length)], zero=0
+                [(0, snap.box.Lx), (self.shrink_time, self.target_length)],
+                zero=0,
             )
             box_resize = hoomd.update.box_resize(L=size_variant)
             hoomd.run_upto(self.shrink_time)
@@ -118,6 +149,3 @@ class Simulation:
                 pass
             finally:
                 gsd_restart.write_restart()
-                hoomd.deprecated.dump.xml(
-                    group=hoomd.group.all(), filename="final.xml", all=True
-                )
