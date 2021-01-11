@@ -33,7 +33,6 @@ class Simulation:
         self.gsd_write = gsd_write
         self.log_write = log_write
         self.shrink_time = shrink_time
-        self.shrink_factor = shrink_factor  # this isn't used anywhere??
         self.shrink_kT_reduced = shrink_kT_reduced
         self.n_steps = n_steps
         self.dt = dt
