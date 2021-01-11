@@ -129,7 +129,7 @@ class Simulation:
             integrator.randomize_velocities(seed=42)
 
             if self.target_length == None:
-                self.target_length = snap.box.Lx  # should be /scale_factor?
+                self.target_length = snap.box.Lx
             size_variant = hoomd.variant.linear_interp(
                 [(0, snap.box.Lx), (self.shrink_time, self.target_length)],
                 zero=0,
