@@ -1,16 +1,14 @@
 name: planckton
 channels:
   - conda-forge
-  - mosdef
-  - omnia
 dependencies:
-  - foyer=0.7.6
+  - foyer=0.7.7
   - gsd=2.2.0
   - hoomd=2.9.3
-  - mbuild=0.10.9
+  - mbuild=0.10.12
   - numpy=1.19
   - openbabel=3.1.1
-  - openmm=7.4.2
+  - openmm>=7.5
   - pip=20.2
   - python=3.7
   - signac=1.5.0
@@ -18,5 +16,4 @@ dependencies:
   - pip:
     - pytest
     - pytest-cov
-    - git+https://bitbucket.org/cmelab/cme_utils.git
     - git+https://github.com/cmelab/planckton@unyt
