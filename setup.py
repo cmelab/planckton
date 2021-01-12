@@ -72,7 +72,9 @@ class UploadCommand(Command):
             pass
 
         self.status("Building Source and Wheel (universal) distribution…")
-        os.system("{0} setup.py sdist bdist_wheel --universal".format(sys.executable))
+        os.system(
+            "{0} setup.py sdist bdist_wheel --universal".format(sys.executable)
+        )
 
         self.status("Uploading the package to PyPi via Twine…")
         os.system("twine upload dist/*")
@@ -101,7 +103,7 @@ setup(
     # entry_points={
     #     'console_scripts': ['mycli=mymodule:cli'],
     # },
-    package_data={'planckton': ['compounds/*.mol2', 'force_fields/*/*']},
+    package_data={"planckton": ["compounds/*.mol2", "force_fields/*/*"]},
     install_requires=REQUIRED,
     include_package_data=True,
     license="MIT",

@@ -8,7 +8,10 @@ def main():
     pcbm = Compound(COMPOUND_FILE["PCBM"])
     p3ht = Compound(COMPOUND_FILE["P3HT"])
     packer = Pack(
-        [pcbm, p3ht], ff_file=FORCE_FIELD["opv_gaff"], n_compounds=[2, 2], density=0.01
+        [pcbm, p3ht],
+        ff_file=FORCE_FIELD["opv_gaff"],
+        n_compounds=[2, 2],
+        density=0.01,
     )
     packer.pack()
     my_sim = Simulation(

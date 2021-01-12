@@ -17,5 +17,4 @@ dependencies:
   - pip:
     - pytest
     - pytest-cov
-    - git+https://bitbucket.org/cmelab/cme_utils.git
     - git+https://github.com/cmelab/planckton@fix_setup
