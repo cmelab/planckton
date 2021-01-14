@@ -10,5 +10,3 @@ RUN conda env create -f environment.yml && \
 SHELL ["conda", "run", "-n", "planckton", "/bin/ash", "-c"]
 
 RUN pip install .
-
-ENTRYPOINT ["conda", "run", "-n", "planckton", "print-LogP"]
