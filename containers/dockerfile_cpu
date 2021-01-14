@@ -4,6 +4,9 @@ WORKDIR /opt/app
 
 COPY environment.yml ./
 
+RUN apk update && apk upgrade && \
+    apk add --no-cache git
+
 RUN conda env create -f environment.yml && \
     conda clean --all --yes
 
