@@ -8,3 +8,5 @@ RUN conda env create -f environment.yml && \
     conda clean --all --yes
 
 SHELL ["conda", "run", "-n", "planckton", "/bin/bash", "-c"]
+
+ENTRYPOINT ["conda", "run", "-n", "planckton"]
