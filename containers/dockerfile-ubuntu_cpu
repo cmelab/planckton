@@ -2,9 +2,11 @@ FROM continuumio/miniconda3:4.9.2
 
 WORKDIR /opt/app
 
+# Create the environment
 COPY environment.yml ./
 
 RUN conda env create -f environment.yml && \
     conda clean --all --yes
 
-ENTRYPOINT ["conda", "run", "-n", "planckton"]
+# Prepend the environment's installation of conda to the PATH
+ENV PATH /opt/conda/envs/planckton/bin:$PATH
