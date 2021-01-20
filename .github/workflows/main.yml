@@ -17,8 +17,7 @@ jobs:
     - uses: actions/checkout@v2
  
     - name: Run pytest with coverage report
-      run: |
-          python -m pytest --cov=./ --cov-report=xml
+      run: conda run -n planckton python -m pytest --cov=./ --cov-report=xml -v
           
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v1
