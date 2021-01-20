@@ -5,11 +5,72 @@ import hoomd.data
 import hoomd.dump
 import hoomd.md
 from mbuild.formats.hoomd_simulation import create_hoomd_simulation
+import unyt as u
 
 from planckton.utils.utils import set_coeffs
 
 
 class Simulation:
+    """
+    Convenience class for initializing and running a HOOMD simulation.
+
+    Parameters
+    ----------
+    typed_system : ParmEd structure
+        Typed structure used to initialize the simulation
+    kT : float
+        Dimensionless temperature at which to run the simulation
+    e_factor : float
+        Scaling parameter for particle interaction strengths, used to simulate
+        solvent (default 1.0)
+    tau : float
+        Thermostat coupling strength (default 5.0)
+    gsd_write : int
+        Period to write simulation snapshots to gsd file (default 1e6)
+    log_write : int
+        Period to write simulation data to the log file (default 1e5)
+    shrink_time : int
+        Number of timesteps over which to shrink the box (default 1e6)
+    shrink_kT_reduced : float
+        Dimensionless temperature to run the shrink step (default 10)
+    n_steps : int
+        Number of steps to run the simulation (default 1e3)
+    dt : float
+        Size of simulation timestep in simulation time units (default 0.0001)
+    mode : str
+        Mode flag passed to hoomd.context.initialize. Options are "cpu" and
+        "gpu". (default "gpu")
+    target_length : unyt.unyt_quantity
+        Target final box length for the shrink step. If None is provided, no
+        shrink step will be performed. (default None)
+
+    Attributes
+    ----------
+    system : ParmEd structure
+        Structure used to initialize the simulation
+    kT : float
+        Dimensionless temperature at the simulation is run
+    e_factor : float
+        Scaling parameter for particle interaction strengths
+    tau : float
+        Thermostat coupling strength
+    gsd_write : int
+        Period to write simulation snapshots to gsd file
+    log_write : int
+        Period to write simulation data to the log file
+    shrink_time : int
+        Number of timesteps over which to shrink the box
+    shrink_kT_reduced : float
+        Dimensionless temperature to run the shrink step
+    n_steps : int
+        Number of steps to run the simulation
+    dt : float
+        Size of simulation timestep in simulation time units
+    mode : str
+        Mode flag passed to hoomd.context.initialize.
+    target_length : unyt.unyt_quantity
+        Target final box length for the shrink step.
+    """
     def __init__(
         self,
         typed_system,
@@ -19,7 +80,6 @@ class Simulation:
         gsd_write=1e6,
         log_write=1e5,
         shrink_time=1e6,
-        shrink_factor=5,
         shrink_kT_reduced=10,
         n_steps=1e3,
         dt=0.0001,
@@ -27,9 +87,9 @@ class Simulation:
         target_length=None,
     ):
         self.system = typed_system
+        self.kT = kT
         self.e_factor = e_factor
         self.tau = tau
-        self.kT = kT
         self.gsd_write = gsd_write
         self.log_write = log_write
         self.shrink_time = shrink_time
@@ -45,6 +105,7 @@ class Simulation:
 
         with sim:
             hoomd.util.quiet_status()
+            # mbuild units are nm, amu
             hoomd_objects, ref_values = create_hoomd_simulation(
                 self.system, auto_scale=True
             )
@@ -129,9 +190,11 @@ class Simulation:
             integrator.randomize_velocities(seed=42)
 
             if self.target_length == None:
-                self.target_length = snap.box.Lx
-            size_variant = hoomd.variant.linear_interp(
-                [(0, snap.box.Lx), (self.shrink_time, self.target_length)],
+                self.target_length = snap.box.Lx * u.angstrom
+            size_variant = hoomd.variant.linear_interp([
+                (0, snap.box.Lx),
+                (self.shrink_time, self.target_length.to("Angstrom").value)
+                ],
                 zero=0,
             )
             box_resize = hoomd.update.box_resize(L=size_variant)

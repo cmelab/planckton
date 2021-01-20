@@ -6,13 +6,29 @@ import foyer
 import mbuild as mb
 import numpy as np
 import parmed as pmd
+import unyt as u
+from unyt.exceptions import UnitConversionError
 
+from planckton.utils.base_units import planckton_units
 from planckton.force_fields import FORCE_FIELD
-from planckton.utils import base_units
 
 
 class Compound(mb.Compound):
-    """ Wrapper class for mb.Compound"""
+    """
+    Wrapper class for mb.Compound
+
+    Parameters
+    ----------
+    input_str : str
+        Path to the file to load or SMILES string
+
+    Attributes
+    ----------
+    mass : unyt.unyt_quantity
+        The mass of the compound in amus
+    name : str
+        Compound name, used to apply the forcefield more quickly in foyer
+    """
 
     def __init__(self, input_str):
         super(Compound, self).__init__()
@@ -23,7 +39,7 @@ class Compound(mb.Compound):
 
         # Calculate mass of compound
         self.set_elements()
-        self.mass = np.sum([p.element.mass for p in self.particles()])
+        self.mass = np.sum([p.element.mass for p in self.particles()]) * u.amu
 
         # This helps to_parmed use residues to apply ff more quickly
         self.name = os.path.basename(input_str).split(".")[0]
@@ -47,6 +63,45 @@ class Compound(mb.Compound):
 
 
 class Pack:
+    """
+    Convenience class for filling box and atomtyping
+
+    Parameters
+    ----------
+    compound : Compound or list of Compounds
+        Compound(s) to initialize in simulation
+    n_compounds : int or list of ints
+        Number(s) of compound(s) to initialize
+    density : unyt.unyt_quantity
+        Density of the system with units::
+            import unyt as u
+            1.0 * u.g / u.cm**3
+    ff : foyer.Forcefield
+        Foyer forcefield to use for typing compounds
+        (default foyer.Forcefield("opvgaff.xml"))
+    remove_hydrogen_atoms : bool
+        Whether to remove hydrogen atoms. (default False)
+    foyer_kwargs = dict
+        Keyword arguments to be passed to foyer.Forcefield.apply()
+        (default {"assert_dihedral_params": False})
+
+    Attributes
+    ----------
+    compound : list of Compound(s)
+        Compound(s) in the system
+    n_compounds : list of int(s)
+        Number(s) of Compound(s) in the system
+    density : unyt.unyt_quantity
+        Density of the system with units
+    ff_file : str
+        Path to foyer forcefield xml
+    out_file : str
+        Path to where the hoomdxml where the initialized system will be written
+    remove_hydrogen_atoms : bool
+        Whether hydrogen atoms will be removed.
+    L : unyt.unyt_quantity
+        Length of the box with units
+    """
     def __init__(
         self,
         compound,
@@ -67,15 +122,25 @@ class Pack:
         else:
             self.n_compounds = n_compounds
 
+        if isinstance(density, u.unyt_quantity):
+            try:
+                # catch unit errors early
+                density.to(
+                        planckton_units["mass"] / planckton_units["length"]**3
+                        )
+            except UnitConversionError as e:
+                raise(e)
+            self.density = density
+        else:
+            raise TypeError("density must be a unyt quantity")
+
         self.residues = [comp.name for comp in self.compound]
-        self.density = density
         self.ff = ff
         self.remove_hydrogen_atoms = remove_hydrogen_atoms
         self.L = self._calculate_L()
         self.foyer_kwargs = foyer_kwargs
 
     def _remove_hydrogen(self):
-        # TODO - not implemented with rigid
         for subcompound in self.compound:
             for atom in subcompound.particles():
                 if atom.name in ["_hc", "_ha", "_h1", "_h4"]:
@@ -96,13 +161,11 @@ class Pack:
         typed_system : ParmEd structure
             ParmEd structure of filled box
         """
-        units = base_units.base_units()
 
         if self.remove_hydrogen_atoms:
             self._remove_hydrogen()
 
-        L = self.L * box_expand_factor
-        # Extra factor to make packing faster, will shrink it out
+        L = (self.L.value * box_expand_factor)
         box = mb.Box([L, L, L])
         system = mb.packing.fill_box(
             self.compound,
@@ -111,17 +174,16 @@ class Pack:
             overlap=0.2,
             fix_orientation=True,
         )
-
         system.box = box
         pmd_system = system.to_parmed(residues=[self.residues])
         typed_system = self.ff.apply(pmd_system, **self.foyer_kwargs)
         return typed_system
 
     def _calculate_L(self):
-        total_mass = np.sum(
-            [n * c.mass for c, n in zip(self.compound, self.n_compounds)]
-        )
-        # Conversion from (amu/(g/cm^3))**(1/3) to ang
-        L = (total_mass / self.density) ** (1 / 3) * 1.1841763
-        L /= 10  # convert ang to nm
-        return L
+        total_mass = np.sum([
+            n * c.mass.in_base('planckton')
+            for c, n in zip(self.compound, self.n_compounds)
+            ]) * u.amu
+
+        L = (total_mass / self.density) ** (1 / 3)
+        return L.in_base('planckton')
