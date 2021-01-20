@@ -39,7 +39,7 @@ class Compound(mb.Compound):
 
         # Calculate mass of compound
         self.set_elements()
-        self.mass = np.sum([p.element.mass for p in self.particles()])
+        self.mass = np.sum([p.element.mass for p in self.particles()]) * u.amu
 
         # This helps to_parmed use residues to apply ff more quickly
         self.name = os.path.basename(input_str).split(".")[0]
