@@ -19,8 +19,6 @@ The simulation tools used by PlanckTon are:
 
 * [**signac-flow**](https://docs.signac.io/projects/flow/en/stable/) - manages workflows
 
-* [**MorphCT**](https://bitbucket.org/cmelab/morphct/src/master/) - calculates charge transport through the morphology
-
 ## How to use
 
 ### Install
@@ -55,9 +53,6 @@ pytest
 See example in `tests/test_sim.py`
 
 Also see [planckton-flow](https://github.com/cmelab/planckton-flow)
-
-### Add new compounds 
-
 
 ## How to develop
 
