@@ -1,5 +1,7 @@
 import os
 
+from ele import element_from_symbol
+from ele.exceptions import ElementError
 import foyer
 import mbuild as mb
 import numpy as np
@@ -36,9 +38,8 @@ class Compound(mb.Compound):
             mb.load(input_str, smiles=True, compound=self)
 
         # Calculate mass of compound
-        # ParmEd uses amu
-        # TODO use ele?
-        self.mass = np.sum([a.mass for a in self.to_parmed().atoms]) * u.amu
+        self.set_elements()
+        self.mass = np.sum([p.element.mass for p in self.particles()])
 
         # This helps to_parmed use residues to apply ff more quickly
         self.name = os.path.basename(input_str).split(".")[0]
@@ -51,6 +52,14 @@ class Compound(mb.Compound):
             compound_pmd = pmd.load_file(input_str)
             for atom_pmd, atom_mb in zip(compound_pmd, self):
                 atom_mb.name = "_{}".format(atom_pmd.type)
+
+    def set_elements(self):
+        for p in self.particles():
+            try:
+                p.element = element_from_symbol(p.name)
+            except ElementError:
+                # This is a hack for our typed mol2 files
+                p.element = element_from_symbol(p.name.strip("0123456789"))
 
 
 class Pack:
