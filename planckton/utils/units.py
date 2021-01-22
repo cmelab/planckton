@@ -26,7 +26,7 @@ def quantity_to_tuple(quantity):
     -------
     (number, string)
     """
-    return (quantity.item(), quantity.units)
+    return (quantity.item(), str(quantity.units))
 
 def tuple_to_quantity(tup):
     """
