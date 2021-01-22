@@ -9,7 +9,7 @@ import parmed as pmd
 import unyt as u
 from unyt.exceptions import UnitConversionError
 
-from planckton.utils.base_units import planckton_units
+from planckton.utils.units import planckton_units
 from planckton.force_fields import FORCE_FIELD
 
 

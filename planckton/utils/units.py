@@ -12,6 +12,39 @@ constants= {
         }
 
 
+def quantity_to_tuple(quantity):
+    """
+    Break a unyt.quantity into value and units in string format.
+
+    IMPORTANT: This function expects one quantity, not an array.
+
+    Parameters
+    ----------
+    quantity: unyt.unyt_quantity
+
+    Returns
+    -------
+    (number, string)
+    """
+    return (quantity.item(), quantity.units)
+
+def tuple_to_quantity(tup):
+    """
+    Convert a tuple containing values and units in string format into a unyt
+    quantity.
+
+    Parameters
+    ----------
+    tup: tuple
+        first value is a number and the second value is a string with the units
+
+    Returns
+    -------
+    unyt.unyt_quantity
+    """
+    return tup[0] * u.Unit(tup[1])
+
+
 def reduced_from_kelvin(T_SI, ref_energy):
     T = constants["boltzmann"] * constants["avogadro"] * T_SI / ref_energy
     return T
