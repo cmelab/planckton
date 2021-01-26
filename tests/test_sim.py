@@ -28,7 +28,7 @@ class TestSimulations(BaseTest):
             e_factor=1,
             n_steps=3e3,
             mode="cpu",
-            shrink_time=1e3,
+            shrink_steps=1e3,
             target_length=packer.L,
         )
         my_sim.run()

@@ -49,7 +49,7 @@ def test_hydrogen_removal_and_sim():
         e_factor=0.5,
         n_steps=3e3,
         mode="cpu",
-        shrink_time=1e3,
+        shrink_steps=1e3,
     )
     print("sim init")
     my_sim.run()

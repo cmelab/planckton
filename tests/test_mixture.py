@@ -27,7 +27,7 @@ def test_mixture():
         e_factor=0.5,
         n_steps=3e3,
         mode="cpu",
-        shrink_time=1e3,
+        shrink_steps=1e3,
     )
     my_sim.run()
 
