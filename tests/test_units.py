@@ -6,6 +6,16 @@ ref_energy = 1.046 * u.kJ / u.mol
 ref_mass = 32.06 * u.amu
 ref_distance = 0.35635948725613575 * u.nm
 
+
+def test_conversions():
+    quantity = 1 * u.gram
+    new_quantity = units.tuple_to_quantity(units.quantity_to_tuple(quantity))
+    assert quantity == new_quantity
+
+    tup = (1, "g")
+    new_tup = units.quantity_to_tuple(units.tuple_to_quantity(tup))
+    assert tup == new_tup
+
 def test_temperature_reduction():
     # Compare conversion for SI (kelvin) to reduced kT
     T_reduced_true = 2.17
