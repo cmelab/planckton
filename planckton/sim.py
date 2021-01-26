@@ -109,6 +109,7 @@ class Simulation:
             hoomd_objects, ref_values = create_hoomd_simulation(
                 self.system, auto_scale=True
             )
+            self.ref_values = ref_values
             snap = hoomd_objects[0]
             hoomd.util.unquiet_status()
 
@@ -189,17 +190,18 @@ class Simulation:
             )
             integrator.randomize_velocities(seed=42)
 
-            if self.target_length == None:
-                self.target_length = snap.box.Lx * u.angstrom
-            size_variant = hoomd.variant.linear_interp([
-                (0, snap.box.Lx),
-                (self.shrink_steps, self.target_length.to("Angstrom").value)
-                ],
-                zero=0,
-            )
-            box_resize = hoomd.update.box_resize(L=size_variant)
-            hoomd.run_upto(self.shrink_steps)
-            box_resize.disable()
+            if self.target_length is not None:
+                # Run the shrink step
+                size_variant = hoomd.variant.linear_interp([
+                    (0, snap.box.Lx),
+                    (self.shrink_steps, self.target_length.to("Angstrom").value)
+                    ],
+                    zero=0,
+                )
+                box_resize = hoomd.update.box_resize(L=size_variant)
+                hoomd.run_upto(self.shrink_steps)
+                box_resize.disable()
+                self.n_steps += self.shrink_steps
 
             # After shrinking, reset velocities and change temp
             integrator.set_params(kT=self.kT)
