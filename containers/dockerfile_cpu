@@ -2,14 +2,14 @@ FROM continuumio/miniconda3:4.9.2
 
 WORKDIR /opt/app
 
+# Install curl for Codecov
+RUN apt-get update && apt-get upgrade -y && apt-get install -y curl
+
 # Create the environment
 COPY environment.yml ./
 
 RUN conda env create -f environment.yml && \
     conda clean --all --yes
-
-# Install curl for Codecov
-RUN apt-get update && apt-get upgrade -y && apt-get install -y curl
 
 # Prepend the environment's installation of conda to the PATH
 ENV PATH /opt/conda/envs/planckton/bin:$PATH

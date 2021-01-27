@@ -17,4 +17,4 @@ dependencies:
   - pip:
     - pytest
     - pytest-cov
-    - git+https://github.com/cmelab/planckton@unyt
+    - git+https://github.com/cmelab/planckton@0.1.5
