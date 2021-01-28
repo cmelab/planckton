@@ -4,6 +4,10 @@ name: CI
 on:
   push:
     branches: [ master ]
+    # Run when container or environment is changed
+    paths:
+        - 'containers/*'
+        - 'environment.yml'
 
 jobs:
   build:
