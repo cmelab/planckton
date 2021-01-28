@@ -21,7 +21,6 @@ ENV PYTHONPATH=/ignore/pythonpath
 
 # Initialize the bash shell for conda
 RUN conda init bash && \
-    rm /environment.yml && \ 
     echo "conda activate planckton" >> ~/.bashrc
 
 # Disable user site directories (https://docs.python.org/3/library/site.html#module-site)
