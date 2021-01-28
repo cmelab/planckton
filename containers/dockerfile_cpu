@@ -10,7 +10,7 @@ SHELL ["/bin/bash", "--login", "-c"]
 COPY environment.yml ./
 
 RUN conda env create -f environment.yml && \
-    conda clean --all --yes
+    conda clean --all --yes -f 
 
 # Install curl for Codecov
 RUN apt-get update && apt-get upgrade -y && apt-get install -y curl
@@ -19,8 +19,8 @@ RUN apt-get update && apt-get upgrade -y && apt-get install -y curl
 # default empty pythonpath
 ENV PYTHONPATH=/ignore/pythonpath
 
+# Initialize the bash shell for conda
 RUN conda init bash && \
-    /opt/conda/bin/conda clean -tipsy && \
     rm /environment.yml && \ 
     echo "conda activate planckton" >> ~/.bashrc
 
