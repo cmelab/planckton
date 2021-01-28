@@ -1,6 +1,8 @@
 import pytest
 
 from base_test import BaseTest
+import unyt as u
+
 from planckton.compounds import COMPOUND_FILE
 from planckton.force_fields import FORCE_FIELD
 from planckton.init import Compound, Pack
@@ -13,19 +15,20 @@ class TestSimulations(BaseTest):
         compound = Compound(COMPOUND_FILE[compound_name])
         packer = Pack(
             compound,
-            ff_file=FORCE_FIELD["opv_gaff"],
+            ff=FORCE_FIELD["opv_gaff"],
             n_compounds=2,
-            density=0.01
+            density=0.01 * u.g / u.cm**3
         )
-        packer.pack()
+        system = packer.pack()
         my_sim = Simulation(
-            "init.hoomdxml",
+            system,
             kT=3.0,
             gsd_write=1e2,
             log_write=1e2,
-            e_factor=0.5,
+            e_factor=1,
             n_steps=3e3,
             mode="cpu",
             shrink_time=1e3,
+            target_length=packer.L,
         )
         my_sim.run()

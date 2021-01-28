@@ -70,7 +70,11 @@ OPLS_INFO = {
         "desc": "Benzene C - 12 site JACS,112,4768-90",
         "doi": "10.1021/ja00168a022",
     },
-    "opls_380": {"def": "[CR;X2][C;R][S;R]", "desc": "CE1 in HID,HIE", "doi": ""},
+    "opls_380": {
+        "def": "[CR;X2][C;R][S;R]",
+        "desc": "CE1 in HID,HIE",
+        "doi": "",
+    },
     "opls_500": {
         "def": "[SR;X2][C;R][S;R]",
         "desc": "Taken from AA opls_2003",
