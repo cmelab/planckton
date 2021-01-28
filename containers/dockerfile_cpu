@@ -9,7 +9,8 @@ SHELL ["/bin/bash", "--login", "-c"]
 # Create the environment
 COPY environment.yml ./
 
-RUN conda env create -f environment.yml && \
+# Install in base environment
+RUN conda env update -n base -f environment.yml && \
     conda clean --all --yes -f 
 
 # Install curl for Codecov
@@ -17,11 +18,4 @@ RUN apt-get update && apt-get upgrade -y && apt-get install -y curl
 
 # Prevent python from loading packages from outside the container
 # default empty pythonpath
-ENV PYTHONPATH=/ignore/pythonpath
-
-# Initialize the bash shell for conda
-RUN conda init bash && \
-    echo "conda activate planckton" >> ~/.bashrc
-
-# Disable user site directories (https://docs.python.org/3/library/site.html#module-site)
-RUN sed -i -e 's/ENABLE_USER_SITE = None/ENABLE_USER_SITE = False/g' `python3 -c 'import site; print(site.__file__)'`
+ENV PYTHONPATH /ignore/pythonpath
