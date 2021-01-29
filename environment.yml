@@ -11,9 +11,10 @@ dependencies:
   - openmm>=7.5
   - pip=20.2
   - python=3.7
-  - signac=1.5.0
+  - signac=1.6.0
+  - signac-flow=0.11.0
   - unyt=2.8.0
   - pip:
     - pytest
     - pytest-cov
-    - git+https://github.com/cmelab/planckton@unyt
+    - git+https://github.com/cmelab/planckton@0.1.5
