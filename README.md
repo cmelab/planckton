@@ -4,8 +4,8 @@
 [![License](https://img.shields.io/badge/license-GPLv3-green.svg)](LICENSE.md)
 [![Contributors](https://img.shields.io/github/contributors-anon/cmelab/planckton.svg?style=flat)](https://github.com/cmelab/planckton/graphs/contributors)
 
-PlanckTon enables exploration of the self-assembly and charge transport for mixtures of organic photovoltaic compounds under various conditions.
-To conduct these parameter sweeps, multiple simulation tools are tied together to reproducibly and accurately generate these structures.
+PlanckTon enables exploration of the self-assembly of organic photovoltaic compound mixtures under various conditions.
+Multiple simulation tools are tied together to reproducibly and accurately generate these structures.
 
 The simulation tools used by PlanckTon are:
 
@@ -15,34 +15,26 @@ The simulation tools used by PlanckTon are:
 
 * [**HOOMD-blue**](https://hoomd-blue.readthedocs.io/en/latest/) - runs the simulations
 
-* [**signac**](https://signac.io/) - manages and organizes the many variables that are run
-
-* [**signac-flow**](https://docs.signac.io/projects/flow/en/stable/) - manages workflows
 
 ## How to use
 
 ### Install
 #### Using a container
 To use PlanckTon in a prebuilt container (using [Singularity](https://singularity.lbl.gov/)), run:
-```
+```bash
 singularity pull docker://cmelab/planckton_cpu:0.1.5
 singularity exec planckton_cpu_0.1.5.sif bash
 ```
-You may need to also run:
-```
-conda init bash
-conda activate planckton
-```
 
 **Or** using [Docker](https://docs.docker.com/), run:
-```
+```bash
 docker pull cmelab/planckton_cpu:0.1.5
 docker run -it cmelab/planckton_cpu:0.1.5
 ```
 
 #### Custom install
 To create a local environment with [conda](https://docs.conda.io/en/latest/miniconda.html), run:
-```
+```bash
 conda env create -f environment.yml
 conda activate planckton
 pytest
