@@ -1,4 +1,3 @@
-import logging
 import os
 
 import hoomd.data
@@ -7,7 +6,7 @@ import hoomd.md
 from mbuild.formats.hoomd_simulation import create_hoomd_simulation
 import unyt as u
 
-from planckton.utils.utils import set_coeffs
+from planckton.utils.solvate import set_coeffs
 
 
 class Simulation:
@@ -29,7 +28,7 @@ class Simulation:
         Period to write simulation snapshots to gsd file (default 1e6)
     log_write : int
         Period to write simulation data to the log file (default 1e5)
-    shrink_time : int
+    shrink_steps : int
         Number of timesteps over which to shrink the box (default 1e6)
     shrink_kT_reduced : float
         Dimensionless temperature to run the shrink step (default 10)
@@ -58,7 +57,7 @@ class Simulation:
         Period to write simulation snapshots to gsd file
     log_write : int
         Period to write simulation data to the log file
-    shrink_time : int
+    shrink_steps : int
         Number of timesteps over which to shrink the box
     shrink_kT_reduced : float
         Dimensionless temperature to run the shrink step
@@ -79,7 +78,7 @@ class Simulation:
         tau=5.0,
         gsd_write=1e6,
         log_write=1e5,
-        shrink_time=1e6,
+        shrink_steps=1e6,
         shrink_kT_reduced=10,
         n_steps=1e3,
         dt=0.0001,
@@ -92,7 +91,7 @@ class Simulation:
         self.tau = tau
         self.gsd_write = gsd_write
         self.log_write = log_write
-        self.shrink_time = shrink_time
+        self.shrink_steps = shrink_steps
         self.shrink_kT_reduced = shrink_kT_reduced
         self.n_steps = n_steps
         self.dt = dt
@@ -109,6 +108,7 @@ class Simulation:
             hoomd_objects, ref_values = create_hoomd_simulation(
                 self.system, auto_scale=True
             )
+            self.ref_values = ref_values
             snap = hoomd_objects[0]
             hoomd.util.unquiet_status()
 
@@ -116,7 +116,7 @@ class Simulation:
                 self.target_length /= ref_values.distance
 
             if self.e_factor != 1:
-                logging.info("Scaling LJ coeffs by e_factor")
+                print("Scaling LJ coeffs by e_factor")
                 hoomd.util.quiet_status()
                 # catch all instances of LJ pair
                 ljtypes = [
@@ -189,17 +189,18 @@ class Simulation:
             )
             integrator.randomize_velocities(seed=42)
 
-            if self.target_length == None:
-                self.target_length = snap.box.Lx * u.angstrom
-            size_variant = hoomd.variant.linear_interp([
-                (0, snap.box.Lx),
-                (self.shrink_time, self.target_length.to("Angstrom").value)
-                ],
-                zero=0,
-            )
-            box_resize = hoomd.update.box_resize(L=size_variant)
-            hoomd.run_upto(self.shrink_time)
-            box_resize.disable()
+            if self.target_length is not None:
+                # Run the shrink step
+                size_variant = hoomd.variant.linear_interp([
+                    (0, snap.box.Lx),
+                    (self.shrink_steps, self.target_length.to("Angstrom").value)
+                    ],
+                    zero=0,
+                )
+                box_resize = hoomd.update.box_resize(L=size_variant)
+                hoomd.run_upto(self.shrink_steps)
+                box_resize.disable()
+                self.n_steps += self.shrink_steps
 
             # After shrinking, reset velocities and change temp
             integrator.set_params(kT=self.kT)
