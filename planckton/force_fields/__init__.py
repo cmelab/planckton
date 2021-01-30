@@ -1,12 +1,14 @@
-import os
-import glob
+from os import path
+import warnings
 
 from foyer import Forcefield
 
-FORCE_FIELD_DIR = os.path.abspath(os.path.dirname(__file__))
-FORCE_FIELD = {}
-for force_field_file in glob.glob(os.path.join(FORCE_FIELD_DIR, "*/*.xml")):
-    force_field_name = force_field_file.split("/")[-1].split(".xml")[0]
-    FORCE_FIELD[force_field_name] = Forcefield(force_field_file)
-
-print(FORCE_FIELD)
+FF_DIR = path.abspath(path.dirname(__file__))
+with warnings.catch_warnings():
+    warnings.simplefilter("ignore")
+    FORCE_FIELD = {
+            "opv_gaff": Forcefield(path.join(FF_DIR, "gaff/opv_gaff.xml")),
+            "oplsua-custom": Forcefield(
+                path.join(FF_DIR, "oplsua/opls-custom.xml")
+                ),
+        }

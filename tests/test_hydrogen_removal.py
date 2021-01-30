@@ -1,5 +1,7 @@
 from os import path, remove
 
+import unyt as u
+
 from planckton.compounds import COMPOUND_FILE
 from planckton.force_fields import FORCE_FIELD
 from planckton.init import Compound, Pack
@@ -12,7 +14,7 @@ def test_hydrogen_removal():
         pcbm,
         ff=FORCE_FIELD["opv_gaff"],
         n_compounds=2,
-        density=0.01,
+        density=0.1 * u.g / u.cm**3,
         remove_hydrogen_atoms=True,
     )
 
@@ -33,11 +35,12 @@ def test_hydrogen_removal_and_sim():
         pcbm,
         ff=FORCE_FIELD["opv_gaff"],
         n_compounds=2,
-        density=0.01,
+        density=0.1 * u.g / u.cm**3,
         remove_hydrogen_atoms=True,
     )
-
+    print("packer init")
     system = packer.pack()
+    print("packer packed")
     my_sim = Simulation(
         system,
         kT=3.0,
@@ -46,8 +49,9 @@ def test_hydrogen_removal_and_sim():
         e_factor=0.5,
         n_steps=3e3,
         mode="cpu",
-        shrink_time=1e3,
+        shrink_steps=1e3,
     )
+    print("sim init")
     my_sim.run()
 
 
@@ -55,3 +59,4 @@ if __name__ == "__main__":
     if path.isfile("restart.gsd"):
         remove("restart.gsd")
     test_hydrogen_removal()
+    test_hydrogen_removal_and_sim()
