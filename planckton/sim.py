@@ -6,6 +6,7 @@ import hoomd.md
 from mbuild.formats.hoomd_simulation import create_hoomd_simulation
 import unyt as u
 
+from planckton.utils.rigid import init_rigid
 from planckton.utils.solvate import set_coeffs
 
 
@@ -75,6 +76,8 @@ class Simulation:
         typed_system,
         kT,
         e_factor=1.0,
+        rigid_inds=None,
+        rigid_typeids=None,
         tau=5.0,
         gsd_write=1e6,
         log_write=1e5,
@@ -88,6 +91,8 @@ class Simulation:
         self.system = typed_system
         self.kT = kT
         self.e_factor = e_factor
+        self.rigid_inds = rigid_inds
+        self.rigid_typeids = rigid_typeids
         self.tau = tau
         self.gsd_write = gsd_write
         self.log_write = log_write
@@ -102,16 +107,33 @@ class Simulation:
         hoomd_args = f"--single-mpi --mode={self.mode}"
         sim = hoomd.context.initialize(hoomd_args)
 
-        with sim:
-            hoomd.util.quiet_status()
-            # mbuild units are nm, amu
-            hoomd_objects, ref_values = create_hoomd_simulation(
-                self.system, auto_scale=True
+        if (self.rigid_inds is not None) and (self.rigid_typeids is not None):
+            both, snap, sim, ref_values = init_rigid(
+                self.rigid_inds, self.rigid_typeids, self.system, sim
             )
             self.ref_values = ref_values
-            snap = hoomd_objects[0]
-            hoomd.util.unquiet_status()
+        elif (self.rigid_inds is not None) or (self.rigid_typeids is not None):
+            vals = [
+                    (self.rigid_inds,"rigid_inds"),
+                    (self.rigid_typeids, "rigid_typeids")
+                    ]
+            ok_val = [i[1] for i in vals if i[0] is not None][0]
+            raise ValueError(
+                "Please provide rigid_inds and rigid_typeids"
+                f"--Only {ok_val} was provided."
+                )
+        else:
+            with sim:
+                hoomd.util.quiet_status()
+                # mbuild units are nm, amu
+                hoomd_objects, ref_values = create_hoomd_simulation(
+                    self.system, auto_scale=True
+                )
+                self.ref_values = ref_values
+                snap = hoomd_objects[0]
+                hoomd.util.unquiet_status()
 
+        with sim:
             if self.target_length is not None:
                 self.target_length /= ref_values.distance
 
