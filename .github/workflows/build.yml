@@ -10,7 +10,7 @@ on:
   pull_request:
     branches: [ master ]
     paths:
-        - 'containers/*'
+        - 'containers/dockerfile_cpu'
         - 'environment.yml'
 
 jobs:
