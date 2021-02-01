@@ -12,7 +12,7 @@ dependencies:
   - pip=20.2
   - python=3.7
   - signac=1.6.0
-  - signac-flow=0.11.0
+  - signac-flow=0.12.0
   - unyt=2.8.0
   - pip:
     - pytest
