@@ -1,4 +1,4 @@
-name: CI
+name: build
 
 on:
   push:
@@ -36,7 +36,7 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           context: .
-          file: containers/dockerfile_cpu
+          file: ./containers/dockerfile_cpu
           push: true
           tags: cmelab/planckton_cpu:latest
       -
