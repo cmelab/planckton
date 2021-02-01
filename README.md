@@ -38,6 +38,9 @@ To create a local environment with [conda](https://docs.conda.io/en/latest/minic
 ```bash
 conda env create -f environment.yml
 conda activate planckton
+```
+And to test your installation, run:
+```
 pytest
 ```
 
