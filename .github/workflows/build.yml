@@ -1,10 +1,14 @@
-
 name: CI
 
 on:
   push:
     branches: [ master ]
     # Run when container or environment is changed
+    paths:
+        - 'containers/*'
+        - 'environment.yml'
+  pull_request:
+    branches: [ master ]
     paths:
         - 'containers/*'
         - 'environment.yml'
