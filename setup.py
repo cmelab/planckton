@@ -17,7 +17,7 @@ from setuptools import Command, find_packages, setup
 # Package meta-data.
 NAME = "planckton"
 DESCRIPTION = "opv simulation package"
-URL = "https://bitbucket.org/cmelab/planckton"
+URL = "https://github.com/cmelab/planckton"
 EMAIL = "mikehenry@boisestate.edu"
 AUTHOR = "CME Lab"
 REQUIRES_PYTHON = ">=3.6.0"
