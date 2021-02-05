@@ -5,11 +5,11 @@ on:
     branches: [ master ]
     # Run when a new tag is pushed
     tags:
-        - *
+        - 0.*
   pull_request:
     branches: [ master ]
     tags:
-        - *
+        - 0.*
 
 jobs:
   build_cpu:
