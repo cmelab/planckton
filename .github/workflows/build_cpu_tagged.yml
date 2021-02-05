@@ -12,7 +12,7 @@ on:
         - 0.*
 
 jobs:
-  build_cpu:
+  build_cpu_tagged:
     runs-on: ubuntu-latest
 
     steps:
