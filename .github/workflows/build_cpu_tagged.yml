@@ -1,26 +1,27 @@
-name: build
+name: build_cpu_tagged
 
 on:
   push:
     branches: [ master ]
-    # Run when container or environment is changed
-    paths:
-        - 'containers/*'
-        - 'environment.yml'
+    # Run when a new tag is pushed
+    tags:
+        - *
   pull_request:
     branches: [ master ]
-    paths:
-        - 'containers/dockerfile_cpu'
-        - 'environment.yml'
+    tags:
+        - *
 
 jobs:
-  build:
+  build_cpu:
     runs-on: ubuntu-latest
 
     steps:
       -
         name: Checkout
         uses: actions/checkout@v2
+      -
+        name: tag number
+        run : echo ${{ github.event.release.tag_name }}
       -
         name: Set up QEMU
         uses: docker/setup-qemu-action@v1
@@ -40,7 +41,7 @@ jobs:
           context: .
           file: ./containers/dockerfile_cpu
           push: true
-          tags: cmelab/planckton_cpu:latest
+          tags: cmelab/planckton_cpu:${{ github.event.release.tag_name }}
       -
         name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}

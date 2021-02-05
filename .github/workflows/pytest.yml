@@ -1,4 +1,4 @@
-name: test
+name: pytest
 
 on:
   push:
@@ -13,10 +13,10 @@ on:
       - 'tests/*'
 
 jobs:
-  test:
+  pytest:
     runs-on: ubuntu-latest
     container: 
-        image: cmelab/planckton_cpu:0.1.5
+        image: cmelab/planckton_cpu:latest
 
     steps:
     - uses: actions/checkout@v2
