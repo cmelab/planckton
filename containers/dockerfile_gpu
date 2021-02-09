@@ -15,7 +15,7 @@ RUN conda env update -n base -f environment.yml && \
 
 # Install curl for Codecov, CUDA, git, cmake, libtbb
 RUN apt-get update && apt-get upgrade -y && \
-    apt-get install -y --no-install-recommends git cmake curl nvidia-cuda-toolkit libtbb-dev && \
+    apt-get install -y --no-install-recommends cmake curl nvidia-cuda-toolkit libtbb-dev && \
     apt clean && \
     rm -rf /var/lib/apt/lists/*
 
