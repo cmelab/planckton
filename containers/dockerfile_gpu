@@ -37,10 +37,10 @@ ENV NVIDIA_REQUIRE_CUDA "cuda>=11.2 brand=tesla,driver>=418,driver<419 brand=tes
 SHELL ["/bin/bash", "--login", "-c"]
 
 # Create the environment
-COPY environment.yml ./
+COPY environment-nohoomd.yml ./
 
 # Install in base environment
-RUN conda env update -n base -f environment.yml && \
+RUN conda env update -n base -f environment-nohoomd.yml && \
     conda clean --all --yes -f 
 
 
