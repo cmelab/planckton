@@ -1,26 +1,28 @@
-
-name: CI
+name: pytest
 
 on:
   push:
     branches: [ master ]
+    paths:
+      - 'planckton/*'
+      - 'tests/*'
   pull_request:
     branches: [ master ]
+    paths:
+      - 'planckton/*'
+      - 'tests/*'
 
 jobs:
-  build:
+  pytest:
     runs-on: ubuntu-latest
     container: 
-      image: cmelab/planckton_cpu0.0.1
+        image: cmelab/planckton_cpu:latest
 
     steps:
     - uses: actions/checkout@v2
  
     - name: Run pytest with coverage report
-      shell: bash -l {0}
-      run: |
-          conda activate planckton
-          python -m pytest --cov=./ --cov-report=xml
+      run: python -m pytest --cov=./ --cov-report=xml -v
           
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v1

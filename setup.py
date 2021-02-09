@@ -17,7 +17,7 @@ from setuptools import Command, find_packages, setup
 # Package meta-data.
 NAME = "planckton"
 DESCRIPTION = "opv simulation package"
-URL = "https://bitbucket.org/cmelab/planckton"
+URL = "https://github.com/cmelab/planckton"
 EMAIL = "mikehenry@boisestate.edu"
 AUTHOR = "CME Lab"
 REQUIRES_PYTHON = ">=3.6.0"
@@ -72,7 +72,9 @@ class UploadCommand(Command):
             pass
 
         self.status("Building Source and Wheel (universal) distribution…")
-        os.system("{0} setup.py sdist bdist_wheel --universal".format(sys.executable))
+        os.system(
+            "{0} setup.py sdist bdist_wheel --universal".format(sys.executable)
+        )
 
         self.status("Uploading the package to PyPi via Twine…")
         os.system("twine upload dist/*")
@@ -101,6 +103,7 @@ setup(
     # entry_points={
     #     'console_scripts': ['mycli=mymodule:cli'],
     # },
+    package_data={"planckton": ["compounds/*.mol2", "force_fields/*/*"]},
     install_requires=REQUIRED,
     include_package_data=True,
     license="MIT",

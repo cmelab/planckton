@@ -207,7 +207,9 @@ class PeriodicTorsionForceImproper(OpenMMXMLField):
     # Amber defines the central atom as the 3rd
     # OpenMM XML defines the central atom ast the 1st
 
-    def __init__(self, class_1, class_2, class_3, class_4, k, phase, periodicity):
+    def __init__(
+        self, class_1, class_2, class_3, class_4, k, phase, periodicity
+    ):
         self.class_1 = class_3  # Note the swap
         self.class_2 = class_2
         self.class_3 = class_1  # Note the swap
@@ -241,7 +243,9 @@ class NonbondedForce(OpenMMXMLField):
 
     def gen_xml_header(self):
         #  TODO is this correct?
-        return f' <{self.xml_field} coulomb14scale="0.833333" lj14scale="0.5">\n'
+        return (
+            f' <{self.xml_field} coulomb14scale="0.833333" lj14scale="0.5">\n'
+        )
 
 
 def get_section(key, line, f):

@@ -1,5 +1,7 @@
 from os import path, remove
 
+import unyt as u
+
 from planckton.compounds import COMPOUND_FILE
 from planckton.force_fields import FORCE_FIELD
 from planckton.init import Compound, Pack
@@ -11,22 +13,21 @@ def test_mixture():
     p3ht = Compound(COMPOUND_FILE["P3HT"])
     packer = Pack(
         [pcbm, p3ht],
-        ff_file=FORCE_FIELD["opv_gaff"],
-        n_compounds=[2,3],
-        density=0.01,
-        out_file="test_init.hoomdxml",
+        ff=FORCE_FIELD["opv_gaff"],
+        n_compounds=[2, 3],
+        density=0.01 * u.g / u.cm**3
     )
 
-    packer.pack()
+    system = packer.pack()
     my_sim = Simulation(
-        "test_init.hoomdxml",
+        system,
         kT=3.0,
         gsd_write=1e2,
         log_write=1e2,
         e_factor=0.5,
         n_steps=3e3,
         mode="cpu",
-        shrink_time=1e3,
+        shrink_steps=1e3,
     )
     my_sim.run()
 
@@ -34,4 +35,4 @@ def test_mixture():
 if __name__ == "__main__":
     if path.isfile("restart.gsd"):
         remove("restart.gsd")
-    test_hydrogen_removal()
+    test_mixture()
