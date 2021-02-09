@@ -14,7 +14,7 @@ on:
         - 'environment.yml'
 
 jobs:
-  build_cpu:
+  build_gpu:
     runs-on: ubuntu-latest
 
     steps:

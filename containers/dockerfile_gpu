@@ -1,0 +1,52 @@
+FROM continuumio/miniconda3:4.9.2
+
+WORKDIR /opt/app
+
+# Make RUN commands use `bash --login`: -- fixes conda init
+# https://pythonspeed.com/articles/activate-conda-dockerfile/
+SHELL ["/bin/bash", "--login", "-c"]
+
+# Create the environment
+COPY environment.yml ./
+
+# Install in base environment
+RUN conda env update -n base -f environment.yml && \
+    conda clean --all --yes -f 
+
+# Install curl for Codecov, CUDA, git, cmake, libtbb
+RUN apt-get update && apt-get upgrade -y && \
+    apt-get install -y --no-install-recommends git cmake curl nvidia-cuda-toolkit libtbb-dev && \
+    apt clean && \
+    rm -rf /var/lib/apt/lists/*
+
+# Prevent python from loading packages from outside the container
+# default empty pythonpath
+ENV PYTHONPATH /ignore/pythonpath
+
+# Install HOOMD
+ENV HOOMD_TAG=v2.9.3
+ENV DEBIAN_FRONTEND=noninteractive
+ENV TZ=Etc/UTC
+
+RUN git clone --recursive https://github.com/glotzerlab/hoomd-blue.git && \
+    cd hoomd-blue && \
+    git checkout $HOOMD_TAG && \
+    git submodule update && \
+    mkdir build && \
+    cd build && \
+    cmake ../ -DENABLE_MPI=OFF \
+              -DENABLE_CUDA=ON \
+              -DPYTHON_EXECUTABLE=$(command -v python) \
+              -DCMAKE_C_COMPILER=$(command -v gcc) \
+              -DCMAKE_CXX_COMPILER=$(command -v g++) \
+              -DCMAKE_INSTALL_PREFIX=$(python -c "import site; print(site.getsitepackages()[0])") \
+              -DBUILD_HPMC=OFF \
+              -DBUILD_JIT=OFF \ 
+              -DBUILD_METAL=OFF \ 
+              -DBUILD_DEM=OFF \
+              -DBUILD_CGCMM=OFF \
+              -DBUILD_MPCD=OFF \
+              -DSINGLE_PRECISION=ON && \
+    make && \
+    make install
+
