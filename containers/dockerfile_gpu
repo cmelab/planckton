@@ -1,55 +1,34 @@
-# use digest instead of tag nvidia/cuda:11.1-devel-ubuntu20.04
-FROM nvidia/cuda@sha256:768ceeaebb96bd35221aa43dfcb7b66eda5e293e5847c8bba18283be653d3525 
+FROM continuumio/miniconda3:4.9.2
+
+WORKDIR /opt/app
+
+# Make RUN commands use `bash --login`: -- fixes conda init
+# https://pythonspeed.com/articles/activate-conda-dockerfile/
 SHELL ["/bin/bash", "--login", "-c"]
 
-# miniconda
+# Create the environment
+COPY environment.yml ./
 
-ENV CONDA_DIR="/opt/conda"
-ENV PATH="$CONDA_DIR/bin:$PATH"
-ENV LC_ALL=C.UTF-8
-ENV LANG=C.UTF-8
+# Install in base environment
+RUN conda env update -n base -f environment.yml && \
+    conda clean --all --yes -f 
 
-RUN CONDA_VERSION="4.8.3" && \
-    CONDA_MD5_CHECKSUM="d63adf39f2c220950a063e0529d4ff74" && \
-    \
-    apt update && \
-    apt install --no-install-recommends -y wget tar ca-certificates bzip2 curl git ssh-client && \
-    apt clean &&\
-    rm -rf /var/lib/apt/lists/* && \
-    \
-    mkdir -p "$CONDA_DIR" && \
-    wget "http://repo.continuum.io/miniconda/Miniconda3-py38_${CONDA_VERSION}-Linux-x86_64.sh" -O miniconda.sh && \
-    echo "$CONDA_MD5_CHECKSUM  miniconda.sh" | md5sum -c && \
-    bash miniconda.sh -f -b -p "$CONDA_DIR" && \
-    rm miniconda.sh && \
-    /opt/conda/bin/conda clean -tipsy && \
-    ln -s /opt/conda/etc/profile.d/conda.sh /etc/profile.d/conda.sh && \
-    conda update --all --yes && \
-    conda config --set auto_update_conda False && \
-    conda init bash
+# Install curl for Codecov, CUDA, git, cmake, libtbb
+RUN apt-get update && apt-get upgrade -y && \
+    apt-get install -y --no-install-recommends git cmake curl nvidia-cuda-toolkit libtbb-dev && \
+    apt clean && \
+    rm -rf /var/lib/apt/lists/*
 
-# planckton
+# Prevent python from loading packages from outside the container
+# default empty pythonpath
+ENV PYTHONPATH /ignore/pythonpath
 
-COPY environment.yml /
-
-# build environment
-RUN conda env create -f environment.yml && \
-    conda init bash && \
-    /opt/conda/bin/conda clean -tipsy && \
-    echo "conda activate planckton" >> ~/.bashrc
-
-# hoomd
-
+# Install HOOMD
 ENV HOOMD_TAG=v2.9.3
 ENV DEBIAN_FRONTEND=noninteractive
 ENV TZ=Etc/UTC
 
-RUN source ~/.bashrc && \
-    conda activate planckton && \
-    apt update && apt install -y --no-install-recommends git cmake && \
-    apt clean && \
-    rm -rf /var/lib/apt/lists/* && \
-    git clone --recursive https://github.com/glotzerlab/hoomd-blue.git && \
+RUN git clone --recursive https://github.com/glotzerlab/hoomd-blue.git && \
     cd hoomd-blue && \
     git checkout $HOOMD_TAG && \
     git submodule update && \
@@ -71,10 +50,3 @@ RUN source ~/.bashrc && \
     make && \
     make install
 
-# mount points for filesystems on clusters
-RUN mkdir -p /nfs && \
-    mkdir -p /oasis && \
-    mkdir -p /scratch && \
-    mkdir -p /work && \
-    mkdir -p /projects && \
-    mkdir -p /home1
