@@ -4,7 +4,6 @@ channels:
 dependencies:
   - foyer=0.7.7
   - gsd=2.2.0
-  - hoomd=2.9.3
   - mbuild=0.10.12
   - numpy=1.19
   - openbabel=3.1.1

@@ -1,5 +1,7 @@
 # PlanckTon
-[![CI](https://github.com/cmelab/planckton/workflows/CI/badge.svg?branch=master)](https://github.com/cmelab/planckton/actions?query=workflow%3ACI) 
+[![test](https://github.com/cmelab/planckton/workflows/pytest/badge.svg)](https://github.com/cmelab/planckton/actions?query=workflow%3Apytest)
+[![build_cpu](https://github.com/cmelab/planckton/workflows/build_cpu/badge.svg)](https://github.com/cmelab/planckton/actions?query=workflow%3Abuild_cpu)
+[![build_gpu](https://github.com/cmelab/planckton/workflows/build_gpu/badge.svg)](https://github.com/cmelab/planckton/actions?query=workflow%3Abuild_gpu)
 [![codecov](https://codecov.io/gh/cmelab/planckton/branch/master/graph/badge.svg?token=5KYVHWMT28)](https://codecov.io/gh/cmelab/planckton/)
 [![License](https://img.shields.io/badge/license-GPLv3-green.svg)](LICENSE.md)
 [![Contributors](https://img.shields.io/github/contributors-anon/cmelab/planckton.svg?style=flat)](https://github.com/cmelab/planckton/graphs/contributors)
@@ -22,14 +24,14 @@ The simulation tools used by PlanckTon are:
 #### Using a container
 To use PlanckTon in a prebuilt container (using [Singularity](https://singularity.lbl.gov/)), run:
 ```bash
-singularity pull docker://cmelab/planckton_cpu:0.1.5
-singularity exec planckton_cpu_0.1.5.sif bash
+singularity pull docker://cmelab/planckton_cpu:latest
+singularity exec planckton_cpu_latest.sif bash
 ```
 
 **Or** using [Docker](https://docs.docker.com/), run:
 ```bash
-docker pull cmelab/planckton_cpu:0.1.5
-docker run -it cmelab/planckton_cpu:0.1.5
+docker pull cmelab/planckton_cpu:latest
+docker run -it cmelab/planckton_cpu:latest
 ```
 
 #### Custom install
@@ -37,6 +39,9 @@ To create a local environment with [conda](https://docs.conda.io/en/latest/minic
 ```bash
 conda env create -f environment.yml
 conda activate planckton
+```
+And to test your installation, run:
+```
 pytest
 ```
 
