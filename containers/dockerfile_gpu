@@ -1,36 +1,15 @@
-FROM continuumio/miniconda3:4.9.2
+FROM nvidia/cuda:11.2.0-devel-ubuntu20.04  
 
-WORKDIR /opt/app
+WORKDIR /opt
 
-# Install curl for Codecov, cmake, libtbb
+ENV DEBIAN_FRONTEND=noninteractive
+ENV TZ=Etc/UTC
+
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    build-essential ca-certificates cmake curl gcc g++ gnupg2 libtbb-dev && \
-    curl -fsSL https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2004/x86_64/7fa2af80.pub | apt-key add - && \
-    echo "deb https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2004/x86_64 /" > /etc/apt/sources.list.d/cuda.list && \
-    echo "deb https://developer.download.nvidia.com/compute/machine-learning/repos/ubuntu2004/x86_64 /" > /etc/apt/sources.list.d/nvidia-ml.list && \
-    apt clean && \
-    rm -rf /var/lib/apt/lists/*
-
-ENV CUDA_VERSION 11.2.0
-
-# For libraries in the cuda-compat-* package: https://docs.nvidia.com/cuda/eula/index.html#attachment-a
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    cuda-cudart-11-2=11.2.72-1 \
-    cuda-compat-11-2 \
-    && ln -s cuda-11.2 /usr/local/cuda && \
-    rm -rf /var/lib/apt/lists/*
-
-# Required for nvidia-docker v1
-RUN echo "/usr/local/nvidia/lib" >> /etc/ld.so.conf.d/nvidia.conf \
-    && echo "/usr/local/nvidia/lib64" >> /etc/ld.so.conf.d/nvidia.conf
-
-ENV PATH /usr/local/nvidia/bin:/usr/local/cuda/bin:${PATH}
-ENV LD_LIBRARY_PATH /usr/local/nvidia/lib:/usr/local/nvidia/lib64
-
-# nvidia-container-runtime
-ENV NVIDIA_VISIBLE_DEVICES all
-ENV NVIDIA_DRIVER_CAPABILITIES compute,utility
-ENV NVIDIA_REQUIRE_CUDA "cuda>=11.2 brand=tesla,driver>=418,driver<419 brand=tesla,driver>=440,driver<441 driver>=450,driver<451"
+    cmake curl git libtbb-dev && \
+    curl -fsSL https://micromamba.snakepit.net/api/micromamba/linux-64/latest | \
+    tar -xvj bin/micromamba && \
+    micromamba shell init -s bash -p ~/micromamba
 
 # Make RUN commands use `bash --login`: -- fixes conda init
 # https://pythonspeed.com/articles/activate-conda-dockerfile/
@@ -40,9 +19,8 @@ SHELL ["/bin/bash", "--login", "-c"]
 COPY environment-nohoomd.yml ./
 
 # Install in base environment
-RUN conda env update -n base -f environment-nohoomd.yml && \
-    conda clean --all --yes -f 
-
+RUN mamba env update -n base -f environment-nohoomd.yml && \
+    mamba clean --all --yes -f 
 
 # Prevent python from loading packages from outside the container
 # default empty pythonpath
@@ -50,8 +28,6 @@ ENV PYTHONPATH /ignore/pythonpath
 
 # Install HOOMD
 ENV HOOMD_TAG=v2.9.3
-ENV DEBIAN_FRONTEND=noninteractive
-ENV TZ=Etc/UTC
 
 RUN git clone --recursive https://github.com/glotzerlab/hoomd-blue.git && \
     cd hoomd-blue && \
