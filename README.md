@@ -1,6 +1,7 @@
 # PlanckTon
 [![test](https://github.com/cmelab/planckton/workflows/pytest/badge.svg)](https://github.com/cmelab/planckton/actions?query=workflow%3Apytest)
 [![build_cpu](https://github.com/cmelab/planckton/workflows/build_cpu/badge.svg)](https://github.com/cmelab/planckton/actions?query=workflow%3Abuild_cpu)
+[![build_gpu](https://github.com/cmelab/planckton/workflows/build_gpu/badge.svg)](https://github.com/cmelab/planckton/workflows/build_cpu/badge.svg)](https://github.com/cmelab/planckton/actions?query=workflow%3Abuild_gpu)
 [![codecov](https://codecov.io/gh/cmelab/planckton/branch/master/graph/badge.svg?token=5KYVHWMT28)](https://codecov.io/gh/cmelab/planckton/)
 [![License](https://img.shields.io/badge/license-GPLv3-green.svg)](LICENSE.md)
 [![Contributors](https://img.shields.io/github/contributors-anon/cmelab/planckton.svg?style=flat)](https://github.com/cmelab/planckton/graphs/contributors)
