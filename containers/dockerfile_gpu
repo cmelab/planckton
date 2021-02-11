@@ -1,36 +1,45 @@
-FROM continuumio/miniconda3:4.9.2
+FROM nvidia/cuda:11.2.0-devel-ubuntu20.04  
 
-WORKDIR /opt/app
+ENV DEBIAN_FRONTEND=noninteractive
+ENV TZ=Etc/UTC
 
-# Install curl for Codecov, cmake, libtbb
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    build-essential ca-certificates cmake curl gnupg2 libtbb-dev && \
-    curl -fsSL https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2004/x86_64/7fa2af80.pub | apt-key add - && \
-    echo "deb https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2004/x86_64 /" > /etc/apt/sources.list.d/cuda.list && \
-    echo "deb https://developer.download.nvidia.com/compute/machine-learning/repos/ubuntu2004/x86_64 /" > /etc/apt/sources.list.d/nvidia-ml.list && \
-    apt clean && \
-    rm -rf /var/lib/apt/lists/*
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+        ca-certificates \
+        cmake \
+        curl \
+        git \
+        libtbb-dev \
+    && apt-get clean
 
-ENV CUDA_VERSION 11.2.0
+ENV LANG=C.UTF-8 LC_ALL=C.UTF-8
 
-# For libraries in the cuda-compat-* package: https://docs.nvidia.com/cuda/eula/index.html#attachment-a
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    cuda-cudart-11-2=11.2.72-1 \
-    cuda-compat-11-2 \
-    && ln -s cuda-11.2 /usr/local/cuda && \
-    rm -rf /var/lib/apt/lists/*
+ENV PATH /opt/conda/bin:$PATH
 
-# Required for nvidia-docker v1
-RUN echo "/usr/local/nvidia/lib" >> /etc/ld.so.conf.d/nvidia.conf \
-    && echo "/usr/local/nvidia/lib64" >> /etc/ld.so.conf.d/nvidia.conf
+CMD [ "/bin/bash" ]
 
-ENV PATH /usr/local/nvidia/bin:/usr/local/cuda/bin:${PATH}
-ENV LD_LIBRARY_PATH /usr/local/nvidia/lib:/usr/local/nvidia/lib64
+# Leave these args here to better use the Docker build cache
+ENV CONDA_VERSION=py38_4.9.2
+ENV CONDA_MD5=122c8c9beb51e124ab32a0fa6426c656
 
-# nvidia-container-runtime
-ENV NVIDIA_VISIBLE_DEVICES all
-ENV NVIDIA_DRIVER_CAPABILITIES compute,utility
-ENV NVIDIA_REQUIRE_CUDA "cuda>=11.2 brand=tesla,driver>=418,driver<419 brand=tesla,driver>=440,driver<441 driver>=450,driver<451"
+RUN curl -s https://repo.anaconda.com/miniconda/Miniconda3-${CONDA_VERSION}-Linux-x86_64.sh -o miniconda.sh && \
+    echo "${CONDA_MD5}  miniconda.sh" > miniconda.md5 && \
+    if ! md5sum --status -c miniconda.md5; then exit 1; fi && \
+    mkdir -p /opt && \
+    sh miniconda.sh -b -p /opt/conda && \
+    rm miniconda.sh miniconda.md5 && \
+    ln -s /opt/conda/etc/profile.d/conda.sh /etc/profile.d/conda.sh && \
+    echo ". /opt/conda/etc/profile.d/conda.sh" >> ~/.bashrc && \
+    echo "conda activate base" >> ~/.bashrc && \
+    find /opt/conda/ -follow -type f -name '*.a' -delete && \
+    find /opt/conda/ -follow -type f -name '*.js.map' -delete && \
+    /opt/conda/bin/conda clean -afy
+
+#    curl -fsSL https://micromamba.snakepit.net/api/micromamba/linux-64/latest | \
+#    tar -xvj bin/micromamba && \
+#    micromamba shell init -s bash -p ~/micromamba
+#
+WORKDIR /opt
 
 # Make RUN commands use `bash --login`: -- fixes conda init
 # https://pythonspeed.com/articles/activate-conda-dockerfile/
@@ -43,15 +52,12 @@ COPY environment-nohoomd.yml ./
 RUN conda env update -n base -f environment-nohoomd.yml && \
     conda clean --all --yes -f 
 
-
 # Prevent python from loading packages from outside the container
 # default empty pythonpath
 ENV PYTHONPATH /ignore/pythonpath
 
 # Install HOOMD
-ENV HOOMD_TAG=v2.9.3
-ENV DEBIAN_FRONTEND=noninteractive
-ENV TZ=Etc/UTC
+ENV HOOMD_TAG=v2.9.4
 
 RUN git clone --recursive https://github.com/glotzerlab/hoomd-blue.git && \
     cd hoomd-blue && \
