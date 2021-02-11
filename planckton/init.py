@@ -11,6 +11,7 @@ from unyt.exceptions import UnitConversionError
 
 from planckton.utils.units import planckton_units
 from planckton.force_fields import FORCE_FIELD
+from planckton.utils.rigid import connect_rings
 
 
 class Compound(mb.Compound):
@@ -44,6 +45,14 @@ class Compound(mb.Compound):
         # This helps to_parmed use residues to apply ff more quickly
         self.name = os.path.basename(input_str).split(".")[0]
 
+        if rigid:
+            # Find conjugated rings and determine how many rigid bodies
+            # the compound should have
+            mol = self.to_pybel()
+            self.rigid_inds = sorted(connect_rings(mol), key=lambda x: x[0])
+        else:
+            self.rigid_inds = None
+
         if self.name.endswith("typed"):
             # This is a hack to allow the old ff and typed files to work
             # We need to rename the atom types
@@ -60,6 +69,28 @@ class Compound(mb.Compound):
             except ElementError:
                 # This is a hack for our typed mol2 files
                 p.element = element_from_symbol(p.name.strip("0123456789"))
+
+    def visualize_rigid(self):
+        if self.rigid_inds == None:
+            raise AttributeError("Can't visualize non-rigid compound.")
+
+        name_array = np.empty(self.n_particles,dtype=str)
+        color_dict = {}
+        color_list = ['orange','blue','yellow','purple','red','green']
+        for i,body in enumerate(self.rigid_inds):
+            r_name = chr(i+65)
+            name_array[body] = r_name
+            color_dict[r_name] = color_list[i % len(color_list)]
+
+        clone = mb.clone(self)
+        for i,p in enumerate(clone.particles()):
+            if name_array[i] != "":
+                p.name = name_array[i]
+            else:
+                p.name = "X"
+                color_dict["X"] = 'grey'
+
+        clone.visualize(color_scheme=color_dict).show()
 
 
 class Pack:
@@ -139,8 +170,11 @@ class Pack:
         self.remove_hydrogen_atoms = remove_hydrogen_atoms
         self.L = self._calculate_L()
         self.foyer_kwargs = foyer_kwargs
+        self.rigid_inds = []
+        self.rigid_typeids = []
 
     def _remove_hydrogen(self):
+        # TODO - not implemented with rigid
         for subcompound in self.compound:
             for atom in subcompound.particles():
                 if atom.name in ["_hc", "_ha", "_h1", "_h4"]:
@@ -174,6 +208,22 @@ class Pack:
             overlap=0.2,
             fix_orientation=True,
         )
+
+        # Calculate the rigid_inds in the packed system
+        if any([comp.rigid_inds for comp in self.compound]):
+            particle_count = 0
+            rigid_count = 0
+            for comp,n in zip(self.compound, self.n_compounds):
+                if comp.rigid_inds is not None:
+                    for _ in range(n):
+                        for i,rigid in enumerate(comp.rigid_inds):
+                            self.rigid_inds.append(rigid+particle_count)
+                            self.rigid_typeids.append(i+rigid_count)
+                        particle_count += comp.n_particles
+                    rigid_count += len(comp.rigid_inds)
+                else:
+                    particle_count += n * comp.n_particles
+
         system.box = box
         pmd_system = system.to_parmed(residues=[self.residues])
         typed_system = self.ff.apply(pmd_system, **self.foyer_kwargs)
