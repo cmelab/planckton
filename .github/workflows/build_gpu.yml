@@ -12,6 +12,8 @@ on:
     paths:
         - 'containers/dockerfile_gpu'
         - 'environment.yml'
+  # Allows workflow to be manually triggered
+  workflow_dispatch:
 
 jobs:
   build_gpu:
