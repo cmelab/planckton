@@ -76,11 +76,11 @@ class Simulation:
         kT,
         e_factor=1.0,
         tau=5.0,
-        gsd_write=1e6,
-        log_write=1e5,
-        shrink_steps=1e6,
+        gsd_write=1e5,
+        log_write=1e3,
+        shrink_steps=1e3,
         shrink_kT_reduced=10,
-        n_steps=1e3,
+        n_steps=1e7,
         dt=0.0001,
         mode="gpu",
         target_length=None,
@@ -161,6 +161,7 @@ class Simulation:
                 group=all_particles,
                 overwrite=False,
                 phase=0,
+                dynamic=['momentum']
             )
             gsd_restart = hoomd.dump.gsd(
                 "restart.gsd",
