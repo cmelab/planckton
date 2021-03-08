@@ -42,6 +42,8 @@ class Simulation:
     target_length : unyt.unyt_quantity
         Target final box length for the shrink step. If None is provided, no
         shrink step will be performed. (default None)
+    restart : str
+        Path to gsd file from which to restart the simulation (default None)
 
     Attributes
     ----------
@@ -84,6 +86,7 @@ class Simulation:
         dt=0.0001,
         mode="gpu",
         target_length=None,
+        restart=None
     ):
         self.system = typed_system
         self.kT = kT
@@ -97,6 +100,7 @@ class Simulation:
         self.dt = dt
         self.mode = mode
         self.target_length = target_length
+        self.restart = restart
 
     def run(self):
         hoomd_args = f"--single-mpi --mode={self.mode}"
@@ -106,7 +110,7 @@ class Simulation:
             hoomd.util.quiet_status()
             # mbuild units are nm, amu
             hoomd_objects, ref_values = create_hoomd_simulation(
-                self.system, auto_scale=True
+                self.system, auto_scale=True, restart=self.restart
             )
             self.ref_values = ref_values
             snap = hoomd_objects[0]
