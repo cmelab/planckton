@@ -1,14 +1,18 @@
 name: planckton
 channels:
   - conda-forge
+  - omnia #
 dependencies:
   - ele=0.1.0
   - foyer=0.7.7
   - gsd=2.2.0
+  - mdtraj=1.9.5 # 
   #- mbuild=0.10.12
   - numpy=1.19
   - openbabel=3.1.1
   - openmm>=7.5
+  - oset=0.1.3 #
+  - packmol=20 #
   - pip=20.2
   - python=3.7
   - signac=1.6.0
