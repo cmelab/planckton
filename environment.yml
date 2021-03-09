@@ -5,16 +5,19 @@ dependencies:
   - foyer=0.7.7
   - gsd=2.2.0
   - hoomd=2.9.3
-  - mbuild=0.10.12
+  #- mbuild=0.10.12
   - numpy=1.19
   - openbabel=3.1.1
   - openmm>=7.5
   - pip=20.2
   - python=3.7
   - signac=1.6.0
-  - signac-flow=0.12.0
+  #- signac-flow=0.12.0
   - unyt=2.8.0
   - pip:
     - pytest
     - pytest-cov
-    - git+https://github.com/cmelab/planckton@0.1.5
+    - git+https://github.com/cmelab/planckton@0.2.0
+    # temporary
+    - git+https://github.com/glotzerlab/signac-flow.git
+    - git+https://github.com/mosdef-hub/mbuild.git@refs/pull/844
