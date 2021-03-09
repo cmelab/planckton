@@ -6,12 +6,12 @@ on:
     # Run when container or environment is changed
     paths:
         - 'containers/dockerfile_gpu'
-        - 'environment.yml'
+        - 'environment-nohoomd.yml'
   pull_request:
     branches: [ master ]
     paths:
         - 'containers/dockerfile_gpu'
-        - 'environment.yml'
+        - 'environment-nohoomd.yml'
   # Allows workflow to be manually triggered
   workflow_dispatch:
 
