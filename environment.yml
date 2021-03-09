@@ -20,4 +20,4 @@ dependencies:
     - git+https://github.com/cmelab/planckton@0.2.0
     # temporary
     - git+https://github.com/glotzerlab/signac-flow.git
-    - git+https://github.com/mosdef-hub/mbuild.git@refs/pull/844
+    - git+https://github.com/mosdef-hub/mbuild.git@refs/pull/844/head
