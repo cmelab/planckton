@@ -2,6 +2,7 @@ name: planckton
 channels:
   - conda-forge
 dependencies:
+  - ele=0.1.0
   - foyer=0.7.7
   - gsd=2.2.0
   - hoomd=2.9.3
