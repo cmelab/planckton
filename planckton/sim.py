@@ -173,6 +173,7 @@ class Simulation:
                 group=all_particles,
                 truncate=True,
                 phase=0,
+                dynamic=["momentum"]
             )
             log_quantities = [
                 "temperature",
@@ -192,7 +193,8 @@ class Simulation:
                 overwrite=False,
                 phase=0,
             )
-            integrator.randomize_velocities(seed=42)
+            if restart is None:
+                integrator.randomize_velocities(seed=42)
 
             if self.target_length is not None:
                 # Run the shrink step
