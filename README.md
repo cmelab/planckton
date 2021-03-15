@@ -23,6 +23,7 @@ The simulation tools used by PlanckTon are:
 ### Install
 #### Using a container
 PlanckTon provides containers with HOOMD compiled for cpu or gpu. If your system allows, we recommend gpu.
+
 To use PlanckTon in a prebuilt container (using [Singularity](https://singularity.lbl.gov/)), run:
 ```bash
 singularity pull docker://cmelab/planckton_gpu:latest
