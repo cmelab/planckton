@@ -193,7 +193,7 @@ class Simulation:
                 overwrite=False,
                 phase=0,
             )
-            if restart is None:
+            if self.restart is None:
                 integrator.randomize_velocities(seed=42)
 
             if self.target_length is not None:
