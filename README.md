@@ -6,7 +6,7 @@
 [![License](https://img.shields.io/badge/license-GPLv3-green.svg)](LICENSE.md)
 [![Contributors](https://img.shields.io/github/contributors-anon/cmelab/planckton.svg?style=flat)](https://github.com/cmelab/planckton/graphs/contributors)
 
-PlanckTon enables exploration of the self-assembly of organic photovoltaic compound mixtures under various conditions.
+PlanckTon enables exploration of the self-assembly of organic photovoltaic (OPV) compound mixtures under various conditions.
 Multiple simulation tools are tied together to reproducibly and accurately generate these structures.
 
 The simulation tools used by PlanckTon are:
@@ -22,16 +22,17 @@ The simulation tools used by PlanckTon are:
 
 ### Install
 #### Using a container
+PlanckTon provides containers with HOOMD compiled for cpu or gpu. If your system allows, we recommend gpu.
 To use PlanckTon in a prebuilt container (using [Singularity](https://singularity.lbl.gov/)), run:
 ```bash
-singularity pull docker://cmelab/planckton_cpu:latest
-singularity exec planckton_cpu_latest.sif bash
+singularity pull docker://cmelab/planckton_gpu:latest
+singularity exec planckton_gpu_latest.sif bash
 ```
 
 **Or** using [Docker](https://docs.docker.com/), run:
 ```bash
-docker pull cmelab/planckton_cpu:latest
-docker run -it cmelab/planckton_cpu:latest
+docker pull cmelab/planckton_gpu:latest
+docker run -it cmelab/planckton_gpu:latest
 ```
 
 #### Custom install
