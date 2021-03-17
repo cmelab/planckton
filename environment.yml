@@ -15,13 +15,13 @@ dependencies:
   - oset=0.1.3 #
   - packmol=20 #
   - pip=20.2
+  - pytest
+  - pytest-cov
   - python=3.7
   - signac=1.6.0
   - signac-flow=0.13.0
   - unyt=2.8.0
   - pip:
-    - pytest
-    - pytest-cov
     - git+https://github.com/cmelab/planckton@0.2.1
     # temporary
     - git+https://github.com/mosdef-hub/mbuild.git@refs/pull/844/head
