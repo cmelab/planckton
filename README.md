@@ -49,7 +49,7 @@ pytest
 
 ### Run simulations
 
-See example in `tests/test_sim.py`
+See example in `planckton/tests/test_sim.py`
 
 Also see [planckton-flow](https://github.com/cmelab/planckton-flow)
 

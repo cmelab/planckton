@@ -7,7 +7,7 @@ comment:
     branches:               # branch names that can post comment
         - "master"
 ignore:
-    - "tests"
+    - "planckton/tests"
     - "planckton/compounds"
     - "planckton/force_fields"
     - "planckton/__version__.py"
