@@ -5,12 +5,10 @@ on:
     branches: [ master ]
     paths:
       - 'planckton/*'
-      - 'tests/*'
   pull_request:
     branches: [ master ]
     paths:
       - 'planckton/*'
-      - 'tests/*'
 
 jobs:
   pytest:
