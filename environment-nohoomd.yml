@@ -16,12 +16,11 @@ dependencies:
   - pip=20.2
   - python=3.7
   - signac=1.6.0
-  #- signac-flow=0.12.0
+  - signac-flow=0.13.0
   - unyt=2.8.0
   - pip:
     - pytest
     - pytest-cov
     - git+https://github.com/cmelab/planckton@0.2.1
     # temporary
-    - git+https://github.com/glotzerlab/signac-flow.git
     - git+https://github.com/mosdef-hub/mbuild.git@refs/pull/844/head
