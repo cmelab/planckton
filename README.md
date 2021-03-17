@@ -8,6 +8,7 @@
 
 PlanckTon enables exploration of the self-assembly of organic photovoltaic (OPV) compound mixtures under various conditions.
 Multiple simulation tools are tied together to reproducibly and accurately generate these structures.
+For managing large parameter spaces and submitting jobs to clusters, we recommend [PlanckTon-flow](https://github.com/cmelab/planckton-flow) which leverages the [Signac](https://docs.signac.io/en/latest/) framework.
 
 The simulation tools used by PlanckTon are:
 
@@ -50,8 +51,6 @@ pytest
 ### Run simulations
 
 See example in `planckton/tests/test_sim.py`
-
-Also see [planckton-flow](https://github.com/cmelab/planckton-flow)
 
 ## How to develop
 
