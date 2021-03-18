@@ -24,7 +24,14 @@ REQUIRES_PYTHON = ">=3.6.0"
 VERSION = None
 
 # What packages are required for this module to be executed?
-REQUIRED = ["numpy"]
+REQUIRED = [
+        "ele",
+        "foyer",
+        "gsd",
+        "mdtraj",
+        "numpy",
+        "unyt",
+        ]
 
 # The rest you shouldn't have to touch too much :)
 # ------------------------------------------------
