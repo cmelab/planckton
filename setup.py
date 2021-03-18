@@ -28,7 +28,7 @@ REQUIRED = [
         "ele",
         "foyer",
         "gsd",
-        "mdtraj",
+        "mbuild",
         "numpy",
         "unyt",
         ]
