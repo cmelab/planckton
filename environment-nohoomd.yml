@@ -23,4 +23,4 @@ dependencies:
   - pip:
     - git+https://github.com/cmelab/planckton@0.2.1
     # temporary
-    - git+https://github.com/mosdef-hub/mbuild.git@refs/pull/844/head
+    - git+https://github.com/jennyfothergill/mbuild.git@feat/hoomd_restart
