@@ -1,3 +1,4 @@
+"""Tools for running an OPV simulation with PlanckTon."""
 import os
 
 import hoomd.data
@@ -72,6 +73,7 @@ class Simulation:
     target_length : unyt.unyt_quantity
         Target final box length for the shrink step.
     """
+
     def __init__(
         self,
         typed_system,
@@ -103,6 +105,7 @@ class Simulation:
         self.restart = restart
 
     def run(self):
+        """Run the simulation."""
         hoomd_args = f"--single-mpi --mode={self.mode}"
         sim = hoomd.context.initialize(hoomd_args)
 

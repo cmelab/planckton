@@ -1,3 +1,4 @@
+"""Tools for initializing an OPV simulation with PlanckTon."""
 import os
 
 from ele import element_from_symbol
@@ -15,7 +16,7 @@ from planckton.force_fields import FORCE_FIELD
 
 class Compound(mb.Compound):
     """
-    Wrapper class for mb.Compound
+    Wrapper class for mb.Compound.
 
     Parameters
     ----------
@@ -54,6 +55,7 @@ class Compound(mb.Compound):
                 atom_mb.name = "_{}".format(atom_pmd.type)
 
     def set_elements(self):
+        """Set the ele.element of each particle in the compound."""
         for p in self.particles():
             try:
                 p.element = element_from_symbol(p.name)
@@ -64,7 +66,7 @@ class Compound(mb.Compound):
 
 class Pack:
     """
-    Convenience class for filling box and atomtyping
+    Convenience class for filling box and atomtyping.
 
     Parameters
     ----------
@@ -102,6 +104,7 @@ class Pack:
     L : unyt.unyt_quantity
         Length of the box with units
     """
+
     def __init__(
         self,
         compound,
@@ -150,6 +153,8 @@ class Pack:
 
     def pack(self, box_expand_factor=5):
         """
+        Packing compounds into a larger box in preparation for shrinking.
+
         Parameters
         ----------
         box_expand_factor : float
@@ -161,7 +166,6 @@ class Pack:
         typed_system : ParmEd structure
             ParmEd structure of filled box
         """
-
         if self.remove_hydrogen_atoms:
             self._remove_hydrogen()
 
