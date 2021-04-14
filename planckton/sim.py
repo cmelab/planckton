@@ -88,7 +88,7 @@ class Simulation:
         dt=0.0001,
         mode="gpu",
         target_length=None,
-        restart=None
+        restart=None,
     ):
         self.system = typed_system
         self.kT = kT
@@ -168,7 +168,7 @@ class Simulation:
                 group=all_particles,
                 overwrite=False,
                 phase=0,
-                dynamic=['momentum']
+                dynamic=["momentum"],
             )
             gsd_restart = hoomd.dump.gsd(
                 "restart.gsd",
@@ -176,7 +176,7 @@ class Simulation:
                 group=all_particles,
                 truncate=True,
                 phase=0,
-                dynamic=["momentum"]
+                dynamic=["momentum"],
             )
             log_quantities = [
                 "temperature",
@@ -201,9 +201,13 @@ class Simulation:
 
             if self.target_length is not None:
                 # Run the shrink step
-                size_variant = hoomd.variant.linear_interp([
-                    (0, snap.box.Lx),
-                    (self.shrink_steps, self.target_length.to("Angstrom").value)
+                size_variant = hoomd.variant.linear_interp(
+                    [
+                        (0, snap.box.Lx),
+                        (
+                            self.shrink_steps,
+                            self.target_length.to("Angstrom").value,
+                        ),
                     ],
                     zero=0,
                 )
@@ -225,4 +229,3 @@ class Simulation:
             finally:
                 gsd_restart.write_restart()
                 print("Restart file written")
-

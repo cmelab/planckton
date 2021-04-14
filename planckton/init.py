@@ -110,11 +110,9 @@ class Pack:
         compound,
         n_compounds,
         density,
-        ff = FORCE_FIELD["opv_gaff"],
-        remove_hydrogen_atoms = False,
-        foyer_kwargs = {
-            "assert_dihedral_params":False
-            }
+        ff=FORCE_FIELD["opv_gaff"],
+        remove_hydrogen_atoms=False,
+        foyer_kwargs={"assert_dihedral_params": False},
     ):
         if not isinstance(compound, (list, set)):
             self.compound = [compound]
@@ -129,10 +127,10 @@ class Pack:
             try:
                 # catch unit errors early
                 density.to(
-                        planckton_units["mass"] / planckton_units["length"]**3
-                        )
+                    planckton_units["mass"] / planckton_units["length"] ** 3
+                )
             except UnitConversionError as e:
-                raise(e)
+                raise (e)
             self.density = density
         else:
             raise TypeError("density must be a unyt quantity")
@@ -169,7 +167,7 @@ class Pack:
         if self.remove_hydrogen_atoms:
             self._remove_hydrogen()
 
-        L = (self.L.value * box_expand_factor)
+        L = self.L.value * box_expand_factor
         box = mb.Box([L, L, L])
         system = mb.packing.fill_box(
             self.compound,
@@ -184,10 +182,11 @@ class Pack:
         return typed_system
 
     def _calculate_L(self):
-        total_mass = np.sum([
-            n * c.mass.in_base('planckton')
+        masses = [
+            n * c.mass.in_base("planckton")
             for c, n in zip(self.compound, self.n_compounds)
-            ]) * u.amu
+        ]
+        total_mass = np.sum(masses) * u.amu
 
         L = (total_mass / self.density) ** (1 / 3)
-        return L.in_base('planckton')
+        return L.in_base("planckton")
