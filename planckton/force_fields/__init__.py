@@ -1,3 +1,4 @@
+"""Forcefields included with PlanckTon."""
 from os import path
 import warnings
 

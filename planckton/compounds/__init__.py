@@ -1,5 +1,6 @@
-import os
+"""Compounds included with PlanckTon."""
 import glob
+import os
 
 COMPOUND_DIR = os.path.abspath(os.path.dirname(__file__))
 COMPOUND_FILE = {}
