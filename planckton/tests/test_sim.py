@@ -1,8 +1,7 @@
 import pytest
 
-from base_test import BaseTest
 import unyt as u
-
+from base_test import BaseTest
 from planckton.compounds import COMPOUND_FILE
 from planckton.force_fields import FORCE_FIELD
 from planckton.init import Compound, Pack
