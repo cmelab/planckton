@@ -1,3 +1,5 @@
+"""Utility functions for handling units."""
+
 import unyt as u
 
 
@@ -13,8 +15,10 @@ constants= {
 
 
 def quantity_to_tuple(quantity):
-    """
-    Break a unyt.quantity into value and units in string format.
+    """Break a unyt.quantity into a tuple.
+
+    Convert a unyt.quantity into a tuple containing its value and units in
+    string format. Useful for serialization.
 
     IMPORTANT: This function expects one quantity, not an array.
 
@@ -29,7 +33,8 @@ def quantity_to_tuple(quantity):
     return (quantity.item(), str(quantity.units))
 
 def tuple_to_quantity(tup):
-    """
+    """Convert tuple to unyt.quantity.
+
     Convert a tuple containing values and units in string format into a unyt
     quantity.
 
@@ -46,11 +51,39 @@ def tuple_to_quantity(tup):
 
 
 def reduced_from_kelvin(T_SI, ref_energy):
+    """Convert temperature in Kelvin to reduced temperature.
+
+    Parameters
+    ----------
+    T_SI: unyt.quantity
+        Temperature in Kelvin.
+    ref_energy: unyt.quantity
+        Reference energy from the simulation
+
+    Returns
+    -------
+    unyt.unyt_quantity
+        Unitless temperature
+    """
     T = constants["boltzmann"] * constants["avogadro"] * T_SI / ref_energy
     return T
 
 
 def kelvin_from_reduced(T_reduced, ref_energy):
+    """Convert temperature in reduced units to Kelvin.
+
+    Parameters
+    ----------
+    T_reduced: unyt.quantity or float
+        Temperature in simulation units. (unitless)
+    ref_energy: unyt.quantity
+        Reference energy from the simulation
+
+    Returns
+    -------
+    unyt.unyt_quantity
+        Temperature in Kelvin
+    """
     T_SI = T_reduced * ref_energy / (
             constants["boltzmann"] * constants["avogadro"]
             )
@@ -58,6 +91,24 @@ def kelvin_from_reduced(T_reduced, ref_energy):
 
 
 def convert_to_real_time(dt, ref_mass, ref_distance, ref_energy):
+    """Convert the timestep in reduced units to seconds.
+
+    Parameters
+    ----------
+    dt: float
+        Timestep
+    ref_mass: unyt.quantity
+        Reference mass from the simulation
+    ref_distance: unyt.quantity
+        Reference distance from the simulation
+    ref_energy: unyt.quantity
+        Reference energy from the simulation
+
+    Returns
+    -------
+    unyt.unyt_quantity
+        Timestep in seconds
+    """
     time_squared = (
             ref_mass * ref_distance**2 * constants["avogadro"] / ref_energy
             )
