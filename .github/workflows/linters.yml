@@ -22,3 +22,12 @@ jobs:
       uses: mflaxman/black-action@v1.0.2
       with:
         args: ". --line-length=80 --check"
+  isort:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+        with:
+          python-version: 3.7
+      - uses: jamescurtin/isort-action@master
+
