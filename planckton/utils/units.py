@@ -2,7 +2,6 @@
 
 import unyt as u
 
-
 planckton_units = u.UnitSystem(
     "planckton", mass_unit="amu", length_unit="nm", time_unit="s"
 )
