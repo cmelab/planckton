@@ -1,5 +1,6 @@
 """Utility functions for scaling energies for implicit solvents."""
 
+
 def set_coeffs(pair_dict, e_factor):
     """Scale energy coefficients.
 

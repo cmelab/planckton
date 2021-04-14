@@ -4,14 +4,14 @@ import unyt as u
 
 
 planckton_units = u.UnitSystem(
-        'planckton', mass_unit='amu', length_unit='nm', time_unit='s'
-        )
-planckton_units['energy'] = 'kJ'
+    "planckton", mass_unit="amu", length_unit="nm", time_unit="s"
+)
+planckton_units["energy"] = "kJ"
 
-constants= {
-        "avogadro": 6.022140857e23 / u.mol,
-        "boltzmann": 1.38064852e-23 * u.J / u.K,
-        }
+constants = {
+    "avogadro": 6.022140857e23 / u.mol,
+    "boltzmann": 1.38064852e-23 * u.J / u.K,
+}
 
 
 def quantity_to_tuple(quantity):
@@ -31,6 +31,7 @@ def quantity_to_tuple(quantity):
     (number, string)
     """
     return (quantity.item(), str(quantity.units))
+
 
 def tuple_to_quantity(tup):
     """Convert tuple to unyt.quantity.
@@ -84,9 +85,11 @@ def kelvin_from_reduced(T_reduced, ref_energy):
     unyt.unyt_quantity
         Temperature in Kelvin
     """
-    T_SI = T_reduced * ref_energy / (
-            constants["boltzmann"] * constants["avogadro"]
-            )
+    T_SI = (
+        T_reduced
+        * ref_energy
+        / (constants["boltzmann"] * constants["avogadro"])
+    )
     return T_SI
 
 
@@ -110,7 +113,7 @@ def convert_to_real_time(dt, ref_mass, ref_distance, ref_energy):
         Timestep in seconds
     """
     time_squared = (
-            ref_mass * ref_distance**2 * constants["avogadro"] / ref_energy
-            )
+        ref_mass * ref_distance ** 2 * constants["avogadro"] / ref_energy
+    )
     real_time = dt * (time_squared ** 0.5)
     return real_time
