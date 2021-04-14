@@ -14,7 +14,7 @@ def test_hydrogen_removal():
         pcbm,
         ff=FORCE_FIELD["opv_gaff"],
         n_compounds=2,
-        density=0.1 * u.g / u.cm**3,
+        density=0.1 * u.g / u.cm ** 3,
         remove_hydrogen_atoms=True,
     )
 
@@ -35,12 +35,10 @@ def test_hydrogen_removal_and_sim():
         pcbm,
         ff=FORCE_FIELD["opv_gaff"],
         n_compounds=2,
-        density=0.1 * u.g / u.cm**3,
+        density=0.1 * u.g / u.cm ** 3,
         remove_hydrogen_atoms=True,
     )
-    print("packer init")
     system = packer.pack()
-    print("packer packed")
     my_sim = Simulation(
         system,
         kT=3.0,
@@ -51,7 +49,6 @@ def test_hydrogen_removal_and_sim():
         mode="cpu",
         shrink_steps=1e3,
     )
-    print("sim init")
     my_sim.run()
 
 
