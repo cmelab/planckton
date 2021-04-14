@@ -1,17 +1,17 @@
 """Tools for initializing an OPV simulation with PlanckTon."""
 import os
 
-from ele import element_from_symbol
-from ele.exceptions import ElementError
 import foyer
 import mbuild as mb
 import numpy as np
 import parmed as pmd
+from ele import element_from_symbol
+from ele.exceptions import ElementError
 import unyt as u
 from unyt.exceptions import UnitConversionError
 
-from planckton.utils.units import planckton_units
 from planckton.force_fields import FORCE_FIELD
+from planckton.utils.units import planckton_units
 
 
 class Compound(mb.Compound):
