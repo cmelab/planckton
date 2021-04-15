@@ -7,16 +7,12 @@ on:
     paths:
         - 'containers/dockerfile_gpu'
         - 'environment-nohoomd.yml'
-  pull_request:
-    branches: [ master ]
-    paths:
-        - 'containers/dockerfile_gpu'
-        - 'environment-nohoomd.yml'
   # Allows workflow to be manually triggered
   workflow_dispatch:
 
 jobs:
   build_gpu:
+    if: github.repository_owner == 'cmelab'
     runs-on: ubuntu-latest
 
     steps:
