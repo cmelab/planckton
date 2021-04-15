@@ -17,6 +17,7 @@ on:
 
 jobs:
   build_gpu:
+    if: github.repository_owner == 'cmelab'
     runs-on: ubuntu-latest
 
     steps:
