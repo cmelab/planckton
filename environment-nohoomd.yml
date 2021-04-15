@@ -21,4 +21,5 @@ dependencies:
   - signac-flow=0.13.0
   - unyt=2.8.0
   - pip:
+    - git+https://github.com/mosdef-hub/mbuild
     - git+https://github.com/cmelab/planckton@0.2.1
