@@ -18,6 +18,7 @@ dependencies:
   - pytest
   - pytest-cov
   - python=3.7
+  - rdkit
   - signac=1.6.0
   - signac-flow=0.13.0
   - unyt=2.8.0
