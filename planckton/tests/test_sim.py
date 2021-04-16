@@ -53,3 +53,14 @@ class TestSimulations(BaseTest):
             shrink_steps=1e3,
             target_length=packer.L,
         )
+
+    def test_gaff_noH_raises(self):
+        p3ht = Compound("c1cscc1CCCCCC")
+        with pytest.raises(NotImplementedError):
+            packer = Pack(
+                p3ht,
+                ff=FORCE_FIELD["gaff"],
+                n_compounds=2,
+                density=0.01 * u.g / u.cm**3,
+                remove_hydrogen_atoms=True
+            )

@@ -113,6 +113,10 @@ class Pack:
             "assert_dihedral_params":False
             }
     ):
+        if ff == FORCE_FIELD["gaff"] and remove_hydrogen_atoms == True:
+            raise NotImplementedError(
+                "Removing hydrogens is not supported with the GAFF forcefield"
+                )
         if not isinstance(compound, (list, set)):
             self.compound = [compound]
         else:
