@@ -5,5 +5,4 @@ COPY environment-nohoomd.yml ./
 
 # Install in base environment
 RUN conda env update -n base -f environment-nohoomd.yml && \
-    python -m pip install git+https://github.com/jennyfothergill/mbuild.git@feat/hoomd_restart && \
     conda clean --all --yes -f 
