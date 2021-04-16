@@ -24,6 +24,5 @@ dependencies:
   - unyt=2.8.0
   - pip:
     - git+https://github.com/mosdef-hub/mbuild
-    - "--editable=git+https://github.com/rsdefever/GAFF-foyer.git#egg=gafffoyer"
     - git+https://github.com/rsdefever/antefoyer.git
     - git+https://github.com/cmelab/planckton@0.3.0
