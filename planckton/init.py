@@ -10,7 +10,7 @@ from ele.exceptions import ElementError
 import unyt as u
 from unyt.exceptions import UnitConversionError
 
-from planckton.force_fields import FORCE_FIELD
+from planckton.forcefields import FORCEFIELD
 from planckton.utils.units import planckton_units
 
 
@@ -85,7 +85,7 @@ class Pack:
             1.0 * u.g / u.cm**3
     ff : foyer.Forcefield
         Foyer forcefield to use for typing compounds
-        (default foyer.Forcefield("opvgaff.xml"))
+        (default foyer.Forcefield("gaff-custom.xml"))
     remove_hydrogen_atoms : bool
         Whether to remove hydrogen atoms. (default False)
     foyer_kwargs = dict
@@ -115,11 +115,11 @@ class Pack:
         compound,
         n_compounds,
         density,
-        ff=FORCE_FIELD["opv_gaff"],
+        ff=FORCEFIELD["gaff-custom"],
         remove_hydrogen_atoms=False,
         foyer_kwargs={"assert_dihedral_params": False},
     ):
-        if ff == FORCE_FIELD["gaff"] and remove_hydrogen_atoms == True:
+        if ff == FORCEFIELD["gaff"] and remove_hydrogen_atoms == True:
             raise NotImplementedError(
                 "Removing hydrogens is not supported with the GAFF forcefield"
             )
@@ -214,4 +214,4 @@ class Pack:
         return L.in_base("planckton")
 
 
-builtin_ffs = [FORCE_FIELD["opv_gaff"], FORCE_FIELD["oplsua-custom"]]
+builtin_ffs = [FORCEFIELD["gaff-custom"], FORCEFIELD["oplsua-custom"]]
