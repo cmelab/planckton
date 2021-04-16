@@ -29,6 +29,8 @@ class Compound(mb.Compound):
         The mass of the compound in amus
     name : str
         Compound name, used to apply the forcefield more quickly in foyer
+    typed : bool
+        Whether the compound is already typed
     """
 
     def __init__(self, input_str):
@@ -46,6 +48,7 @@ class Compound(mb.Compound):
         self.name = os.path.basename(input_str).split(".")[0]
 
         if self.name.endswith("typed"):
+            self.typed = True
             # This is a hack to allow the old ff and typed files to work
             # We need to rename the atom types
             # TODO : test that gafffoyer and foyeroplsaa get same results and
@@ -53,6 +56,8 @@ class Compound(mb.Compound):
             compound_pmd = pmd.load_file(input_str)
             for atom_pmd, atom_mb in zip(compound_pmd, self):
                 atom_mb.name = "_{}".format(atom_pmd.type)
+        else:
+            self.typed = False
 
     def set_elements(self):
         """Set the ele.element of each particle in the compound."""
@@ -114,6 +119,11 @@ class Pack:
         remove_hydrogen_atoms=False,
         foyer_kwargs={"assert_dihedral_params": False},
     ):
+        if ff == FORCE_FIELD["gaff"] and remove_hydrogen_atoms == True:
+            raise NotImplementedError(
+                "Removing hydrogens is not supported with the GAFF forcefield"
+            )
+
         if not isinstance(compound, (list, set)):
             self.compound = [compound]
         else:
@@ -122,6 +132,18 @@ class Pack:
             self.n_compounds = [n_compounds]
         else:
             self.n_compounds = n_compounds
+
+        if not all([c.typed for c in self.compound]) and ff in builtin_ffs:
+            raise NotImplementedError(
+                "Untyped compounds not supported with custom forcefields. "
+                "Try a forcefield with SMARTS grammar, like 'gaff', instead."
+            )
+        if any([c.typed for c in self.compound]) and ff not in builtin_ffs:
+            raise NotImplementedError(
+                "Typed compounds are designed to be used with the custom "
+                "forcefields. Try 'opv_gaff' instead."
+            )
+
 
         if isinstance(density, u.unyt_quantity):
             try:
@@ -190,3 +212,6 @@ class Pack:
 
         L = (total_mass / self.density) ** (1 / 3)
         return L.in_base("planckton")
+
+
+builtin_ffs = [FORCE_FIELD["opv_gaff"], FORCE_FIELD["oplsua-custom"]]
