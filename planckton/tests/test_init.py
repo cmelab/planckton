@@ -18,6 +18,6 @@ def test_bad_units():
 
 
 def test_no_units():
-    pcbm = Compound(COMPOUND_FILE["PCBM-gaff"])
+    pcbm = Compound(COMPOUND["PCBM-gaff"])
     with pytest.raises(TypeError):
         packer = Pack(pcbm, n_compounds=2, density=2)

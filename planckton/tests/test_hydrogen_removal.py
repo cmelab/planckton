@@ -30,7 +30,7 @@ def test_hydrogen_removal():
 
 
 def test_hydrogen_removal_and_sim():
-    pcbm = Compound(COMPOUND_FILE["PCBM-gaff"])
+    pcbm = Compound(COMPOUND["PCBM-gaff"])
     packer = Pack(
         pcbm,
         ff=FORCEFIELD["gaff-custom"],
