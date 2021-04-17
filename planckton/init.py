@@ -141,7 +141,7 @@ class Pack:
         if any([c.typed for c in self.compound]) and ff not in builtin_ffs:
             raise NotImplementedError(
                 "Typed compounds are designed to be used with the custom "
-                "forcefields. Try 'opv_gaff' instead."
+                "forcefields. Try 'gaff-custom' instead."
             )
 
 

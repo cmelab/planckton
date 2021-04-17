@@ -2,17 +2,17 @@ from os import path, remove
 
 import unyt as u
 
-from planckton.compounds import COMPOUND_FILE
-from planckton.force_fields import FORCE_FIELD
+from planckton.compounds import COMPOUND
+from planckton.forcefields import FORCEFIELD
 from planckton.init import Compound, Pack
 from planckton.sim import Simulation
 
 
 def test_hydrogen_removal():
-    pcbm = Compound(COMPOUND_FILE["PCBM"])
+    pcbm = Compound(COMPOUND["PCBM-gaff"])
     packer = Pack(
         pcbm,
-        ff=FORCE_FIELD["opv_gaff"],
+        ff=FORCEFIELD["gaff-custom"],
         n_compounds=2,
         density=0.1 * u.g / u.cm ** 3,
         remove_hydrogen_atoms=True,
@@ -30,10 +30,10 @@ def test_hydrogen_removal():
 
 
 def test_hydrogen_removal_and_sim():
-    pcbm = Compound(COMPOUND_FILE["PCBM"])
+    pcbm = Compound(COMPOUND_FILE["PCBM-gaff"])
     packer = Pack(
         pcbm,
-        ff=FORCE_FIELD["opv_gaff"],
+        ff=FORCEFIELD["gaff-custom"],
         n_compounds=2,
         density=0.1 * u.g / u.cm ** 3,
         remove_hydrogen_atoms=True,
