@@ -201,15 +201,10 @@ class Simulation:
 
             if self.target_length is not None:
                 # Run the shrink step
+                final_length = self.target_length.to("Angstrom").value
+                final_box = (self.shrink_steps, final_length)
                 size_variant = hoomd.variant.linear_interp(
-                    [
-                        (0, snap.box.Lx),
-                        (
-                            self.shrink_steps,
-                            self.target_length.to("Angstrom").value,
-                        ),
-                    ],
-                    zero=0,
+                    [(0, snap.box.Lx), final_box], zero=0
                 )
                 box_resize = hoomd.update.box_resize(L=size_variant)
                 hoomd.run_upto(self.shrink_steps)
