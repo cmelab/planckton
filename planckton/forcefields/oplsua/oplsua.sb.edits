@@ -176,7 +176,7 @@ C7-CH 317.       1.50           OPLS hydrocarbons ff (jtr 5-14-91)
 C7-C2 317.       1.50           OPLS hydrocarbons ff (jtr 5-14-91)
 C7-C3 317.       1.50           OPLS hydrocarbons ff (jtr 5-14-91)
 CT-F  367.       1.332          PAK CT-F for CHF3 (emd 5-09-94)
-                      
+
 **HW-OW-HW    100.       104.52
 HW-OW-HW    34.05      104.52   J Phys Chem 91, 3349 (1987)
 CH-C -DU    35.        120.0    Dummy Values for Perturbations - wlj
@@ -371,9 +371,9 @@ C -CH-C3    63.0       111.1      ALA
 C -CH-CH    63.0       111.1      ILE
 C -CH-N     63.0       110.1      AA     WORK DONE ON 6/23/82
 C -CH-NT    80.0       109.7      AA
-C -CH-N3    63.0       110.1      
-C3-CH-N3    80.0       109.7      
-C2-CH-N3    80.0       109.7      
+C -CH-N3    63.0       110.1
+C3-CH-N3    80.0       109.7
+C2-CH-N3    80.0       109.7
 C2-CH-CH    63.0       111.5      SUG,ILE
 C2-CH-N     80.0       109.7      ALA    JACS 94, 2657
 C2-CH-N*    80.0       109.5      SUG
@@ -479,8 +479,8 @@ CH-NT-C3    51.8       107.2             "
 C2-NT-C2    51.8       107.2             "
 C2-NT-C3    51.8       107.2             "
 C3-NT-C3    51.8       107.2             "
-C2-N3-C2    51.8       107.2             " for prot amine 
-C2-N3-CH    51.8       107.2             " for prot amine 
+C2-N3-C2    51.8       107.2             " for prot amine
+C2-N3-CH    51.8       107.2             " for prot amine
 HC-CT-HC     35.       109.5
 HC-CT-N      35.       109.5
 HC-CT-N*     35.       109.5
@@ -519,7 +519,7 @@ H -N -H     35.        120.       ADE,CYT,GUA,GLN,ASN     **
 H3-N -H3    35.        120.       ADE,CYT,GUA,GLN,ASN     **
 C -N*-CH    70.        117.6      URA,CYT
 C -N*-CJ    70.        121.6      URA,CYT
-C -N*-CM    70.        121.6      
+C -N*-CM    70.        121.6
 C -NA-CM    70.        121.6      copy from above for CytH+ (jtr 5-14-91)
 C -N*-CT     70.       117.6
 C -N*-H     35.        119.2
@@ -727,7 +727,7 @@ C3-C7-C3    70.        124.     OPLS hydrocarbons ff (jtr 5-14-91)
 CA-OS-C3    46.5       113.0    Anisole  JPC 4483 (1990) added 9/96 MLL
 CA-OS-C2   100.0       111.8    AMBER(MMOD) 9/9/91
 CA-CT-CA    40.0       109.5      "
-CA-CT-C2    63.0       114.0      "           
+CA-CT-C2    63.0       114.0      "
 CT-CT-F     50.        109.5    PAK F-CT-HC (emd 5-09-94)
 F -CT-F     77.        109.1    PAK F-CT-F  (emd 5-09-94)
 CT-C -C     80.        117.2    (JP 1-6-91) FK506,SKF8

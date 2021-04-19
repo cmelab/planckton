@@ -1,5 +1,4 @@
 import pytest
-
 import unyt as u
 from unyt.exceptions import UnitConversionError
 

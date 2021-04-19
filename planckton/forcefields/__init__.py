@@ -1,6 +1,6 @@
 """Forcefields included with PlanckTon."""
-from os import path
 import warnings
+from os import path
 
 import foyer.forcefields as ff
 from foyer import Forcefield

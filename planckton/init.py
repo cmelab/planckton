@@ -5,9 +5,9 @@ import foyer
 import mbuild as mb
 import numpy as np
 import parmed as pmd
+import unyt as u
 from ele import element_from_symbol
 from ele.exceptions import ElementError
-import unyt as u
 from unyt.exceptions import UnitConversionError
 
 from planckton.forcefields import FORCEFIELD
@@ -143,7 +143,6 @@ class Pack:
                 "Typed compounds are designed to be used with the custom "
                 "forcefields. Try 'gaff-custom' instead."
             )
-
 
         if isinstance(density, u.unyt_quantity):
             try:

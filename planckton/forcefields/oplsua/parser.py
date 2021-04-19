@@ -1,4 +1,5 @@
-from dataclasses import dataclass, InitVar
+from dataclasses import InitVar, dataclass
+
 from mass import MASS, NON_ELEMENT
 
 PI = 3.141_592_653_589

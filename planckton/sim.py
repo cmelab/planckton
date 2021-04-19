@@ -4,8 +4,8 @@ import os
 import hoomd.data
 import hoomd.dump
 import hoomd.md
-from mbuild.formats.hoomd_simulation import create_hoomd_simulation
 import unyt as u
+from mbuild.formats.hoomd_simulation import create_hoomd_simulation
 
 from planckton.utils.solvate import set_coeffs
 

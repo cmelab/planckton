@@ -1,7 +1,7 @@
 import pytest
-
 import unyt as u
 from base_test import BaseTest
+
 from planckton.compounds import COMPOUND
 from planckton.forcefields import FORCEFIELD
 from planckton.init import Compound, Pack
@@ -33,7 +33,7 @@ class TestSimulations(BaseTest):
             p3ht,
             ff=FORCEFIELD["gaff"],
             n_compounds=2,
-            density=0.01 * u.g / u.cm**3
+            density=0.01 * u.g / u.cm ** 3,
         )
         system = packer.pack()
         my_sim = Simulation(
@@ -55,8 +55,8 @@ class TestSimulations(BaseTest):
                 p3ht,
                 ff=FORCEFIELD["gaff"],
                 n_compounds=2,
-                density=0.01 * u.g / u.cm**3,
-                remove_hydrogen_atoms=True
+                density=0.01 * u.g / u.cm ** 3,
+                remove_hydrogen_atoms=True,
             )
 
     def test_smiles_opvgaff_raises(self):
@@ -66,7 +66,7 @@ class TestSimulations(BaseTest):
                 p3ht,
                 ff=FORCEFIELD["gaff-custom"],
                 n_compounds=2,
-                density=0.01 * u.g / u.cm**3,
+                density=0.01 * u.g / u.cm ** 3,
             )
 
     def test_typed_gaff_raises(self):
@@ -76,5 +76,5 @@ class TestSimulations(BaseTest):
                 p3ht,
                 ff=FORCEFIELD["gaff"],
                 n_compounds=2,
-                density=0.01 * u.g / u.cm**3,
+                density=0.01 * u.g / u.cm ** 3,
             )

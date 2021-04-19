@@ -16,7 +16,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - use unyt and ele packages for handling units and elements
 - use gsd instead of deprecated xml files
 - use `create_hoomd_simulation` function from mbuild
-- remove `cme_utils` dependency 
+- remove `cme_utils` dependency
 
 ## 0.0.2 - 2019-01-16
 ### Added

@@ -1,6 +1,6 @@
 # How to add new compounds
 
-## Set up 
+## Set up
 
 First we need a few more tools:
 

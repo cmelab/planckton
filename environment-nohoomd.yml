@@ -6,7 +6,7 @@ dependencies:
   - ele=0.1.0
   - foyer=0.7.7
   - gsd=2.2.0
-  - mdtraj=1.9.5 # 
+  - mdtraj=1.9.5 #
   #- mbuild=0.10.12
   - numpy=1.19
   - openbabel=3.1.1
