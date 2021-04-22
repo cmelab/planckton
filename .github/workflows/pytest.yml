@@ -4,11 +4,11 @@ on:
   push:
     branches: [ master ]
     paths:
-      - 'planckton/*'
+      - 'planckton/**'
   pull_request:
     branches: [ master ]
     paths:
-      - 'planckton/*'
+      - 'planckton/**'
 
 jobs:
   pytest:
