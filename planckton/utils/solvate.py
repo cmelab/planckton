@@ -1,5 +1,9 @@
+"""Utility functions for scaling energies for implicit solvents."""
+
+
 def set_coeffs(pair_dict, e_factor):
-    """
+    """Scale energy coefficients.
+
     Given an e_factor and a dictionary of pair parameters (e.g. from
     `lj.get_metadata()['pair_coeff'].get_metadata()` where `lj` is
     `hoomd.md.pair.lj`). This function will return parameters to pass into

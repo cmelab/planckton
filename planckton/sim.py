@@ -1,10 +1,11 @@
+"""Tools for running an OPV simulation with PlanckTon."""
 import os
 
 import hoomd.data
 import hoomd.dump
 import hoomd.md
-from mbuild.formats.hoomd_simulation import create_hoomd_simulation
 import unyt as u
+from mbuild.formats.hoomd_simulation import create_hoomd_simulation
 
 from planckton.utils.solvate import set_coeffs
 
@@ -72,6 +73,7 @@ class Simulation:
     target_length : unyt.unyt_quantity
         Target final box length for the shrink step.
     """
+
     def __init__(
         self,
         typed_system,
@@ -86,7 +88,7 @@ class Simulation:
         dt=0.0001,
         mode="gpu",
         target_length=None,
-        restart=None
+        restart=None,
     ):
         self.system = typed_system
         self.kT = kT
@@ -103,6 +105,7 @@ class Simulation:
         self.restart = restart
 
     def run(self):
+        """Run the simulation."""
         hoomd_args = f"--single-mpi --mode={self.mode}"
         sim = hoomd.context.initialize(hoomd_args)
 
@@ -165,7 +168,7 @@ class Simulation:
                 group=all_particles,
                 overwrite=False,
                 phase=0,
-                dynamic=['momentum']
+                dynamic=["momentum"],
             )
             gsd_restart = hoomd.dump.gsd(
                 "restart.gsd",
@@ -173,7 +176,7 @@ class Simulation:
                 group=all_particles,
                 truncate=True,
                 phase=0,
-                dynamic=["momentum"]
+                dynamic=["momentum"],
             )
             log_quantities = [
                 "temperature",
@@ -198,11 +201,10 @@ class Simulation:
 
             if self.target_length is not None:
                 # Run the shrink step
-                size_variant = hoomd.variant.linear_interp([
-                    (0, snap.box.Lx),
-                    (self.shrink_steps, self.target_length.to("Angstrom").value)
-                    ],
-                    zero=0,
+                final_length = self.target_length.to("Angstrom").value
+                final_box = (self.shrink_steps, final_length)
+                size_variant = hoomd.variant.linear_interp(
+                    [(0, snap.box.Lx), final_box], zero=0
                 )
                 box_resize = hoomd.update.box_resize(L=size_variant)
                 hoomd.run_upto(self.shrink_steps)
@@ -222,4 +224,3 @@ class Simulation:
             finally:
                 gsd_restart.write_restart()
                 print("Restart file written")
-

@@ -11,7 +11,7 @@ COPY environment.yml ./
 
 # Install in base environment
 RUN conda env update -n base -f environment.yml && \
-    conda clean --all --yes -f 
+    conda clean --all --yes -f
 
 # Install curl for Codecov
 RUN apt-get update && apt-get upgrade -y && apt-get install -y curl

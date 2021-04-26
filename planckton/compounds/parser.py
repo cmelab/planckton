@@ -1,5 +1,5 @@
-from copy import deepcopy
 from collections import defaultdict
+from copy import deepcopy
 
 PI = 3.141_592_653_589
 

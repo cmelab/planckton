@@ -1,24 +1,18 @@
 import pytest
-
-from base_test import BaseTest
 import unyt as u
+from base_test import BaseTest
 
-from planckton.compounds import COMPOUND_FILE
-from planckton.force_fields import FORCE_FIELD
+from planckton.compounds import COMPOUND
+from planckton.forcefields import FORCEFIELD
 from planckton.init import Compound, Pack
 from planckton.sim import Simulation
 
 
 class TestSimulations(BaseTest):
-    @pytest.mark.parametrize("compound_name", COMPOUND_FILE.keys())
+    @pytest.mark.parametrize("compound_name", COMPOUND.keys())
     def test_simple_sim(self, compound_name):
-        compound = Compound(COMPOUND_FILE[compound_name])
-        packer = Pack(
-            compound,
-            ff=FORCE_FIELD["opv_gaff"],
-            n_compounds=2,
-            density=0.01 * u.g / u.cm**3
-        )
+        compound = Compound(COMPOUND[compound_name])
+        packer = Pack(compound, n_compounds=2, density=0.01 * u.g / u.cm ** 3)
         system = packer.pack()
         my_sim = Simulation(
             system,
@@ -37,9 +31,9 @@ class TestSimulations(BaseTest):
         p3ht = Compound("c1cscc1CCCCCC")
         packer = Pack(
             p3ht,
-            ff=FORCE_FIELD["gaff"],
+            ff=FORCEFIELD["gaff"],
             n_compounds=2,
-            density=0.01 * u.g / u.cm**3
+            density=0.01 * u.g / u.cm ** 3,
         )
         system = packer.pack()
         my_sim = Simulation(
@@ -59,10 +53,10 @@ class TestSimulations(BaseTest):
         with pytest.raises(NotImplementedError):
             packer = Pack(
                 p3ht,
-                ff=FORCE_FIELD["gaff"],
+                ff=FORCEFIELD["gaff"],
                 n_compounds=2,
-                density=0.01 * u.g / u.cm**3,
-                remove_hydrogen_atoms=True
+                density=0.01 * u.g / u.cm ** 3,
+                remove_hydrogen_atoms=True,
             )
 
     def test_smiles_opvgaff_raises(self):
@@ -70,17 +64,17 @@ class TestSimulations(BaseTest):
         with pytest.raises(NotImplementedError):
             packer = Pack(
                 p3ht,
-                ff=FORCE_FIELD["opv_gaff"],
+                ff=FORCEFIELD["gaff-custom"],
                 n_compounds=2,
-                density=0.01 * u.g / u.cm**3,
+                density=0.01 * u.g / u.cm ** 3,
             )
 
     def test_typed_gaff_raises(self):
-        p3ht = Compound(COMPOUND_FILE["P3HT_16"])
+        p3ht = Compound(COMPOUND["P3HT-16-gaff"])
         with pytest.raises(NotImplementedError):
             packer = Pack(
                 p3ht,
-                ff=FORCE_FIELD["gaff"],
+                ff=FORCEFIELD["gaff"],
                 n_compounds=2,
-                density=0.01 * u.g / u.cm**3,
+                density=0.01 * u.g / u.cm ** 3,
             )

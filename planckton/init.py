@@ -1,21 +1,22 @@
+"""Tools for initializing an OPV simulation with PlanckTon."""
 import os
 
-from ele import element_from_symbol
-from ele.exceptions import ElementError
 import foyer
 import mbuild as mb
 import numpy as np
 import parmed as pmd
 import unyt as u
+from ele import element_from_symbol
+from ele.exceptions import ElementError
 from unyt.exceptions import UnitConversionError
 
+from planckton.forcefields import FORCEFIELD
 from planckton.utils.units import planckton_units
-from planckton.force_fields import FORCE_FIELD
 
 
 class Compound(mb.Compound):
     """
-    Wrapper class for mb.Compound
+    Wrapper class for mb.Compound.
 
     Parameters
     ----------
@@ -59,6 +60,7 @@ class Compound(mb.Compound):
             self.typed = False
 
     def set_elements(self):
+        """Set the ele.element of each particle in the compound."""
         for p in self.particles():
             try:
                 p.element = element_from_symbol(p.name)
@@ -69,7 +71,7 @@ class Compound(mb.Compound):
 
 class Pack:
     """
-    Convenience class for filling box and atomtyping
+    Convenience class for filling box and atomtyping.
 
     Parameters
     ----------
@@ -83,7 +85,7 @@ class Pack:
             1.0 * u.g / u.cm**3
     ff : foyer.Forcefield
         Foyer forcefield to use for typing compounds
-        (default foyer.Forcefield("opvgaff.xml"))
+        (default foyer.Forcefield("gaff-custom.xml"))
     remove_hydrogen_atoms : bool
         Whether to remove hydrogen atoms. (default False)
     foyer_kwargs = dict
@@ -113,11 +115,11 @@ class Pack:
         compound,
         n_compounds,
         density,
-        ff=FORCE_FIELD["opv_gaff"],
+        ff=FORCEFIELD["gaff-custom"],
         remove_hydrogen_atoms=False,
         foyer_kwargs={"assert_dihedral_params": False},
     ):
-        if ff == FORCE_FIELD["gaff"] and remove_hydrogen_atoms == True:
+        if ff == FORCEFIELD["gaff"] and remove_hydrogen_atoms == True:
             raise NotImplementedError(
                 "Removing hydrogens is not supported with the GAFF forcefield"
             )
@@ -139,9 +141,8 @@ class Pack:
         if any([c.typed for c in self.compound]) and ff not in builtin_ffs:
             raise NotImplementedError(
                 "Typed compounds are designed to be used with the custom "
-                "forcefields. Try 'opv_gaff' instead."
+                "forcefields. Try 'gaff-custom' instead."
             )
-
 
         if isinstance(density, u.unyt_quantity):
             try:
@@ -171,6 +172,8 @@ class Pack:
 
     def pack(self, box_expand_factor=5):
         """
+        Packing compounds into a larger box in preparation for shrinking.
+
         Parameters
         ----------
         box_expand_factor : float
@@ -182,7 +185,6 @@ class Pack:
         typed_system : ParmEd structure
             ParmEd structure of filled box
         """
-
         if self.remove_hydrogen_atoms:
             self._remove_hydrogen()
 
@@ -201,18 +203,14 @@ class Pack:
         return typed_system
 
     def _calculate_L(self):
-        total_mass = (
-            np.sum(
-                [
-                    n * c.mass.in_base("planckton")
-                    for c, n in zip(self.compound, self.n_compounds)
-                ]
-            )
-            * u.amu
-        )
+        masses = [
+            n * c.mass.in_base("planckton")
+            for c, n in zip(self.compound, self.n_compounds)
+        ]
+        total_mass = np.sum(masses) * u.amu
 
         L = (total_mass / self.density) ** (1 / 3)
         return L.in_base("planckton")
 
 
-builtin_ffs = [FORCE_FIELD["opv_gaff"], FORCE_FIELD["oplsua-custom"]]
+builtin_ffs = [FORCEFIELD["gaff-custom"], FORCEFIELD["oplsua-custom"]]

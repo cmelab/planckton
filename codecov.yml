@@ -12,4 +12,3 @@ ignore:
     - "planckton/force_fields"
     - "planckton/__version__.py"
     - "setup.py"
-

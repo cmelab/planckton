@@ -1,3 +1,4 @@
-VERSION = (0, 3, 1)
+"""PlanckTon version."""
+VERSION = (0, 4, 0)
 
 __version__ = ".".join(map(str, VERSION))
