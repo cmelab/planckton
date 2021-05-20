@@ -52,9 +52,6 @@ pytest
 
 See example in `planckton/tests/test_sim.py`
 
-## How to develop
+## How to Contribute
 
-* Fork and clone this repo ([how to make a fork](https://docs.github.com/en/free-pro-team@latest/github/getting-started-with-github/fork-a-repo))
-* Add this repository as upstream `git remote add upstream git@github.com:cmelab/planckton.git`
-* Modify the code and push to your fork
-* Submit a pull request (PR) ([how to create a PR](https://docs.github.com/en/free-pro-team@latest/github/collaborating-with-issues-and-pull-requests/creating-a-pull-request-from-a-fork))
+see [Contributing guide](.github/CONTRIBUTING.md)
