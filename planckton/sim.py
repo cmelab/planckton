@@ -11,43 +11,48 @@ from planckton.utils.solvate import set_coeffs
 
 
 class Simulation:
-    """
-    Convenience class for initializing and running a HOOMD simulation.
+    """Convenience class for initializing and running a HOOMD simulation.
 
     Parameters
     ----------
     typed_system : ParmEd structure
-        Typed structure used to initialize the simulation
+        Typed structure used to initialize the simulation.
     kT : float
-        Dimensionless temperature at which to run the simulation
-    e_factor : float
+        Dimensionless temperature at which to run the simulation.
+    e_factor : float, default 1.0
         Scaling parameter for particle interaction strengths, used to simulate
-        solvent (default 1.0)
-    tau : float
-        Thermostat coupling strength (default 5.0)
-    gsd_write : int
-        Period to write simulation snapshots to gsd file (default 1e6)
-    log_write : int
-        Period to write simulation data to the log file (default 1e5)
-    shrink_steps : int
-        Number of timesteps over which to shrink the box (default 1e6)
-    shrink_kT_reduced : float
-        Dimensionless temperature to run the shrink step (default 10)
-    n_steps : int
-        Number of steps to run the simulation (default 1e3)
-    dt : float
-        Size of simulation timestep in simulation time units (default 0.0001)
-    mode : str
-        Mode flag passed to hoomd.context.initialize. Options are "cpu" and
-        "gpu". (default "gpu")
-    target_length : unyt.unyt_quantity
+        implicit solvent.
+    tau : float, default 1.0
+        Thermostat coupling strength.
+    gsd_write : int, default 1e6
+        Period to write simulation snapshots to gsd file.
+    log_write : int, default 1e5
+        Period to write simulation data to the log file.
+    shrink_steps : int, default 1e6
+        Number of timesteps over which to shrink the box.
+    shrink_kT_reduced : float, default 10
+        Dimensionless temperature to run the shrink step.
+    n_steps : int, default 1e3
+        Number of steps to run the simulation.
+    dt : float, default 0.0001
+        Size of simulation timestep in simulation time units.
+    mode : str, default "gpu"
+        Mode passed to hoomd.context.initialize. Options are "cpu" or "gpu".
+    target_length : unyt.unyt_quantity, default None
         Target final box length for the shrink step. If None is provided, no
-        shrink step will be performed. (default None)
-    restart : str
-        Path to gsd file from which to restart the simulation (default None)
+        shrink step will be performed.
+    restart : str, default None
+        Path to gsd file from which to restart the simulation.
+    nlist : str, default "cell"
+        Type of neighborlist to use. Options are "cell", "tree", and "stencil".
+        See https://hoomd-blue.readthedocs.io/en/stable/nlist.html and
+        https://hoomd-blue.readthedocs.io/en/stable/module-md-nlist.html
 
     Attributes
     ----------
+    ref_values : namedtuple
+        Distance, energy, and mass values used for scaling in angstroms,
+        kcal/mol, and daltons.
     system : ParmEd structure
         Structure used to initialize the simulation
     kT : float
@@ -72,6 +77,8 @@ class Simulation:
         Mode flag passed to hoomd.context.initialize.
     target_length : unyt.unyt_quantity
         Target final box length for the shrink step.
+    nlist : str
+        Type of neighborlist used.
     """
 
     def __init__(
@@ -79,7 +86,7 @@ class Simulation:
         typed_system,
         kT,
         e_factor=1.0,
-        tau=5.0,
+        tau=1.0,
         gsd_write=1e5,
         log_write=1e3,
         shrink_steps=1e3,
@@ -89,6 +96,7 @@ class Simulation:
         mode="gpu",
         target_length=None,
         restart=None,
+        nlist="cell",
     ):
         self.system = typed_system
         self.kT = kT
@@ -103,6 +111,7 @@ class Simulation:
         self.mode = mode
         self.target_length = target_length
         self.restart = restart
+        self.nlist = nlist
 
     def run(self):
         """Run the simulation."""
@@ -113,7 +122,10 @@ class Simulation:
             hoomd.util.quiet_status()
             # mbuild units are nm, amu
             hoomd_objects, ref_values = create_hoomd_simulation(
-                self.system, auto_scale=True, restart=self.restart
+                self.system,
+                auto_scale=True,
+                restart=self.restart,
+                nlist=self.nlist,
             )
             self.ref_values = ref_values
             snap = hoomd_objects[0]

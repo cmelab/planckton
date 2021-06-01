@@ -15,8 +15,7 @@ from planckton.utils.units import planckton_units
 
 
 class Compound(mb.Compound):
-    """
-    Wrapper class for mb.Compound.
+    """Wrapper class for mb.Compound.
 
     Parameters
     ----------
@@ -70,8 +69,7 @@ class Compound(mb.Compound):
 
 
 class Pack:
-    """
-    Convenience class for filling box and atomtyping.
+    """Convenience class for filling box and atomtyping.
 
     Parameters
     ----------
@@ -171,8 +169,7 @@ class Pack:
                     subcompound.remove(atom)
 
     def pack(self, box_expand_factor=5):
-        """
-        Packing compounds into a larger box in preparation for shrinking.
+        """Pack compounds into a larger box in preparation for shrinking.
 
         Parameters
         ----------
