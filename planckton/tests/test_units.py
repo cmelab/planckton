@@ -12,7 +12,7 @@ def test_conversions():
     new_quantity = units.string_to_quantity(units.quantity_to_string(quantity))
     assert quantity == new_quantity
 
-    string = "1_g-cm**3"
+    string = "1.0_g-cm**3"
     new_string = units.quantity_to_string(units.string_to_quantity(string))
     assert string == new_string
 
