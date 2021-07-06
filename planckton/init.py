@@ -117,11 +117,6 @@ class Pack:
         remove_hydrogen_atoms=False,
         foyer_kwargs={"assert_dihedral_params": False},
     ):
-        if ff == FORCEFIELD["gaff"] and remove_hydrogen_atoms == True:
-            raise NotImplementedError(
-                "Removing hydrogens is not supported with the GAFF forcefield"
-            )
-
         if not isinstance(compound, (list, set)):
             self.compound = [compound]
         else:
@@ -182,7 +177,7 @@ class Pack:
         typed_system : ParmEd structure
             ParmEd structure of filled box
         """
-        if self.remove_hydrogen_atoms:
+        if self.remove_hydrogen_atoms and self.ff == FORCEFIELD["gaff-custom"]:
             self._remove_hydrogen()
 
         L = self.L.value * box_expand_factor
@@ -197,6 +192,10 @@ class Pack:
         system.box = box
         pmd_system = system.to_parmed(residues=[self.residues])
         typed_system = self.ff.apply(pmd_system, **self.foyer_kwargs)
+        if self.remove_hydrogen_atoms and self.ff != FORCEFIELD["gaff-custom"]:
+            typed_system.strip(
+                    [a.atomic_number == 1 for a in typed_system.atoms]
+                    )
         return typed_system
 
     def _calculate_L(self):

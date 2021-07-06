@@ -48,16 +48,27 @@ class TestSimulations(BaseTest):
             target_length=packer.L,
         )
 
-    def test_gaff_noH_raises(self):
+    def test_gaff_noH(self):
         p3ht = Compound("c1cscc1CCCCCC")
-        with pytest.raises(NotImplementedError):
-            packer = Pack(
-                p3ht,
-                ff=FORCEFIELD["gaff"],
-                n_compounds=2,
-                density=0.01 * u.g / u.cm ** 3,
-                remove_hydrogen_atoms=True,
-            )
+        packer = Pack(
+            p3ht,
+            ff=FORCEFIELD["gaff"],
+            n_compounds=2,
+            density=0.01 * u.g / u.cm ** 3,
+            remove_hydrogen_atoms=True,
+        )
+        system = packer.pack()
+        my_sim = Simulation(
+            system,
+            kT=3.0,
+            gsd_write=1e2,
+            log_write=1e2,
+            e_factor=1,
+            n_steps=3e3,
+            mode="cpu",
+            shrink_steps=1e3,
+            target_length=packer.L,
+        )
 
     def test_smiles_opvgaff_raises(self):
         p3ht = Compound("c1cscc1CCCCCC")

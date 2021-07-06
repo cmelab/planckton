@@ -51,6 +51,20 @@ def test_hydrogen_removal_and_sim():
     )
     my_sim.run()
 
+def test_hydrogen_remove_gaff():
+    p3ht = Compound("c1cscc1CCCCCC")
+    p3ht_Hs = [h for h in p3ht.particles_by_element("H")]
+    packer = Pack(
+        p3ht,
+        ff=FORCEFIELD["gaff"],
+        n_compounds=2,
+        density=0.01 * u.g / u.cm ** 3,
+        remove_hydrogen_atoms=True,
+    )
+    system = packer.pack()
+    assert "H" not in [a.name for a in system.atoms]
+    assert p3ht.n_particles*2 - len(system.atoms) == len(p3ht_Hs)*2
+
 
 if __name__ == "__main__":
     if path.isfile("restart.gsd"):
