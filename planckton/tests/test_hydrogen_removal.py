@@ -18,15 +18,8 @@ def test_hydrogen_removal():
         remove_hydrogen_atoms=True,
     )
 
-    packer._remove_hydrogen()
-
-    for atom in packer.compound[0].particles():
-        assert atom.name not in [
-            "_hc",
-            "_ha",
-            "_h1",
-            "_h4",
-        ], "Hydrogen found in system!"
+    system = packer.pack()
+    assert 1 not in [a.atomic_number for a in system.atoms]
 
 
 def test_hydrogen_removal_and_sim():
