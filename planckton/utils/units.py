@@ -13,11 +13,13 @@ constants = {
 }
 
 
-def quantity_to_tuple(quantity):
-    """Break a unyt.quantity into a tuple.
+def quantity_to_string(quantity):
+    """Break a unyt.quantity into a string.
 
-    Convert a unyt.quantity into a tuple containing its value and units in
-    string format. Useful for serialization.
+    Convert a unyt.quantity into a string containing its value and units in
+    string format separated by "_". Useful for serialization. Division symbols,
+    "/", which interfere with signac's workspace directory structure will be
+    replaced with a dash, "-".
 
     IMPORTANT: This function expects one quantity, not an array.
 
@@ -27,27 +29,29 @@ def quantity_to_tuple(quantity):
 
     Returns
     -------
-    (number, string)
+    str :
+        unyt quantity in form "number_unit"
     """
-    return (quantity.item(), str(quantity.units))
+    return f"{quantity.item()}_{str(quantity.units).replace('/','-')}"
 
 
-def tuple_to_quantity(tup):
-    """Convert tuple to unyt.quantity.
+def string_to_quantity(string):
+    """Convert a string to unyt.quantity.
 
-    Convert a tuple containing values and units in string format into a unyt
-    quantity.
+    Convert a string of  values and units separated by an underscore, "_", into
+    a unyt quantity. See also `quantity_to_string`.
 
     Parameters
     ----------
-    tup: tuple
-        first value is a number and the second value is a string with the units
+    string : str
+        Unyt quantity formatted as string, e.g., "number_units"
 
     Returns
     -------
     unyt.unyt_quantity
     """
-    return tup[0] * u.Unit(tup[1])
+    num, unit = string.split("_")
+    return float(num) * u.Unit(unit.replace("-", "/"))
 
 
 def reduced_from_kelvin(T_SI, ref_energy):
