@@ -8,13 +8,13 @@ ref_distance = 0.35635948725613575 * u.nm
 
 
 def test_conversions():
-    quantity = 1 * u.gram
-    new_quantity = units.tuple_to_quantity(units.quantity_to_tuple(quantity))
+    quantity = 1 * u.gram / u.cm ** 3
+    new_quantity = units.string_to_quantity(units.quantity_to_string(quantity))
     assert quantity == new_quantity
 
-    tup = (1, "g")
-    new_tup = units.quantity_to_tuple(units.tuple_to_quantity(tup))
-    assert tup == new_tup
+    string = "1.0_g-cm**3"
+    new_string = units.quantity_to_string(units.string_to_quantity(string))
+    assert string == new_string
 
 
 def test_temperature_reduction():
