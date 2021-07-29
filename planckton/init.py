@@ -117,11 +117,6 @@ class Pack:
         remove_hydrogen_atoms=False,
         foyer_kwargs={"assert_dihedral_params": False},
     ):
-        if ff == FORCEFIELD["gaff"] and remove_hydrogen_atoms == True:
-            raise NotImplementedError(
-                "Removing hydrogens is not supported with the GAFF forcefield"
-            )
-
         if not isinstance(compound, (list, set)):
             self.compound = [compound]
         else:
@@ -160,14 +155,6 @@ class Pack:
         self.L = self._calculate_L()
         self.foyer_kwargs = foyer_kwargs
 
-    def _remove_hydrogen(self):
-        for subcompound in self.compound:
-            for atom in subcompound.particles():
-                if atom.name in ["_hc", "_ha", "_h1", "_h4"]:
-                    # NOTE: May not be a comprehensive list of
-                    # all hydrogen types.
-                    subcompound.remove(atom)
-
     def pack(self, box_expand_factor=5):
         """Pack compounds into a larger box in preparation for shrinking.
 
@@ -182,9 +169,6 @@ class Pack:
         typed_system : ParmEd structure
             ParmEd structure of filled box
         """
-        if self.remove_hydrogen_atoms:
-            self._remove_hydrogen()
-
         L = self.L.value * box_expand_factor
         box = mb.Box([L, L, L])
         system = mb.packing.fill_box(
@@ -197,6 +181,10 @@ class Pack:
         system.box = box
         pmd_system = system.to_parmed(residues=[self.residues])
         typed_system = self.ff.apply(pmd_system, **self.foyer_kwargs)
+        if self.remove_hydrogen_atoms:
+            typed_system.strip(
+                [a.atomic_number == 1 for a in typed_system.atoms]
+            )
         return typed_system
 
     def _calculate_L(self):
