@@ -11,8 +11,7 @@ from planckton.utils.solvate import set_coeffs
 
 
 class Simulation:
-    """
-    Convenience class for initializing and running a HOOMD simulation.
+    """Convenience class for initializing and running a HOOMD simulation.
 
     Parameters
     ----------
@@ -24,9 +23,9 @@ class Simulation:
         Scaling parameter for particle interaction strengths, used to simulate
         solvent
     tau : float, default 5.0
-        Thermostat coupling period
+        Thermostat coupling period (in simulation time units)
     r_cut : float, default 2.5
-        Cutoff radius for potentials
+        Cutoff radius for potentials (in simulation distance units)
     gsd_write : int, default 1e6
         Period to write simulation snapshots to gsd file
     log_write : int, default 1e5
@@ -38,7 +37,7 @@ class Simulation:
     n_steps : int, default 1e3
         Number of steps to run the simulation
     dt : float, default 0.0001
-        Size of simulation timestep in simulation time units
+        Size of simulation timestep (in simulation time units)
     mode : str, default "gpu"
         Mode flag passed to hoomd.context.initialize. Options are "cpu" and
         "gpu".
