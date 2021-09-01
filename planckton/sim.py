@@ -24,7 +24,7 @@ class Simulation:
         Scaling parameter for particle interaction strengths, used to simulate
         solvent (default 1.0)
     tau : float
-        Thermostat coupling strength (default 5.0)
+        Thermostat coupling period (default 5.0)
     gsd_write : int
         Period to write simulation snapshots to gsd file (default 1e6)
     log_write : int
@@ -55,7 +55,7 @@ class Simulation:
     e_factor : float
         Scaling parameter for particle interaction strengths
     tau : float
-        Thermostat coupling strength
+        Thermostat coupling period
     gsd_write : int
         Period to write simulation snapshots to gsd file
     log_write : int
