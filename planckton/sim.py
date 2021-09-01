@@ -219,8 +219,11 @@ class Simulation:
             try:
                 hoomd.run_upto(self.n_steps + 1, limit_multiple=self.gsd_write)
                 print("Simulation completed")
+                done = True
             except hoomd.WalltimeLimitReached:
                 print("Walltime limit reached")
+                done = False
             finally:
                 gsd_restart.write_restart()
                 print("Restart file written")
+            return done
