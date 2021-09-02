@@ -7,4 +7,4 @@ RUN micromamba install -y -n base -f /tmp/env.yml && \
 USER root
 
 # Install curl for Codecov
-RUN sudo apt-get update && sudo apt-get upgrade -y && apt-get install -y curl
+RUN apt-get update && apt-get upgrade -y && apt-get install -y curl
