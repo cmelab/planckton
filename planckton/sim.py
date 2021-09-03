@@ -11,8 +11,7 @@ from planckton.utils.solvate import set_coeffs
 
 
 class Simulation:
-    """
-    Convenience class for initializing and running a HOOMD simulation.
+    """Convenience class for initializing and running a HOOMD simulation.
 
     Parameters
     ----------
@@ -20,31 +19,33 @@ class Simulation:
         Typed structure used to initialize the simulation
     kT : float
         Dimensionless temperature at which to run the simulation
-    e_factor : float
+    e_factor : float, default 1.0
         Scaling parameter for particle interaction strengths, used to simulate
-        solvent (default 1.0)
-    tau : float
-        Thermostat coupling period (default 5.0)
-    gsd_write : int
-        Period to write simulation snapshots to gsd file (default 1e6)
-    log_write : int
-        Period to write simulation data to the log file (default 1e5)
-    shrink_steps : int
-        Number of timesteps over which to shrink the box (default 1e6)
-    shrink_kT_reduced : float
-        Dimensionless temperature to run the shrink step (default 10)
-    n_steps : int
-        Number of steps to run the simulation (default 1e3)
-    dt : float
-        Size of simulation timestep in simulation time units (default 0.0001)
-    mode : str
+        solvent
+    tau : float, default 5.0
+        Thermostat coupling period (in simulation time units)
+    r_cut : float, default 2.5
+        Cutoff radius for potentials (in simulation distance units)
+    gsd_write : int, default 1e6
+        Period to write simulation snapshots to gsd file
+    log_write : int, default 1e5
+        Period to write simulation data to the log file
+    shrink_steps : int, default 1e6
+        Number of timesteps over which to shrink the box
+    shrink_kT_reduced : float, default 10
+        Dimensionless temperature to run the shrink step
+    n_steps : int, default 1e3
+        Number of steps to run the simulation
+    dt : float, default 0.0001
+        Size of simulation timestep (in simulation time units)
+    mode : str, default "gpu"
         Mode flag passed to hoomd.context.initialize. Options are "cpu" and
-        "gpu". (default "gpu")
-    target_length : unyt.unyt_quantity
+        "gpu".
+    target_length : unyt.unyt_quantity, default None
         Target final box length for the shrink step. If None is provided, no
-        shrink step will be performed. (default None)
-    restart : str
-        Path to gsd file from which to restart the simulation (default None)
+        shrink step will be performed.
+    restart : str, default None
+        Path to gsd file from which to restart the simulation
 
     Attributes
     ----------
@@ -56,6 +57,8 @@ class Simulation:
         Scaling parameter for particle interaction strengths
     tau : float
         Thermostat coupling period
+    r_cut : float
+        Cutoff radius for potentials
     gsd_write : int
         Period to write simulation snapshots to gsd file
     log_write : int
@@ -80,6 +83,7 @@ class Simulation:
         kT,
         e_factor=1.0,
         tau=5.0,
+        r_cut=2.5,
         gsd_write=1e5,
         log_write=1e3,
         shrink_steps=1e3,
@@ -94,6 +98,7 @@ class Simulation:
         self.kT = kT
         self.e_factor = e_factor
         self.tau = tau
+        self.r_cut = r_cut
         self.gsd_write = gsd_write
         self.log_write = log_write
         self.shrink_steps = shrink_steps
@@ -113,7 +118,10 @@ class Simulation:
             hoomd.util.quiet_status()
             # mbuild units are nm, amu
             hoomd_objects, ref_values = create_hoomd_simulation(
-                self.system, auto_scale=True, restart=self.restart
+                self.system,
+                auto_scale=True,
+                restart=self.restart,
+                r_cut=self.r_cut,
             )
             self.ref_values = ref_values
             snap = hoomd_objects[0]
