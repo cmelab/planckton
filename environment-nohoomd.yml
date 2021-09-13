@@ -3,13 +3,13 @@ channels:
   - conda-forge
 dependencies:
   - ele=0.2.0
-  - foyer=0.9.1
+  - foyer=0.9.4
   - gmso=0.6.0
   - gsd=2.4.2
-  - mbuild=0.11.0
-  - numpy=1.20
+  - mbuild=0.13.0
+  - numpy=1.21
   - openbabel=3.1.1
-  - openmm>=7.5
+  - openmm>=7.6
   - pip=20.2
   - pytest
   - pytest-cov
@@ -20,4 +20,4 @@ dependencies:
   - unyt=2.8.0
   - pip:
     - git+https://github.com/rsdefever/antefoyer.git
-    - git+https://github.com/cmelab/planckton@v0.5.0
+    - git+https://github.com/cmelab/planckton@v0.5.1
