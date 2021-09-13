@@ -4,6 +4,7 @@ channels:
 dependencies:
   - ele=0.2.0
   - foyer=0.9.4
+  - git
   - gmso=0.6.0
   - gsd=2.4.2
   - mbuild=0.13.0
