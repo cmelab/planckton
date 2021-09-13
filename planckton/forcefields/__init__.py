@@ -2,7 +2,7 @@
 import warnings
 from os import path
 
-import foyer.forcefields as ff
+import foyer
 from foyer import Forcefield
 
 FF_DIR = path.abspath(path.dirname(__file__))
@@ -11,5 +11,5 @@ with warnings.catch_warnings():
     FORCEFIELD = {
         "gaff-custom": Forcefield(path.join(FF_DIR, "gaff/opv_gaff.xml")),
         "oplsua-custom": Forcefield(path.join(FF_DIR, "oplsua/oplsua.xml")),
-        "gaff": ff.load_GAFF(),
+        "gaff": foyer.forcefields.load_GAFF(),
     }
