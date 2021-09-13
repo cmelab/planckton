@@ -41,7 +41,6 @@ class Compound(mb.Compound):
 
         # Calculate mass of compound
         self.set_elements()
-        self.mass = np.sum([p.element.mass for p in self.particles()]) * u.amu
 
         # This helps to_parmed use residues to apply ff more quickly
         self.name = os.path.basename(input_str).split(".")[0]
@@ -188,11 +187,7 @@ class Pack:
         return typed_system
 
     def _calculate_L(self):
-        masses = [
-            n * c.mass.in_base("planckton")
-            for c, n in zip(self.compound, self.n_compounds)
-        ]
-        total_mass = np.sum(masses) * u.amu
+        total_mass = np.sum([c.mass for c in self.compound]) * u.amu
 
         L = (total_mass / self.density) ** (1 / 3)
         return L.in_base("planckton")
