@@ -187,7 +187,12 @@ class Pack:
         return typed_system
 
     def _calculate_L(self):
-        total_mass = np.sum([c.mass for c in self.compound]) * u.amu
+        total_mass = (
+            np.sum(
+                [c.mass * n for c, n in zip(self.compound, self.n_compounds)]
+            )
+            * u.amu
+        )
 
         L = (total_mass / self.density) ** (1 / 3)
         return L.in_base("planckton")
