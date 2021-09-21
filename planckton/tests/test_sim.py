@@ -19,6 +19,7 @@ class TestSimulations(BaseTest):
             kT=[3.0],
             tau=[1.0],
             n_steps=[1e3],
+            e_factor=0.5,
             gsd_write=1e2,
             log_write=1e2,
             mode="cpu",
