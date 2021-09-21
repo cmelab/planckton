@@ -17,13 +17,17 @@ class Simulation:
     ----------
     typed_system : ParmEd structure
         Typed structure used to initialize the simulation.
-    kT : float
-        Dimensionless temperature at which to run the simulation
+    kT : list of float
+        Dimensionless temperature(s) at which to run the simulation
+    tau : list of float
+        Thermostat coupling period(s) (in simulation time units)
+    n_steps : list of int
+        Number of timesteps to run each simulation block
+    dt : float, default 0.001
+        Size of simulation timestep (in simulation time units)
     e_factor : float, default 1.0
         Scaling parameter for particle interaction strengths, used to simulate
         solvent
-    tau : float, default 1.0
-        Thermostat coupling period (in simulation time units)
     r_cut : float, default 2.5
         Cutoff radius for potentials (in simulation distance units)
     gsd_write : int, default 1e6
@@ -32,12 +36,8 @@ class Simulation:
         Period to write simulation data to the log file
     shrink_steps : int, default 1e6
         Number of timesteps over which to shrink the box
-    shrink_kT_reduced : float, default 10
+    shrink_kT : float, default 10
         Dimensionless temperature to run the shrink step
-    n_steps : int, default 1e3
-        Number of steps to run the simulation
-    dt : float, default 0.0001
-        Size of simulation timestep (in simulation time units)
     mode : str, default "gpu"
         Mode flag passed to hoomd.context.initialize. Options are "cpu" and
         "gpu".
@@ -58,12 +58,16 @@ class Simulation:
         kcal/mol, and daltons.
     system : ParmEd structure
         Structure used to initialize the simulation
-    kT : float
-        Dimensionless temperature at the simulation is run
+    kT : list of float
+        Dimensionless temperature(s) at the simulation is run
+    tau : list of float
+        Thermostat coupling period(s)
+    n_steps : list of int
+        Number of timesteps to run each simulation block
+    dt : float
+        Size of simulation timestep in simulation time units
     e_factor : float
         Scaling parameter for particle interaction strengths
-    tau : float
-        Thermostat coupling period
     r_cut : float
         Cutoff radius for potentials
     gsd_write : int
@@ -72,12 +76,10 @@ class Simulation:
         Period to write simulation data to the log file
     shrink_steps : int
         Number of timesteps over which to shrink the box
-    shrink_kT_reduced : float
+    shrink_kT : float
         Dimensionless temperature to run the shrink step
-    n_steps : int
-        Number of steps to run the simulation
-    dt : float
-        Size of simulation timestep in simulation time units
+    shrink_tau : float
+        Thermostat coupling period during shrink step
     mode : str
         Mode flag passed to hoomd.context.initialize.
     target_length : unyt.unyt_quantity
@@ -92,20 +94,31 @@ class Simulation:
         self,
         typed_system,
         kT,
+        tau,
+        n_steps,
+        dt=0.001,
         e_factor=1.0,
-        tau=1.0,
         r_cut=2.5,
         gsd_write=1e5,
         log_write=1e3,
         shrink_steps=1e3,
-        shrink_kT_reduced=10,
-        n_steps=1e7,
-        dt=0.0001,
+        shrink_kT=10,
+        shrink_tau=1.0,
         mode="gpu",
         target_length=None,
         restart=None,
         nlist="cell",
     ):
+        assert len(kT) == len(tau) == len(n_steps), (
+            f"Must have the same number of values for kT (found {len(kT)}), "
+            f"tau (found {len(tau)}), and n_steps (found {len(n_steps)})."
+        )
+
+        # Combine n_steps, so each value reflects the total steps at that point
+        for i, n in enumerate(n_steps[:-1]):
+            for j in range(i + 1, len(n_steps)):
+                n_steps[j] += n
+
         self.system = typed_system
         self.kT = kT
         self.e_factor = e_factor
@@ -114,7 +127,8 @@ class Simulation:
         self.gsd_write = gsd_write
         self.log_write = log_write
         self.shrink_steps = shrink_steps
-        self.shrink_kT_reduced = shrink_kT_reduced
+        self.shrink_kT = shrink_kT
+        self.shrink_tau = shrink_tau
         self.n_steps = n_steps
         self.dt = dt
         self.mode = mode
@@ -176,12 +190,12 @@ class Simulation:
             all_particles = hoomd.group.all()
             try:
                 integrator = hoomd.md.integrate.nvt(
-                    group=both, tau=self.tau, kT=self.shrink_kT_reduced
+                    group=both, tau=self.shrink_tau, kT=self.shrink_kT
                 )
             except NameError:
                 # both does not exist
                 integrator = hoomd.md.integrate.nvt(
-                    group=all_particles, tau=self.tau, kT=self.shrink_kT_reduced
+                    group=all_particles, tau=self.shrink_tau, kT=self.shrink_kT
                 )
 
             hoomd.dump.gsd(
@@ -218,8 +232,6 @@ class Simulation:
                 overwrite=False,
                 phase=0,
             )
-            if self.restart is None:
-                integrator.randomize_velocities(seed=42)
 
             if self.target_length is not None:
                 # Run the shrink step
@@ -229,23 +241,26 @@ class Simulation:
                     [(0, snap.box.Lx), final_box], zero=0
                 )
                 box_resize = hoomd.update.box_resize(L=size_variant)
+                integrator.randomize_velocities(seed=42)
                 hoomd.run_upto(self.shrink_steps)
                 box_resize.disable()
-                self.n_steps += self.shrink_steps
+                self.n_steps = [i + self.shrink_steps for i in self.n_steps]
 
-            # After shrinking, reset velocities and change temp
-            integrator.set_params(kT=self.kT)
-            integrator.randomize_velocities(seed=42)
-            integrator_mode.set_params(dt=self.dt)
+            # Begin temp ramp
+            for kT, tau, n_steps in zip(self.kT, self.tau, self.n_steps):
+                integrator.set_params(kT=kT, tau=tau)
+                # Reset velocities
+                integrator.randomize_velocities(seed=42)
 
-            try:
-                hoomd.run_upto(self.n_steps + 1, limit_multiple=self.gsd_write)
-                print("Simulation completed")
-                done = True
-            except hoomd.WalltimeLimitReached:
-                print("Walltime limit reached")
-                done = False
-            finally:
-                gsd_restart.write_restart()
-                print("Restart file written")
-            return done
+                try:
+                    hoomd.run_upto(n_steps + 1, limit_multiple=self.gsd_write)
+                    if sim.system.getCurrentTimeStep() >= self.n_steps[-1]:
+                        print("Simulation completed")
+                        done = True
+                except hoomd.WalltimeLimitReached:
+                    print("Walltime limit reached")
+                    done = False
+                finally:
+                    gsd_restart.write_restart()
+                    print("Restart file written")
+        return done

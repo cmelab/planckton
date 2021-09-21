@@ -34,11 +34,11 @@ def test_hydrogen_removal_and_sim():
     system = packer.pack()
     my_sim = Simulation(
         system,
-        kT=3.0,
+        kT=[3.0],
+        tau=[1.0],
+        n_steps=[1e3],
         gsd_write=1e2,
         log_write=1e2,
-        e_factor=0.5,
-        n_steps=3e3,
         mode="cpu",
         shrink_steps=1e3,
     )

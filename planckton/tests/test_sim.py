@@ -16,11 +16,12 @@ class TestSimulations(BaseTest):
         system = packer.pack()
         my_sim = Simulation(
             system,
-            kT=3.0,
+            kT=[3.0],
+            tau=[1.0],
+            n_steps=[1e3],
+            e_factor=0.5,
             gsd_write=1e2,
             log_write=1e2,
-            e_factor=1,
-            n_steps=3e3,
             mode="cpu",
             shrink_steps=1e3,
             target_length=packer.L,
@@ -38,11 +39,11 @@ class TestSimulations(BaseTest):
         system = packer.pack()
         my_sim = Simulation(
             system,
-            kT=3.0,
+            kT=[3.0],
+            tau=[1.0],
+            n_steps=[1e3],
             gsd_write=1e2,
             log_write=1e2,
-            e_factor=1,
-            n_steps=3e3,
             mode="cpu",
             shrink_steps=1e3,
             target_length=packer.L,
@@ -60,11 +61,11 @@ class TestSimulations(BaseTest):
         system = packer.pack()
         my_sim = Simulation(
             system,
-            kT=3.0,
+            kT=[3.0],
+            tau=[1.0],
+            n_steps=[1e3],
             gsd_write=1e2,
             log_write=1e2,
-            e_factor=1,
-            n_steps=3e3,
             mode="cpu",
             shrink_steps=1e3,
             target_length=packer.L,
@@ -101,13 +102,50 @@ class TestSimulations(BaseTest):
         system = packer.pack()
         my_sim = Simulation(
             system,
-            kT=3.0,
+            kT=[3.0],
+            tau=[1.0],
+            n_steps=[1e3],
             gsd_write=1e2,
             log_write=1e2,
-            e_factor=1,
-            n_steps=3e3,
             mode="cpu",
             shrink_steps=1e3,
             target_length=packer.L,
             nlist="tree",
         )
+
+    def test_temps_ramp(self):
+        p3ht = Compound("c1cscc1CCCCCC")
+        packer = Pack(
+            p3ht,
+            ff=FORCEFIELD["gaff"],
+            n_compounds=2,
+            density=0.01 * u.g / u.cm ** 3,
+        )
+        system = packer.pack()
+        my_sim = Simulation(
+            system,
+            kT=[3.0, 4.0],
+            tau=[1.0, 1.0],
+            n_steps=[1e3, 1e3],
+            shrink_steps=1e3,
+            target_length=packer.L,
+            mode="cpu",
+        )
+
+    def test_bad_temps_raises(self):
+        p3ht = Compound("c1cscc1CCCCCC")
+        packer = Pack(
+            p3ht,
+            ff=FORCEFIELD["gaff"],
+            n_compounds=2,
+            density=0.01 * u.g / u.cm ** 3,
+        )
+        system = packer.pack()
+        with pytest.raises(AssertionError):
+            my_sim = Simulation(
+                system,
+                kT=[3.0, 4.0],
+                tau=[1.0],
+                n_steps=[1e3],
+                mode="cpu",
+            )
