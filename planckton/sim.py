@@ -16,13 +16,13 @@ class Simulation:
     Parameters
     ----------
     typed_system : ParmEd structure
-        Typed structure used to initialize the simulation
+        Typed structure used to initialize the simulation.
     kT : float
         Dimensionless temperature at which to run the simulation
     e_factor : float, default 1.0
         Scaling parameter for particle interaction strengths, used to simulate
         solvent
-    tau : float, default 5.0
+    tau : float, default 1.0
         Thermostat coupling period (in simulation time units)
     r_cut : float, default 2.5
         Cutoff radius for potentials (in simulation distance units)
@@ -45,10 +45,17 @@ class Simulation:
         Target final box length for the shrink step. If None is provided, no
         shrink step will be performed.
     restart : str, default None
-        Path to gsd file from which to restart the simulation
+        Path to gsd file from which to restart the simulation.
+    nlist : str, default "cell"
+        Type of neighborlist to use. Options are "cell", "tree", and "stencil".
+        See https://hoomd-blue.readthedocs.io/en/stable/nlist.html and
+        https://hoomd-blue.readthedocs.io/en/stable/module-md-nlist.html
 
     Attributes
     ----------
+    ref_values : namedtuple
+        Distance, energy, and mass values used for scaling in angstroms,
+        kcal/mol, and daltons.
     system : ParmEd structure
         Structure used to initialize the simulation
     kT : float
@@ -75,6 +82,10 @@ class Simulation:
         Mode flag passed to hoomd.context.initialize.
     target_length : unyt.unyt_quantity
         Target final box length for the shrink step.
+    nlist : hoomd.md.nlist
+        Type of neighborlist used, see
+        https://hoomd-blue.readthedocs.io/en/stable/module-md-nlist.html
+        for more information.
     """
 
     def __init__(
@@ -82,7 +93,7 @@ class Simulation:
         typed_system,
         kT,
         e_factor=1.0,
-        tau=5.0,
+        tau=1.0,
         r_cut=2.5,
         gsd_write=1e5,
         log_write=1e3,
@@ -93,6 +104,7 @@ class Simulation:
         mode="gpu",
         target_length=None,
         restart=None,
+        nlist="cell",
     ):
         self.system = typed_system
         self.kT = kT
@@ -108,6 +120,7 @@ class Simulation:
         self.mode = mode
         self.target_length = target_length
         self.restart = restart
+        self.nlist = getattr(hoomd.md.nlist, nlist)
 
     def run(self):
         """Run the simulation."""
@@ -121,6 +134,7 @@ class Simulation:
                 self.system,
                 auto_scale=True,
                 restart=self.restart,
+                nlist=self.nlist,
                 r_cut=self.r_cut,
             )
             self.ref_values = ref_values
