@@ -104,7 +104,6 @@ class Simulation:
         shrink_steps=1e3,
         shrink_kT=10,
         shrink_tau=1.0,
-        dt=0.001,
         mode="gpu",
         target_length=None,
         restart=None,
