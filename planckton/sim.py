@@ -82,8 +82,10 @@ class Simulation:
         Mode flag passed to hoomd.context.initialize.
     target_length : unyt.unyt_quantity
         Target final box length for the shrink step.
-    nlist : str
-        Type of neighborlist used.
+    nlist : hoomd.md.nlist
+        Type of neighborlist used, see
+        https://hoomd-blue.readthedocs.io/en/stable/module-md-nlist.html
+        for more information.
     """
 
     def __init__(
@@ -118,7 +120,7 @@ class Simulation:
         self.mode = mode
         self.target_length = target_length
         self.restart = restart
-        self.nlist = nlist
+        self.nlist = getattr(hoomd.md.nlist, nlist)
 
     def run(self):
         """Run the simulation."""
