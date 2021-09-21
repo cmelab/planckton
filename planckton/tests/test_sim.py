@@ -89,3 +89,25 @@ class TestSimulations(BaseTest):
                 n_compounds=2,
                 density=0.01 * u.g / u.cm ** 3,
             )
+
+    def test_nlist(self):
+        p3ht = Compound("c1cscc1CCCCCC")
+        packer = Pack(
+            p3ht,
+            ff=FORCEFIELD["gaff"],
+            n_compounds=2,
+            density=0.01 * u.g / u.cm ** 3,
+        )
+        system = packer.pack()
+        my_sim = Simulation(
+            system,
+            kT=3.0,
+            gsd_write=1e2,
+            log_write=1e2,
+            e_factor=1,
+            n_steps=3e3,
+            mode="cpu",
+            shrink_steps=1e3,
+            target_length=packer.L,
+            nlist="tree",
+        )
