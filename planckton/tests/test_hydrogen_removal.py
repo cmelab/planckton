@@ -1,5 +1,6 @@
 from os import path, remove
 
+import pytest
 import unyt as u
 
 from planckton.compounds import COMPOUND
@@ -8,10 +9,11 @@ from planckton.init import Compound, Pack
 from planckton.sim import Simulation
 
 
-def test_hydrogen_removal():
-    pcbm = Compound(COMPOUND["PCBM-gaff"])
+@pytest.mark.parametrize("compound_name", COMPOUND.keys())
+def test_hydrogen_removal(compound_name):
+    comp = Compound(COMPOUND[compound_name])
     packer = Pack(
-        pcbm,
+        comp,
         ff=FORCEFIELD["gaff-custom"],
         n_compounds=2,
         density=0.1 * u.g / u.cm ** 3,
@@ -20,6 +22,7 @@ def test_hydrogen_removal():
 
     system = packer.pack()
     assert 1 not in [a.atomic_number for a in system.atoms]
+    assert len(system.atoms) != comp.n_particles * 2
 
 
 def test_hydrogen_removal_and_sim():
