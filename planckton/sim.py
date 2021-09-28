@@ -249,8 +249,6 @@ class Simulation:
             # Begin temp ramp
             for kT, tau, n_steps in zip(self.kT, self.tau, self.n_steps):
                 integrator.set_params(kT=kT, tau=tau)
-                # Reset velocities
-                integrator.randomize_velocities(seed=42)
 
                 try:
                     hoomd.run_upto(n_steps + 1, limit_multiple=self.gsd_write)
