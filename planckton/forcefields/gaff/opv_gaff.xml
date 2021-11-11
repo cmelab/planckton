@@ -59,6 +59,8 @@
   <Bond class1="cd" class2="ha" length="0.10840000000000001" k="292126.88"/>
   <Bond class1="c3" class2="cc" length="0.1502" k="280160.64"/>
   <Bond class1="cc" class2="cc" length="0.14279999999999998" k="351288.64"/>
+  <Bond class1="cd" class2="cg" length="0.14270000000000002" k="352209.11999999994"/>
+  <Bond class1="cc" class2="cg" length="0.14257" k="353631.68"/>
   <Bond class1="nc" class2="ss" length="0.1626" k="301080.64"/>
   <Bond class1="c" class2="ss" length="0.18" k="199074.72"/>
   <Bond class1="c" class2="n" length="0.1379" k="357815.68"/>
