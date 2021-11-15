@@ -88,6 +88,10 @@
   <Bond class1="cc" class2="f" length="0.1341" k="307775.04000000004"/>
  </HarmonicBondForce>
  <HarmonicAngleForce>
+  <Angle class1="cd" class2="c3" class3="cd" angle="1.961575546316427" k="536.3888"/>
+  <Angle class1="c3" class2="cd" class3="ss" angle="2.1210986399487086" k="508.7744"/>
+  <Angle class1="cc" class2="ce" class3="cg" angle="2.1340140764134667" k="552.288"/>
+  <Angle class1="ca" class2="cc" class3="ce" angle="2.2167426829579977" k="520.4896"/>
   <Angle class1="cp" class2="ca" class3="na" angle="1.898743693244152" k="601.6592"/>
   <Angle class1="ca" class2="ca" class3="na" angle="2.065422636809568" k="578.2288"/>
   <Angle class1="c3" class2="c3" class3="na" angle="1.9701276596507018" k="548.104"/>
