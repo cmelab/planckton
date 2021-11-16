@@ -254,6 +254,17 @@
   <Angle class1="cc" class2="cd" class3="cc" angle="2.0957913657942617" k="567.3504"/>
  </HarmonicAngleForce>
  <PeriodicTorsionForce>
+  <Proper class1="" class2="ca" class3="ca" class4="" periodicity1="2" k1="15.167" phase1="3.141592653589793"/>
+  <Proper class1="" class2="c" class3="ca" class4="" periodicity1="2" k1="4.184" phase1="3.141592653589793"/>
+  <Proper class1="" class2="cc" class3="cd" class4="" periodicity1="2" k1="16.736" phase1="3.141592653589793"/>
+  <Proper class1="" class2="cd" class3="cd" class4="" periodicity1="2" k1="16.736" phase1="3.141592653589793"/>
+  <Proper class1="" class2="cc" class3="cc" class4="" periodicity1="2" k1="16.736" phase1="3.141592653589793"/>
+  <Proper class1="" class2="c" class3="cc" class4="" periodicity1="2" k1="12.029" phase1="3.141592653589793"/>
+  <Proper class1="" class2="c3" class3="cc" class4="" periodicity1="3" k1="0.0" phase1="0.0"/>
+  <Proper class1="" class2="c3" class3="cd" class4="" periodicity1="3" k1="0.0" phase1="0.0"/>
+  <Proper class1="" class2="c3" class3="c3" class4="" periodicity1="3" k1="0.6508444444444444" phase1="0.0"/>
+  <Proper class1="" class2="c" class3="cc" class4="" periodicity1="2" k1="12.029" phase1="3.141592653589793"/>
+  <Proper class1="" class2="c" class3="cd" class4="" periodicity1="2" k1="12.029" phase1="3.141592653589793"/>
   <Proper type1="cp" type2="ca" type3="na" type4="cp" k1="15.167" periodicity1="2" phase1="3.141592653589"/>
   <Proper type1="cp" type2="ca" type3="na" type4="ca" k1="15.167" periodicity1="2" phase1="3.141592653589"/>
   <Proper type1="ca" type2="ca" type3="ca" type4="na" k1="15.167" periodicity1="2" phase1="3.141592653589"/>
