@@ -13,6 +13,7 @@ dependencies:
   - openbabel=3.1.1
   - openmm>=7.6
   - pip=20.2
+  - pre-commit
   - pytest
   - pytest-cov
   - python=3.7
