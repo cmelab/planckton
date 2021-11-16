@@ -23,4 +23,4 @@ dependencies:
   - unyt=2.8.0
   - pip:
     - git+https://github.com/rsdefever/antefoyer.git
-    - git+https://github.com/cmelab/planckton@v0.6.1
+    - git+https://github.com/cmelab/planckton@v0.7.0
