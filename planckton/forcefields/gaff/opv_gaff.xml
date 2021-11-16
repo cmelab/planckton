@@ -59,6 +59,8 @@
   <Bond class1="cd" class2="ha" length="0.10840000000000001" k="292126.88"/>
   <Bond class1="c3" class2="cc" length="0.1502" k="280160.64"/>
   <Bond class1="cc" class2="cc" length="0.14279999999999998" k="351288.64"/>
+  <Bond class1="cd" class2="cg" length="0.14270000000000002" k="352209.11999999994"/>
+  <Bond class1="cc" class2="cg" length="0.14257" k="353631.68"/>
   <Bond class1="nc" class2="ss" length="0.1626" k="301080.64"/>
   <Bond class1="c" class2="ss" length="0.18" k="199074.72"/>
   <Bond class1="c" class2="n" length="0.1379" k="357815.68"/>
@@ -86,6 +88,10 @@
   <Bond class1="cc" class2="f" length="0.1341" k="307775.04000000004"/>
  </HarmonicBondForce>
  <HarmonicAngleForce>
+  <Angle class1="cd" class2="c3" class3="cd" angle="1.961575546316427" k="536.3888"/>
+  <Angle class1="c3" class2="cd" class3="ss" angle="2.1210986399487086" k="508.7744"/>
+  <Angle class1="cc" class2="ce" class3="cg" angle="2.1340140764134667" k="552.288"/>
+  <Angle class1="ca" class2="cc" class3="ce" angle="2.2167426829579977" k="520.4896"/>
   <Angle class1="cp" class2="ca" class3="na" angle="1.898743693244152" k="601.6592"/>
   <Angle class1="ca" class2="ca" class3="na" angle="2.065422636809568" k="578.2288"/>
   <Angle class1="c3" class2="c3" class3="na" angle="1.9701276596507018" k="548.104"/>
@@ -248,6 +254,17 @@
   <Angle class1="cc" class2="cd" class3="cc" angle="2.0957913657942617" k="567.3504"/>
  </HarmonicAngleForce>
  <PeriodicTorsionForce>
+  <Proper class1="" class2="ca" class3="ca" class4="" periodicity1="2" k1="15.167" phase1="3.141592653589793"/>
+  <Proper class1="" class2="c" class3="ca" class4="" periodicity1="2" k1="4.184" phase1="3.141592653589793"/>
+  <Proper class1="" class2="cc" class3="cd" class4="" periodicity1="2" k1="16.736" phase1="3.141592653589793"/>
+  <Proper class1="" class2="cd" class3="cd" class4="" periodicity1="2" k1="16.736" phase1="3.141592653589793"/>
+  <Proper class1="" class2="cc" class3="cc" class4="" periodicity1="2" k1="16.736" phase1="3.141592653589793"/>
+  <Proper class1="" class2="c" class3="cc" class4="" periodicity1="2" k1="12.029" phase1="3.141592653589793"/>
+  <Proper class1="" class2="c3" class3="cc" class4="" periodicity1="3" k1="0.0" phase1="0.0"/>
+  <Proper class1="" class2="c3" class3="cd" class4="" periodicity1="3" k1="0.0" phase1="0.0"/>
+  <Proper class1="" class2="c3" class3="c3" class4="" periodicity1="3" k1="0.6508444444444444" phase1="0.0"/>
+  <Proper class1="" class2="c" class3="cc" class4="" periodicity1="2" k1="12.029" phase1="3.141592653589793"/>
+  <Proper class1="" class2="c" class3="cd" class4="" periodicity1="2" k1="12.029" phase1="3.141592653589793"/>
   <Proper type1="cp" type2="ca" type3="na" type4="cp" k1="15.167" periodicity1="2" phase1="3.141592653589"/>
   <Proper type1="cp" type2="ca" type3="na" type4="ca" k1="15.167" periodicity1="2" phase1="3.141592653589"/>
   <Proper type1="ca" type2="ca" type3="ca" type4="na" k1="15.167" periodicity1="2" phase1="3.141592653589"/>
