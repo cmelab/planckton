@@ -88,6 +88,9 @@ class Pack:
     foyer_kwargs = dict
         Keyword arguments to be passed to foyer.Forcefield.apply()
         (default {"assert_dihedral_params": False})
+    verbose: bool, default False
+        Whether to output information about missing forcefield parameters.
+        Useful for debugging.
 
     Attributes
     ----------
@@ -105,6 +108,8 @@ class Pack:
         Whether hydrogen atoms will be removed.
     L : unyt.unyt_quantity
         Length of the box with units
+    verbose: bool
+        Whether to output information about missing forcefield parameters.
     """
 
     def __init__(
@@ -115,6 +120,7 @@ class Pack:
         ff=FORCEFIELD["gaff-custom"],
         remove_hydrogen_atoms=False,
         foyer_kwargs={"assert_dihedral_params": False},
+        verbose=False,
     ):
         if not isinstance(compound, (list, set)):
             self.compound = [compound]
@@ -153,6 +159,7 @@ class Pack:
         self.remove_hydrogen_atoms = remove_hydrogen_atoms
         self.L = self._calculate_L()
         self.foyer_kwargs = foyer_kwargs
+        self.verbose = verbose
 
     def pack(self, box_expand_factor=5):
         """Pack compounds into a larger box in preparation for shrinking.
@@ -179,7 +186,9 @@ class Pack:
         )
         system.box = box
         pmd_system = system.to_parmed(residues=[self.residues])
-        typed_system = self.ff.apply(pmd_system, **self.foyer_kwargs)
+        typed_system = self.ff.apply(
+            pmd_system, verbose=self.verbose, **self.foyer_kwargs
+        )
         if self.remove_hydrogen_atoms:
             typed_system.strip([a.atomic_number == 1 for a in pmd_system.atoms])
         return typed_system

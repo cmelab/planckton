@@ -12,7 +12,12 @@ class TestSimulations(BaseTest):
     @pytest.mark.parametrize("compound_name", COMPOUND.keys())
     def test_simple_sim(self, compound_name):
         compound = Compound(COMPOUND[compound_name])
-        packer = Pack(compound, n_compounds=2, density=0.01 * u.g / u.cm ** 3)
+        packer = Pack(
+            compound,
+            n_compounds=2,
+            density=0.01 * u.g / u.cm ** 3,
+            verbose=True,
+        )
         system = packer.pack()
         my_sim = Simulation(
             system,
