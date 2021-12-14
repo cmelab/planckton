@@ -86,6 +86,7 @@
   <Bond class1="cd" class2="f" length="0.1341" k="307775.04000000004"/>
   <Bond class1="ca" class2="os" length="0.137" k="315138.88"/>
   <Bond class1="cc" class2="f" length="0.1341" k="307775.04000000004"/>
+  <Bond class1="cc" class2="na" length="0.13802" k="356309.44"/>
  </HarmonicBondForce>
  <HarmonicAngleForce>
   <Angle class1="cd" class2="c3" class3="cd" angle="1.961575546316427" k="536.3888"/>
