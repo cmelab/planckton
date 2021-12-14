@@ -4,7 +4,7 @@ channels:
   - conda-forge
 dependencies:
   - ele=0.2.0
-  - foyer=0.9.4
+  #  - foyer=0.9.4
   - git
   - gmso=0.6.0
   - gsd=2.4.2
@@ -24,3 +24,4 @@ dependencies:
   - unyt=2.8.0
   - pip:
     - git+https://github.com/rsdefever/antefoyer.git
+    - git+https://github.com/jennyfothergill/foyer.git@feat/verbose-bond
