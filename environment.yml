@@ -22,6 +22,11 @@ dependencies:
   - signac=1.7.0
   - signac-flow=0.14.0
   - unyt=2.8.0
+  - lark-parser #
+  - lxml #
+  - networkx>=2.5 #
+  - parmed>=3.4.3 #
+  - requests #
   - pip:
     - git+https://github.com/rsdefever/antefoyer.git
-    - git+https://github.com/jennyfothergill/foyer.git@feat/verbose-bond
+    - git+https://github.com/jennyfothergill/foyer.git@feat/verbose-bond #
