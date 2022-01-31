@@ -12,7 +12,7 @@ class TestSimulations(BaseTest):
     @pytest.mark.parametrize("compound_name", COMPOUND.keys())
     def test_simple_sim(self, compound_name):
         compound = Compound(COMPOUND[compound_name])
-        packer = Pack(compound, n_compounds=2, density=0.01 * u.g / u.cm ** 3)
+        packer = Pack(compound, n_compounds=2, density=0.01 * u.g / u.cm**3)
         system = packer.pack()
         my_sim = Simulation(
             system,
@@ -34,7 +34,7 @@ class TestSimulations(BaseTest):
             p3ht,
             ff=FORCEFIELD["gaff"],
             n_compounds=2,
-            density=0.01 * u.g / u.cm ** 3,
+            density=0.01 * u.g / u.cm**3,
         )
         system = packer.pack()
         my_sim = Simulation(
@@ -55,7 +55,7 @@ class TestSimulations(BaseTest):
             p3ht,
             ff=FORCEFIELD["gaff"],
             n_compounds=2,
-            density=0.01 * u.g / u.cm ** 3,
+            density=0.01 * u.g / u.cm**3,
             remove_hydrogen_atoms=True,
         )
         system = packer.pack()
@@ -78,7 +78,7 @@ class TestSimulations(BaseTest):
                 p3ht,
                 ff=FORCEFIELD["gaff-custom"],
                 n_compounds=2,
-                density=0.01 * u.g / u.cm ** 3,
+                density=0.01 * u.g / u.cm**3,
             )
 
     def test_typed_gaff_raises(self):
@@ -88,7 +88,7 @@ class TestSimulations(BaseTest):
                 p3ht,
                 ff=FORCEFIELD["gaff"],
                 n_compounds=2,
-                density=0.01 * u.g / u.cm ** 3,
+                density=0.01 * u.g / u.cm**3,
             )
 
     def test_nlist(self):
@@ -97,7 +97,7 @@ class TestSimulations(BaseTest):
             p3ht,
             ff=FORCEFIELD["gaff"],
             n_compounds=2,
-            density=0.01 * u.g / u.cm ** 3,
+            density=0.01 * u.g / u.cm**3,
         )
         system = packer.pack()
         my_sim = Simulation(
@@ -119,7 +119,7 @@ class TestSimulations(BaseTest):
             p3ht,
             ff=FORCEFIELD["gaff"],
             n_compounds=2,
-            density=0.01 * u.g / u.cm ** 3,
+            density=0.01 * u.g / u.cm**3,
         )
         system = packer.pack()
         my_sim = Simulation(
@@ -138,7 +138,7 @@ class TestSimulations(BaseTest):
             p3ht,
             ff=FORCEFIELD["gaff"],
             n_compounds=2,
-            density=0.01 * u.g / u.cm ** 3,
+            density=0.01 * u.g / u.cm**3,
         )
         system = packer.pack()
         with pytest.raises(AssertionError):

@@ -16,7 +16,7 @@ def test_hydrogen_removal(compound_name):
         comp,
         ff=FORCEFIELD["gaff-custom"],
         n_compounds=2,
-        density=0.1 * u.g / u.cm ** 3,
+        density=0.1 * u.g / u.cm**3,
         remove_hydrogen_atoms=True,
     )
 
@@ -31,7 +31,7 @@ def test_hydrogen_removal_and_sim():
         pcbm,
         ff=FORCEFIELD["gaff-custom"],
         n_compounds=2,
-        density=0.1 * u.g / u.cm ** 3,
+        density=0.1 * u.g / u.cm**3,
         remove_hydrogen_atoms=True,
     )
     system = packer.pack()
@@ -55,7 +55,7 @@ def test_hydrogen_remove_gaff():
         p3ht,
         ff=FORCEFIELD["gaff"],
         n_compounds=2,
-        density=0.01 * u.g / u.cm ** 3,
+        density=0.01 * u.g / u.cm**3,
         remove_hydrogen_atoms=True,
     )
     system = packer.pack()

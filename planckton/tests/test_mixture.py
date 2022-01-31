@@ -15,7 +15,7 @@ def test_mixture():
         [pcbm, p3ht],
         ff=FORCEFIELD["gaff-custom"],
         n_compounds=[2, 3],
-        density=0.01 * u.g / u.cm ** 3,
+        density=0.01 * u.g / u.cm**3,
     )
 
     system = packer.pack()
