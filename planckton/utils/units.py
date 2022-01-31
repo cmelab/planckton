@@ -116,7 +116,7 @@ def convert_to_real_time(dt, ref_mass, ref_distance, ref_energy):
         Timestep in seconds
     """
     time_squared = (
-        ref_mass * ref_distance ** 2 * constants["avogadro"] / ref_energy
+        ref_mass * ref_distance**2 * constants["avogadro"] / ref_energy
     )
-    real_time = dt * (time_squared ** 0.5)
+    real_time = dt * (time_squared**0.5)
     return real_time

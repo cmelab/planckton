@@ -8,7 +8,7 @@ ref_distance = 0.35635948725613575 * u.nm
 
 
 def test_conversions():
-    quantity = 1 * u.gram / u.cm ** 3
+    quantity = 1 * u.gram / u.cm**3
     new_quantity = units.string_to_quantity(units.quantity_to_string(quantity))
     assert quantity == new_quantity
 
