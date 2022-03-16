@@ -628,6 +628,14 @@
   <Proper type1="cd" type2="cc" type3="ha" type4="cc" k1="16.736" periodicity1="2" phase1="3.141592653589"/>
   <Proper type1="cd" type2="cc" type3="cd" type4="cc" k1="16.736" periodicity1="2" phase1="3.141592653589"/>
   <Proper type1="cd" type2="cc" type3="ss" type4="cc" k1="16.736" periodicity1="2" phase1="3.141592653589"/>
+  <Proper type1="cc" type2="ca" type3="ca" type4="nc" k1="2.9288" periodicity1="2" phase1="3.141592653589"/>
+  <Proper type1="cc" type2="ca" type3="ca" type4="nd" k1="2.9288" periodicity1="2" phase1="3.141592653589"/>
+  <Proper type1="os" type2="cd" type3="nc" type4="nd" k1="4.3932" periodicity1="2" phase1="3.141592653589"/>
+  <Proper type1="os" type2="cd" type3="c3" type4="nd" k1="4.3932" periodicity1="2" phase1="3.141592653589"/>
+  <Improper type1="ca" type2="ca" type3="ca" type4="no" k1="4.6024" periodicity1="2" phase1="3.141592653589"/>
+  <Improper type1="no" type2="o" type3="ca" type4="o" k1="4.6024" periodicity1="2" phase1="3.141592653589"/>
+  <Improper type1="cc" type2="nc" type3="ca" type4="nd" k1="43.932" periodicity1="2" phase1="3.141592653589"/>
+  <Improper type1="cd" type2="nc" type3="c3" type4="os" k1="4.6024" periodicity1="2" phase1="3.141592653589"/>
   <Improper type1="na" type2="ca" type3="c3" type4="ca" k1="4.6024" periodicity1="2" phase1="3.141592653589"/>
   <Improper type1="ca" type2="cp" type3="ca" type4="na" k1="4.6024" periodicity1="2" phase1="3.141592653589"/>
   <Improper type1="cp" type2="ca" type3="ca" type4="cp" k1="4.6024" periodicity1="2" phase1="3.141592653589"/>
