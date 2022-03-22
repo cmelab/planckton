@@ -735,5 +735,7 @@
   <Atom type="ch" charge="0" sigma="0.33996695084235345" epsilon="0.87864"/>
   <Atom type="os" charge="0" sigma="0.3000012343465778" epsilon="0.7112800000000001"/>
   <Atom type="cx" charge="0" sigma="0.33996695084235345" epsilon="0.359824"/>
+  <Atom type="no" charge="0.0" sigma="0.32499985237759577" epsilon="0.7112800000000001"/>
+  <Atom type="nd" charge="0.0" sigma="0.32499985237759577" epsilon="0.7112800000000001"/>
  </NonbondedForce>
 </ForceField>
