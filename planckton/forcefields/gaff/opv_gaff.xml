@@ -24,6 +24,8 @@
   <Type name="ch" class="ch" element="_ch" mass="12.010" def="_ch" desc="" doi=""/>
   <Type name="os" class="os" element="_os" mass="16.000" def="_os" desc="" doi=""/>
   <Type name="cx" class="cx" element="_cx" mass="12.010" def="_cx" desc="" doi=""/>
+  <Type name="nd" class="nd" element="_nd" mass="14.01" def"_nd"desc=""  doi="10.1002/jcc/20035"/>
+  <Type name="no" class="no" element="_no" mass="14.01" def="_no" desc="" doi="10.1002/jcc/20035"/>
  </AtomTypes>
  <HarmonicBondForce>
   <Bond class1="ca" class2="na" length="0.1384" k="351874.4"/>
