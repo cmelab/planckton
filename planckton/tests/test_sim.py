@@ -83,7 +83,7 @@ class TestSimulations(BaseTest):
 
     def test_typed_gaff_raises(self):
         p3ht = Compound(COMPOUND["P3HT-16-gaff"])
-        with pytest.raises(NotImplementedError):
+        with pytest.warns(UserWarning):
             packer = Pack(
                 p3ht,
                 ff=FORCEFIELD["gaff"],
