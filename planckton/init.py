@@ -1,5 +1,6 @@
 """Tools for initializing an OPV simulation with PlanckTon."""
 import os
+import warnings
 
 import foyer
 import mbuild as mb
@@ -131,9 +132,10 @@ class Pack:
                 "Try a forcefield with SMARTS grammar, like 'gaff', instead."
             )
         if any([c.typed for c in self.compound]) and ff not in builtin_ffs:
-            raise NotImplementedError(
-                "Typed compounds are designed to be used with the custom "
-                "forcefields. Try 'gaff-custom' instead."
+            warnings.warn(
+                "You are using a typed compound. Make sure that the types "
+                "match those in your forcefield. If you run into errors and "
+                "are using 'gaff', try 'gaff-custom' instead."
             )
 
         if isinstance(density, u.unyt_quantity):
