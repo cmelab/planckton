@@ -628,6 +628,30 @@
   <Proper type1="cd" type2="cc" type3="ha" type4="cc" k1="16.736" periodicity1="2" phase1="3.141592653589"/>
   <Proper type1="cd" type2="cc" type3="cd" type4="cc" k1="16.736" periodicity1="2" phase1="3.141592653589"/>
   <Proper type1="cd" type2="cc" type3="ss" type4="cc" k1="16.736" periodicity1="2" phase1="3.141592653589"/>
+  <Proper type1="cc" type2="ca" type3="ca" type4="nc" k1="2.9288" periodicity1="2" phase1="3.141592653589"/>
+  <Proper type1="cc" type2="ca" type3="ca" type4="nd" k1="2.9288" periodicity1="2" phase1="3.141592653589"/>
+  <Proper type1="os" type2="cd" type3="nc" type4="nd" k1="4.3932" periodicity1="2" phase1="3.141592653589"/>
+  <Proper type1="os" type2="cd" type3="c3" type4="nd" k1="4.3932" periodicity1="2" phase1="3.141592653589"/>
+  <Proper type1="ca" type2="ca" type3="cc" type4="ce" k1="0.0" k2="4.387824313701576" k3="0.0" k4="0.0" periodicity1="1" periodicity2="2" periodicity3="3" periodicity4="4" phase1="0.0" phase2="3.141592653589793" phase3="0.0" phase4="3.141592653589793"/> 
+  <Proper type1="ca" type2="ca" type3="cc" type4="cc" k1="0.0" k2="4.387824313701576" k3="0.0" k4="0.0" periodicity1="1" periodicity2="2" periodicity3="3" periodicity4="4" phase1="0.0" phase2="3.141592653589793" phase3="0.0" phase4="3.141592653589793"/>
+  <Proper type1="ca" type2="na" type3="c3" type4="h1" k1="0" k2="0.7802448648863632" k3="-0.19137745034585105" k4="0" periodicity1="1" periodicity2="2" periodicity3="3" periodicity4="4" phase1="0" phase2="0.0" phase3="0.0" phase4="3.141592653589793"/>
+  <Proper type1="cc" type2="na" type3="c3" type4="c3" k1="0.0" k2="0.7802448648863632" k3="-0.19137745034585105" k4="0.0" periodicity1="1" periodicity2="2" periodicity3="3" periodicity4="4" phase1="0.0" phase2="0.0" phase3="0.0" phase4="3.141592653589793"/>
+  <Proper type1="ca" type2="cd" type3="ss" type4="cd" k1="0.0" k2="1.855063289362304" k3="0.0" k4="0.0" periodicity1="1" periodicity2="2" periodicity3="3" periodicity4="4" phase1="0.0" phase2="3.141592653589793" phase3="0.0" phase4="3.141592653589793"/>
+  <Proper type1="ca" type2="ca" type3="ss" type4="cd" k1="0.0" k2="0.0" k3="-0.93912285044788" k4="0.0" periodicity1="1" periodicity2="2" periodicity3="3" periodicity4="4" phase1="0.0" phase2="3.141592653589793" phase3="0.0" phase4="3.141592653589793"/>
+  <Proper type1="cc" type2="cc" type3="ss" type4="cc" k1="0.0" k2="1.855063289362304" k3="0.0" k4="0.0" periodicity1="1" periodicity2="2" periodicity3="3" periodicity4="4" phase1="0.0" phase2="3.141592653589793" phase3="0.0" phase4="3.141592653589793"/>
+  <Proper type1="ce" type2="cc" type3="ss" type4="cc" k1="0.0" k2="1.855063289362304" k3="0.0" k4="0.0" periodicity1="1" periodicity2="2" periodicity3="3" periodicity4="4" phase1="0.0" phase2="3.141592653589793" phase3="0.0" phase4="3.141592653589793"/>
+  <Proper type1="cd" type2="cd" type3="c3" type4="hc" k1="0.0" k2="0.0" k3="-0.93912285044788" k4="0.0" periodicity1="1" periodicity2="2" periodicity3="3" periodicity4="4" phase1="0.0" phase2="3.141592653589793" phase3="0.0" phase4="3.141592653589793"/>
+  <Proper type1="c3" type2="c3" type3="cd" type4="cc" k1="0.0" k2="0.0" k3="-0.93912285044788" k4="0.0" periodicity1="1" periodicity2="2" periodicity3="3" periodicity4="4" phase1="0.0" phase2="3.141592653589793" phase3="0.0" phase4="3.141592653589793"/>
+  <Proper type1="cd" type2="ce" type3="cc" type4="ss" k1="0.0" k2="4.387824313701576" k3="0.0" k4="0.0" periodicity1="1" periodicity2="2" periodicity3="3" periodicity4="4" phase1="0.0" phase2="3.141592653589793" phase3="0.0" phase4="3.141592653589793"/>
+  <Proper type1="ss" type2="cc" type3="ce" type4="ha" k1="0.0" k2="4.387824313701576" k3="0.0" k4="0.0" periodicity1="1" periodicity2="2" periodicity3="3" periodicity4="4" phase1="0.0" phase2="3.141592653589793" phase3="0.0" phase4="3.141592653589793"/>
+  <Proper type1="cd" type2="cd" type3="ce" type4="cg" k1="0.0" k2="4.387824313701576" k3="0.0" k4="0.0" periodicity1="1" periodicity2="2" periodicity3="3" periodicity4="4" phase1="0.0" phase2="3.141592653589793" phase3="0.0" phase4="3.141592653589793"/>
+  <Proper type1="ca" type2="cd" type3="ce" type4="cg" k1="0.0" k2="4.387824313701576" k3="0.0" k4="0.0" periodicity1="1" periodicity2="2" periodicity3="3" periodicity4="4" phase1="0.0" phase2="3.141592653589793" phase3="0.0" phase4="3.141592653589793"/>
+   <Proper type1="c" type2="cd" type3="ce" type4="cc" k1="0.0" k2="4.387824313701576" k3="0.0" k4="0.0" periodicity1="1" periodicity2="2" periodicity3="3" periodicity4="4" phase1="0.0" phase2="3.141592653589793" phase3="0.0" phase4="3.141592653589793"/>
+   <Proper type1="c" type2="cd" type3="ce" type4="ha" k1="0.0" k2="4.387824313701576" k3="0.0" k4="0.0" periodicity1="1" periodicity2="2" periodicity3="3" periodicity4="4" phase1="0.0" phase2="3.141592653589793" phase3="0.0" phase4="3.141592653589793"/>
+  <Improper type1="ca" type2="ca" type3="ca" type4="no" k1="4.6024" periodicity1="2" phase1="3.141592653589"/>
+  <Improper type1="no" type2="o" type3="ca" type4="o" k1="4.6024" periodicity1="2" phase1="3.141592653589"/>
+  <Improper type1="cc" type2="nc" type3="ca" type4="nd" k1="43.932" periodicity1="2" phase1="3.141592653589"/>
+  <Improper type1="cd" type2="nc" type3="c3" type4="os" k1="4.6024" periodicity1="2" phase1="3.141592653589"/>
   <Improper type1="na" type2="ca" type3="c3" type4="ca" k1="4.6024" periodicity1="2" phase1="3.141592653589"/>
   <Improper type1="ca" type2="cp" type3="ca" type4="na" k1="4.6024" periodicity1="2" phase1="3.141592653589"/>
   <Improper type1="cp" type2="ca" type3="ca" type4="cp" k1="4.6024" periodicity1="2" phase1="3.141592653589"/>
@@ -701,6 +725,7 @@
   <Improper type1="cd" type2="cd" type3="cd" type4="ss" k1="4.6024" periodicity1="2" phase1="3.141592653589"/>
   <Improper type1="cd" type2="cc" type3="cc" type4="ss" k1="4.6024" periodicity1="2" phase1="3.141592653589"/>
   <Improper type1="cc" type2="cd" type3="cd" type4="ss" k1="4.6024" periodicity1="2" phase1="3.141592653589"/>
+  <Improper type1="n1" type2="cg" type3="ce" type4="cd" k1="0.0" k2="1.5341333333333336" k3="0.0" k4="0.0" periodicity1="1" periodicity2="2" periodicity3="3" periodicity4="4" phase1="0.0" phase2="3.141592653589793" phase3="0.0" phase4="3.141592653589793"/>
  </PeriodicTorsionForce>
  <NonbondedForce coulomb14scale="0.833333" lj14scale="0.5">
   <Atom type="na" charge="0" sigma="0.32499985237759577" epsilon="0.7112800000000001"/>
