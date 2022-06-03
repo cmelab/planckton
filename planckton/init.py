@@ -14,6 +14,7 @@ from unyt.exceptions import UnitConversionError
 from planckton.forcefields import FORCEFIELD
 from planckton.utils.units import planckton_units
 
+from mbuild.coordinate_transform import z_axis_transform
 
 class Compound(mb.Compound):
     """Wrapper class for mb.Compound.
@@ -185,6 +186,29 @@ class Pack:
         if self.remove_hydrogen_atoms:
             typed_system.strip([a.atomic_number == 1 for a in pmd_system.atoms])
         return typed_system
+    
+    def stack(self, separation=0.7):
+        system = mb.Compound()
+        L = self.L.value
+        
+        for idx, comp in enumerate(self.compound):
+             z_axis_transform(comp)
+             comp.translate(np.array([separation,0,0])*idx)
+             system.add(comp)
+
+        system.box = mb.box.Box([L, L, L]) 
+
+        system.translate_to((
+            system.box.Lx / 2,
+            system.box.Ly / 2,
+            system.box.Lz / 2
+         ))
+    
+        system.to_parmed()
+        typed_system = self.ff.apply(system)
+
+        return typed_system
+
 
     def _calculate_L(self):
         total_mass = (
