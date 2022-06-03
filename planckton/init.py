@@ -188,6 +188,19 @@ class Pack:
         return typed_system
     
     def stack(self, separation=0.7):
+        """Stack compounds in a single layer
+
+        Parameters
+        ----------
+        separation : float, default=0.7
+            Distance in nm to separate the individually stacked compounds
+
+        Returns
+        -------
+        typed_system : ParmEd structure
+            ParmEd structure of the box with the stacked compounds
+        """
+
         system = mb.Compound()
         L = self.L.value
         
