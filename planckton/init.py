@@ -217,9 +217,10 @@ class Pack:
             system.box.Lz / 2
          ))
     
-        system.to_parmed()
-        typed_system = self.ff.apply(system)
-
+        pmd_system = system.to_parmed(residues=[self.residues])
+        typed_system = self.ff.apply(pmd_system, **self.foyer_kwargs)
+        if self.remove_hydrogen_atoms:
+            typed_system.strip([a.atomic_number == 1 for a in pmd_system.atoms])
         return typed_system
 
 
