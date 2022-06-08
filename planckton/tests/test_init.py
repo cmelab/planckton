@@ -21,6 +21,7 @@ def test_no_units():
     with pytest.raises(TypeError):
         packer = Pack(pcbm, n_compounds=2, density=2)
 
+
 def test_pack():
     pcbm = Compound(COMPOUND["PCBM-gaff"])
     packer = Pack(pcbm, n_compounds=2, density=0.01 * u.g / u.cm**3)
