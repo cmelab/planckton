@@ -9,6 +9,7 @@ import parmed as pmd
 import unyt as u
 from ele import element_from_symbol
 from ele.exceptions import ElementError
+from mbuild.coordinate_transform import z_axis_transform
 from unyt.exceptions import UnitConversionError
 
 from planckton.forcefields import FORCEFIELD
@@ -180,6 +181,39 @@ class Pack:
             fix_orientation=True,
         )
         system.box = box
+        pmd_system = system.to_parmed(residues=[self.residues])
+        typed_system = self.ff.apply(pmd_system, **self.foyer_kwargs)
+        if self.remove_hydrogen_atoms:
+            typed_system.strip([a.atomic_number == 1 for a in pmd_system.atoms])
+        return typed_system
+
+    def stack(self, separation=0.7):
+        """Stack compounds in a single layer.
+
+        Parameters
+        ----------
+        separation : float, default=0.7
+            Distance in nm to separate the individually stacked compounds
+
+        Returns
+        -------
+        typed_system : ParmEd structure
+            ParmEd structure of the box with the stacked compounds
+        """
+        system = mb.Compound()
+        L = self.L.value
+
+        for idx, comp in enumerate(self.compound):
+            z_axis_transform(comp)
+            comp.translate(np.array([separation, 0, 0]) * idx)
+            system.add(comp)
+
+        system.box = mb.box.Box([L, L, L])
+
+        system.translate_to(
+            (system.box.Lx / 2, system.box.Ly / 2, system.box.Lz / 2)
+        )
+
         pmd_system = system.to_parmed(residues=[self.residues])
         typed_system = self.ff.apply(pmd_system, **self.foyer_kwargs)
         if self.remove_hydrogen_atoms:

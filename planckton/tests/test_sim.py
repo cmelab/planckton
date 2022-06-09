@@ -28,6 +28,24 @@ class TestSimulations(BaseTest):
         )
         my_sim.run()
 
+    def test_stack(self):
+        compound = Compound(COMPOUND["P3HT-16-gaff"])
+        packer = Pack(compound, n_compounds=2, density=0.01 * u.g / u.cm**3)
+        system = packer.stack(separation=1.0)
+        my_sim = Simulation(
+            system,
+            kT=[3.0],
+            tau=[1.0],
+            n_steps=[1e3],
+            e_factor=0.5,
+            gsd_write=1e2,
+            log_write=1e2,
+            mode="cpu",
+            shrink_steps=1e3,
+            target_length=packer.L,
+        )
+        my_sim.run()
+
     def test_smiles_gaff(self):
         p3ht = Compound("c1cscc1CCCCCC")
         packer = Pack(
