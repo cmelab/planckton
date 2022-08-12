@@ -2,7 +2,7 @@
 import os
 
 import hoomd.data
-import hoomd.dump
+#import hoomd.dump
 import hoomd.md
 import unyt as u
 from mbuild.formats.hoomd_simulation import create_hoomd_simulation
@@ -107,7 +107,7 @@ class Simulation:
         mode="gpu",
         target_length=None,
         restart=None,
-        nlist="cell",
+        nlist="Cell",
     ):
         assert len(kT) == len(tau) == len(n_steps), (
             f"Must have the same number of values for kT (found {len(kT)}), "
@@ -198,7 +198,7 @@ class Simulation:
                     group=all_particles, tau=self.shrink_tau, kT=self.shrink_kT
                 )
 
-            hoomd.dump.gsd(
+            hoomd.writer.gsd(
                 filename="trajectory.gsd",
                 period=self.gsd_write,
                 group=all_particles,
