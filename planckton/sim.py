@@ -139,7 +139,7 @@ class Simulation:
     def run(self):
         """Run the simulation."""
         hoomd_args = f"--single-mpi --mode={self.mode}"
-        sim = hoomd.context.initialize(hoomd_args)
+        sim = hoomd.Simulation(device=hoomd_args)
 
         with sim:
             hoomd.util.quiet_status()
