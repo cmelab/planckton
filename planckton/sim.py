@@ -219,11 +219,10 @@ class Simulation:
                     trigger=box_resize_trigger,
                 )
                 sim.operations.updaters.append(box_resize)
-                integrator.randomize_velocities(seed=42)
-                hoomd.run_upto(self.shrink_steps)
-                box_resize.disable()
+                sim.state.thermalize_particle_momenta(filter=all_particles, kT=self.shrink_kT)
+                sim.run(self.shrink_steps)
                 self.n_steps = [i + self.shrink_steps for i in self.n_steps]
-
+                
             # Begin temp ramp
             for kT, tau, n_steps in zip(self.kT, self.tau, self.n_steps):
                 integrator.set_params(kT=kT, tau=tau)
