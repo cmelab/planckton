@@ -38,7 +38,8 @@ class Simulation:
         Number of timesteps over which to shrink the box
     shrink_kT : float, default 10
         Dimensionless temperature to run the shrink step
-        "gpu".
+    shrink_period: int, default 1
+        Number of steps to run in between box updates.
     target_length : unyt.unyt_quantity, default None
         Target final box length for the shrink step. If None is provided, no
         shrink step will be performed.
@@ -48,6 +49,8 @@ class Simulation:
         Type of neighborlist to use. Options are "cell", "tree", and "stencil".
         See https://hoomd-blue.readthedocs.io/en/stable/nlist.html and
         https://hoomd-blue.readthedocs.io/en/stable/module-md-nlist.html
+    seed: int, default 5
+        Random seed for hoomd simulation
 
     Attributes
     ----------
@@ -78,12 +81,16 @@ class Simulation:
         Dimensionless temperature to run the shrink step
     shrink_tau : float
         Thermostat coupling period during shrink step
+    shrink_period: int, default=1
+        Number of steps to run in between box updates.
     target_length : unyt.unyt_quantity
         Target final box length for the shrink step.
     nlist : hoomd.md.nlist
         Type of neighborlist used, see
         https://hoomd-blue.readthedocs.io/en/stable/module-md-nlist.html
         for more information.
+    seed: int, default 5
+        Random seed for hoomd simulation
     """
 
     def __init__(
@@ -100,10 +107,11 @@ class Simulation:
         shrink_steps=1e3,
         shrink_kT=10,
         shrink_tau=1.0,
-        shrink_period=1.0,
+        shrink_period=1,
         target_length=None,
         restart=None,
         nlist="Cell",
+        seed=5
     ):
         assert len(kT) == len(tau) == len(n_steps), (
             f"Must have the same number of values for kT (found {len(kT)}), "
@@ -131,21 +139,19 @@ class Simulation:
         self.target_length = target_length
         self.restart = restart
         self.nlist = getattr(hoomd.md.nlist, nlist)
+        self.seed=seed
         self.log_quantities = [
-            "temperature",
+            "kinetic_temperature",
             "pressure",
             "volume",
             "potential_energy",
-            "kinetic_energy",
-            "pair_lj_energy",
-            "bond_harmonic_energy",
-            "angle_harmonic_energy",
+            "kinetic_energy"
         ]
 
     def run(self):
         """Run the simulation."""
         device = hoomd.device.auto_select()
-        sim = hoomd.Simulation(device=device)
+        sim = hoomd.Simulation(device=device, seed=self.seed)
 
         # mbuild units are nm, amu
         snap, hoomd_objects, ref_values = create_hoomd_forcefield(
@@ -155,11 +161,13 @@ class Simulation:
             nlist=self.nlist,
             r_cut=self.r_cut,
         )
+        sim.create_state_from_snapshot(snap)
 
         if self.target_length is not None:
             self.target_length /= ref_values.distance
 
         if self.e_factor != 1:
+            pass
             print("Scaling LJ coeffs by e_factor")
             # catch all instances of LJ pair
             ljtypes = [
@@ -238,10 +246,9 @@ class Simulation:
                 else:
                     print("Simulation not completed.")
                     done = False
-            finally:
-                gsd_restart.write_restart()
-                print("Restart file written")
-
+                hoomd.write.GSD.write(
+                        state=sim.state, mode=wb, filename=restart.gsd
+                )
         return done
 
     def _hoomd_writers(self, group, forcefields, sim):
