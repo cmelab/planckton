@@ -219,10 +219,12 @@ class Simulation:
                     trigger=box_resize_trigger,
                 )
                 sim.operations.updaters.append(box_resize)
-                sim.state.thermalize_particle_momenta(filter=all_particles, kT=self.shrink_kT)
+                sim.state.thermalize_particle_momenta(
+                        filter=all_particles, kT=self.shrink_kT
+                )
                 sim.run(self.shrink_steps, write_at_start=True)
                 self.n_steps = [i + self.shrink_steps for i in self.n_steps]
-                
+
             # Begin temp ramp
             for kT, tau, n_steps in zip(self.kT, self.tau, self.n_steps):
                 sim.operations.Integrator.methods[0].kT=kT
