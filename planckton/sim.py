@@ -183,13 +183,13 @@ class Simulation:
                         # and will fail when trying to make the new_dict
                         pass
 
-            integrator= hoomd.md.Intergrator(dt=self.dt)
+            integrator = hoomd.md.Intergrator(dt=self.dt)
             all_particles = hoomd.filter.All()
             integrator_method = hoomd.md.methods.NVT(
                 filter=all_particles, kT=self.shrink_kT, tau=self.shrink_tau
             )
-            integrator.forces=hoomd_objects
-            integrator.methods= [integrator_method]
+            integrator.forces = hoomd_objects
+            integrator.methods = [integrator_method]
             sim.operations.add(integrator)
 
             gsd_writer, table_file = self._hoomd_writers(
