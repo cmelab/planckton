@@ -136,21 +136,19 @@ class Simulation:
         sim = hoomd.Simulation(device=device)
 
         # mbuild units are nm, amu
-        snap, hoomd_objects, ref_values = create_hoomd_ff(
+        snap, hoomd_objects, ref_values = create_hoomd_forcefield(
             self.system,
             auto_scale=True,
             restart=self.restart,
             nlist=self.nlist,
             r_cut=self.r_cut,
         )
-        snap = hoomd_objects[0]
 
         if self.target_length is not None:
             self.target_length /= ref_values.distance
 
         if self.e_factor != 1:
             print("Scaling LJ coeffs by e_factor")
-            hoomd.util.quiet_status()
             # catch all instances of LJ pair
             ljtypes = [
                 i
@@ -174,19 +172,10 @@ class Simulation:
                         # instead it will be a string (e.g. "ca-ca")
                         # and will fail when trying to make the new_dict
                         pass
-            hoomd.util.unquiet_status()
 
-            integrator_mode = hoomd.md.integrate.mode_standard(dt=self.dt)
-            all_particles = hoomd.group.all()
-            try:
-                integrator = hoomd.md.integrate.nvt(
-                    group=both, tau=self.shrink_tau, kT=self.shrink_kT
-                )
-            except NameError:
-                # both does not exist
-                integrator = hoomd.md.integrate.nvt(
-                    group=all_particles, tau=self.shrink_tau, kT=self.shrink_kT
-                )
+            integrator_mode = hoomd.md.Intergrator(dt=self.dt)
+            all_particles = hoomd.filter.All()
+            integrator = hoomd.md.methods.NVT(filter=all_particles, kT= self.shrink_kT, tau=self.shrink_tau)
 
             hoomd.writer.gsd(
                 filename="trajectory.gsd",
