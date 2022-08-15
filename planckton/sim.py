@@ -175,6 +175,7 @@ class Simulation:
             all_particles = hoomd.filter.All()
             integrator = hoomd.md.methods.NVT(filter=all_particles, kT= self.shrink_kT, tau=self.shrink_tau)
 
+
             hoomd.writer.gsd(
                 filename="trajectory.gsd",
                 period=self.gsd_write,
@@ -240,4 +241,37 @@ class Simulation:
                 finally:
                     gsd_restart.write_restart()
                     print("Restart file written")
+
         return done
+
+    def _hoomd_writers(self, group, forcefields, sim):
+        # GSD and Logging:
+        if self.restart:
+            writemode = "a"
+        else:
+            writemode = "w"
+        gsd_writer = hoomd.write.GSD(
+                filename="sim_traj.gsd",
+                trigger=hoomd.trigger.Periodic(
+                    period=int(self.gsd_write), phase=0
+                ),
+                mode=f"{writemode}b",
+                dynamic=["momentum"]
+        )
+        logger = hoomd.logging.Logger(categories=["scalar", "string"])
+        logger.add(sim, quantities=["timestep", "tps"])
+        thermo_props = hoomd.md.compute.ThermodynamicQuantities(filter=group)
+        sim.operations.computes.append(thermo_props)
+        logger.add(thermo_props, quantities=self.log_quantities)
+        for f in forcefields:
+            logger.add(f, quantities=["energy"])
+
+        table_file = hoomd.write.Table(
+            output=open("sim_traj.txt", mode=f"{writemode}", newline="\n"),
+            trigger=hoomd.trigger.Periodic(
+                period=int(self.log_write), phase=0
+            ),
+            logger=logger,
+            max_header_len=None,
+        )
+        return gsd_writer, table_file
