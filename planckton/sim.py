@@ -125,7 +125,7 @@ class Simulation:
         self.shrink_steps = shrink_steps
         self.shrink_kT = shrink_kT
         self.shrink_tau = shrink_tau
-        self.shink_period=shrink_period
+        self.shink_period = shrink_period
         self.n_steps = n_steps
         self.dt = dt
         self.target_length = target_length
@@ -199,19 +199,19 @@ class Simulation:
                 final_box = (self.shrink_steps, final_length)
                 box_resize_trigger = hoomd.trigger.Periodic(self.shrink_period)
                 ramp = hoomd.variant.Ramp(
-                        A=0, B=1, t_start=0, t_ramp=int(self.shrink_steps)
+                    A=0, B=1, t_start=0, t_ramp=int(self.shrink_steps)
                 )
                 initial_box = sim.state.box
                 final_box = hoomd.Box(
-                        Lx=self.target_length,
-                        Ly=self.target_length,
-                        Lz=self.target_length
+                    Lx=self.target_length,
+                    Ly=self.target_length,
+                    Lz=self.target_length,
                 )
                 box_resize = hoomd.update.BoxResize(
-                        box1=initial_box,
-                        box2=final_box,
-                        variant=ramp,
-                        trigger=box_resize_trigger
+                    box1=initial_box,
+                    box2=final_box,
+                    variant=ramp,
+                    trigger=box_resize_trigger,
                 )
                 sim.operations.updaters.append(box_resize)
                 integrator.randomize_velocities(seed=42)
