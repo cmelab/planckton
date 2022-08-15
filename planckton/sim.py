@@ -153,9 +153,7 @@ class Simulation:
 
         # mbuild units are nm, amu
         snap, hoomd_objects, ref_values = create_hoomd_forcefield(
-            self.system,
-            auto_scale=True,
-            r_cut=self.r_cut
+            self.system, auto_scale=True, r_cut=self.r_cut
         )
         if self.restart:
             sim.create_state_from_gsd(self.restart)
@@ -205,32 +203,32 @@ class Simulation:
         sim.operations.writers.append(gsd_writer)
         sim.operations.writers.append(table_file)
 
-        if self.target_length is not None:
-            # Run the shrink step
-            final_length = self.target_length.to("Angstrom").value
-            final_box = (self.shrink_steps, final_length)
-            box_resize_trigger = hoomd.trigger.Periodic(self.shrink_period)
-            ramp = hoomd.variant.Ramp(
-                A=0, B=1, t_start=0, t_ramp=int(self.shrink_steps)
-            )
-            initial_box = sim.state.box
-            final_box = hoomd.Box(
-                Lx=self.target_length,
-                Ly=self.target_length,
-                Lz=self.target_length,
-            )
-            box_resize = hoomd.update.BoxResize(
-                box1=initial_box,
-                box2=final_box,
-                variant=ramp,
-                trigger=box_resize_trigger,
-            )
-            sim.operations.updaters.append(box_resize)
-            sim.state.thermalize_particle_momenta(
-                filter=all_particles, kT=self.shrink_kT
-            )
-            sim.run(self.shrink_steps, write_at_start=True)
-            self.n_steps = [i + self.shrink_steps for i in self.n_steps]
+            if self.target_length is not None:
+                # Run the shrink step
+                final_length = self.target_length.to("Angstrom").value
+                final_box = (self.shrink_steps, final_length)
+                box_resize_trigger = hoomd.trigger.Periodic(self.shrink_period)
+                ramp = hoomd.variant.Ramp(
+                    A=0, B=1, t_start=0, t_ramp=int(self.shrink_steps)
+                )
+                initial_box = sim.state.box
+                final_box = hoomd.Box(
+                    Lx=final_length,
+                    Ly=final_length,
+                    Lz=final_length,
+                )
+                box_resize = hoomd.update.BoxResize(
+                    box1=initial_box,
+                    box2=final_box,
+                    variant=ramp,
+                    trigger=box_resize_trigger,
+                )
+                sim.operations.updaters.append(box_resize)
+                sim.state.thermalize_particle_momenta(
+                    filter=all_particles, kT=self.shrink_kT
+                )
+                sim.run(self.shrink_steps, write_at_start=True)
+                self.n_steps = [i + self.shrink_steps for i in self.n_steps]
 
             # Begin temp ramp
             for kT, tau, n_steps in zip(self.kT, self.tau, self.n_steps):

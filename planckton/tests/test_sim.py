@@ -22,7 +22,6 @@ class TestSimulations(BaseTest):
             e_factor=0.5,
             gsd_write=1e2,
             log_write=1e2,
-            mode="cpu",
             shrink_steps=1e3,
             target_length=packer.L,
         )
@@ -40,7 +39,6 @@ class TestSimulations(BaseTest):
             e_factor=0.5,
             gsd_write=1e2,
             log_write=1e2,
-            mode="cpu",
             shrink_steps=1e3,
             target_length=packer.L,
         )
@@ -62,7 +60,6 @@ class TestSimulations(BaseTest):
             n_steps=[1e3],
             gsd_write=1e2,
             log_write=1e2,
-            mode="cpu",
             shrink_steps=1e3,
             target_length=packer.L,
         )
@@ -84,7 +81,6 @@ class TestSimulations(BaseTest):
             n_steps=[1e3],
             gsd_write=1e2,
             log_write=1e2,
-            mode="cpu",
             shrink_steps=1e3,
             target_length=packer.L,
         )
@@ -125,7 +121,6 @@ class TestSimulations(BaseTest):
             n_steps=[1e3],
             gsd_write=1e2,
             log_write=1e2,
-            mode="cpu",
             shrink_steps=1e3,
             target_length=packer.L,
             nlist="tree",
@@ -147,7 +142,6 @@ class TestSimulations(BaseTest):
             n_steps=[1e3, 1e3],
             shrink_steps=1e3,
             target_length=packer.L,
-            mode="cpu",
         )
 
     def test_bad_temps_raises(self):
@@ -165,5 +159,4 @@ class TestSimulations(BaseTest):
                 kT=[3.0, 4.0],
                 tau=[1.0],
                 n_steps=[1e3],
-                mode="cpu",
             )
