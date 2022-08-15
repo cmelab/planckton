@@ -1,11 +1,9 @@
 """Tools for running an OPV simulation with PlanckTon."""
 import os
 
-import hoomd.data
-# import hoomd.dump
-import hoomd.md
+import hoomd
 import unyt as u
-from mbuild.formats.hoomd_forcefield import create_hoomd_ff
+from mbuild.formats.hoomd_forcefield import create_hoomd_forcefield
 
 from planckton.utils.solvate import set_coeffs
 
@@ -157,11 +155,12 @@ class Simulation:
         snap, hoomd_objects, ref_values = create_hoomd_forcefield(
             self.system,
             auto_scale=True,
-            restart=self.restart,
-            nlist=self.nlist,
-            r_cut=self.r_cut,
+            r_cut=self.r_cut
         )
-        sim.create_state_from_snapshot(snap)
+        if self.restart:
+            sim.create_state_from_gsd(self.restart)
+        else:
+            sim.create_state_from_snapshot(snap)
 
         if self.target_length is not None:
             self.target_length /= ref_values.distance
