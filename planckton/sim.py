@@ -80,8 +80,6 @@ class Simulation:
         Dimensionless temperature to run the shrink step
     shrink_tau : float
         Thermostat coupling period during shrink step
-    mode : str
-        Mode flag passed to hoomd.context.initialize.
     target_length : unyt.unyt_quantity
         Target final box length for the shrink step.
     nlist : hoomd.md.nlist
@@ -104,7 +102,6 @@ class Simulation:
         shrink_steps=1e3,
         shrink_kT=10,
         shrink_tau=1.0,
-        mode="gpu",
         target_length=None,
         restart=None,
         nlist="Cell",
@@ -131,7 +128,6 @@ class Simulation:
         self.shrink_tau = shrink_tau
         self.n_steps = n_steps
         self.dt = dt
-        self.mode = mode
         self.target_length = target_length
         self.restart = restart
         self.nlist = getattr(hoomd.md.nlist, nlist)
