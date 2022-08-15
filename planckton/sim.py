@@ -153,9 +153,7 @@ class Simulation:
 
         # mbuild units are nm, amu
         snap, hoomd_objects, ref_values = create_hoomd_forcefield(
-            self.system,
-            auto_scale=True,
-            r_cut=self.r_cut
+            self.system, auto_scale=True, r_cut=self.r_cut
         )
         if self.restart:
             sim.create_state_from_gsd(self.restart)
