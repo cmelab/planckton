@@ -213,9 +213,9 @@ class Simulation:
                 )
                 initial_box = sim.state.box
                 final_box = hoomd.Box(
-                    Lx=self.target_length,
-                    Ly=self.target_length,
-                    Lz=self.target_length,
+                    Lx=final_length,
+                    Ly=final_length,
+                    Lz=final_length,
                 )
                 box_resize = hoomd.update.BoxResize(
                     box1=initial_box,
