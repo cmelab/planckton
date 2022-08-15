@@ -220,26 +220,25 @@ class Simulation:
                 )
                 sim.operations.updaters.append(box_resize)
                 sim.state.thermalize_particle_momenta(filter=all_particles, kT=self.shrink_kT)
-                sim.run(self.shrink_steps)
+                sim.run(self.shrink_steps, write_at_start=True)
                 self.n_steps = [i + self.shrink_steps for i in self.n_steps]
                 
             # Begin temp ramp
             for kT, tau, n_steps in zip(self.kT, self.tau, self.n_steps):
-                integrator.set_params(kT=kT, tau=tau)
-                # Reset velocities
-                integrator.randomize_velocities(seed=42)
+                sim.operations.Integrator.methods[0].kT=kT
+                sim.operations.Integrator.methods[0].tau=tau
+                sim.state.thermalize_particle_momenta(filter=all_particles, kT=kT)
 
-                try:
-                    hoomd.run_upto(n_steps + 1, limit_multiple=self.gsd_write)
-                    if sim.system.getCurrentTimeStep() >= self.n_steps[-1]:
-                        print("Simulation completed")
-                        done = True
-                except hoomd.WalltimeLimitReached:
-                    print("Walltime limit reached")
+                sim.run(n_steps)
+                if sim.timestep >= self.n_steps[-1]:
+                    print("Simulation completed")
+                    done = True
+                else:
+                    print("Simulation not completed.")
                     done = False
-                finally:
-                    gsd_restart.write_restart()
-                    print("Restart file written")
+            finally:
+                gsd_restart.write_restart()
+                print("Restart file written")
 
         return done
 
