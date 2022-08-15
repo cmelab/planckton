@@ -190,7 +190,6 @@ class Simulation:
             gsd_writer, table_file = self._hoomd_writers(
                     group=all_particles, sim=sim, forcefields=hoomd_objects
             )
-            
 
             if self.target_length is not None:
                 # Run the shrink step
