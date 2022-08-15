@@ -38,8 +38,6 @@ class Simulation:
         Number of timesteps over which to shrink the box
     shrink_kT : float, default 10
         Dimensionless temperature to run the shrink step
-    mode : str, default "gpu"
-        Mode flag passed to hoomd.context.initialize. Options are "cpu" and
         "gpu".
     target_length : unyt.unyt_quantity, default None
         Target final box length for the shrink step. If None is provided, no
