@@ -129,6 +129,16 @@ class Simulation:
         self.target_length = target_length
         self.restart = restart
         self.nlist = getattr(hoomd.md.nlist, nlist)
+        self.log_quantities = [
+            "temperature",
+            "pressure",
+            "volume",
+            "potential_energy",
+            "kinetic_energy",
+            "pair_lj_energy",
+            "bond_harmonic_energy",
+            "angle_harmonic_energy",
+        ]
 
     def run(self):
         """Run the simulation."""
@@ -177,41 +187,10 @@ class Simulation:
                 filter=all_particles, kT=self.shrink_kT, tau=self.shrink_tau
             )
 
-
-            hoomd.writer.gsd(
-                filename="trajectory.gsd",
-                period=self.gsd_write,
-                group=all_particles,
-                overwrite=False,
-                phase=0,
-                dynamic=["momentum"],
+            gsd_writer, table_file = self._hoomd_writers(
+                    group=all_particles, sim=sim, forcefields=hoomd_objects
             )
-            gsd_restart = hoomd.dump.gsd(
-                "restart.gsd",
-                period=self.gsd_write,
-                group=all_particles,
-                truncate=True,
-                phase=0,
-                dynamic=["momentum"],
-            )
-            log_quantities = [
-                "temperature",
-                "pressure",
-                "volume",
-                "potential_energy",
-                "kinetic_energy",
-                "pair_lj_energy",
-                "bond_harmonic_energy",
-                "angle_harmonic_energy",
-            ]
-            hoomd.analyze.log(
-                "trajectory.log",
-                quantities=log_quantities,
-                period=self.log_write,
-                header_prefix="#",
-                overwrite=False,
-                phase=0,
-            )
+            
 
             if self.target_length is not None:
                 # Run the shrink step
@@ -253,7 +232,7 @@ class Simulation:
         else:
             writemode = "w"
         gsd_writer = hoomd.write.GSD(
-                filename="sim_traj.gsd",
+                filename="trajectory.gsd",
                 trigger=hoomd.trigger.Periodic(
                     period=int(self.gsd_write), phase=0
                 ),
@@ -269,7 +248,7 @@ class Simulation:
             logger.add(f, quantities=["energy"])
 
         table_file = hoomd.write.Table(
-            output=open("sim_traj.txt", mode=f"{writemode}", newline="\n"),
+            output=open("trajectory.txt", mode=f"{writemode}", newline="\n"),
             trigger=hoomd.trigger.Periodic(
                 period=int(self.log_write), phase=0
             ),
