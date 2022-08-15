@@ -138,8 +138,8 @@ class Simulation:
 
     def run(self):
         """Run the simulation."""
-        hoomd_args = f"--single-mpi --mode={self.mode}"
-        sim = hoomd.Simulation(device=hoomd_args)
+        device = hoomd.device.auto_select()
+        sim = hoomd.Simulation(device=device)
 
         with sim:
             hoomd.util.quiet_status()
