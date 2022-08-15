@@ -111,7 +111,7 @@ class Simulation:
         target_length=None,
         restart=None,
         nlist="Cell",
-        seed=5
+        seed=5,
     ):
         assert len(kT) == len(tau) == len(n_steps), (
             f"Must have the same number of values for kT (found {len(kT)}), "
@@ -139,13 +139,13 @@ class Simulation:
         self.target_length = target_length
         self.restart = restart
         self.nlist = getattr(hoomd.md.nlist, nlist)
-        self.seed=seed
+        self.seed = seed
         self.log_quantities = [
             "kinetic_temperature",
             "pressure",
             "volume",
             "potential_energy",
-            "kinetic_energy"
+            "kinetic_energy",
         ]
 
     def run(self):
@@ -228,16 +228,18 @@ class Simulation:
                 )
                 sim.operations.updaters.append(box_resize)
                 sim.state.thermalize_particle_momenta(
-                        filter=all_particles, kT=self.shrink_kT
+                    filter=all_particles, kT=self.shrink_kT
                 )
                 sim.run(self.shrink_steps, write_at_start=True)
                 self.n_steps = [i + self.shrink_steps for i in self.n_steps]
 
             # Begin temp ramp
             for kT, tau, n_steps in zip(self.kT, self.tau, self.n_steps):
-                sim.operations.Integrator.methods[0].kT=kT
-                sim.operations.Integrator.methods[0].tau=tau
-                sim.state.thermalize_particle_momenta(filter=all_particles, kT=kT)
+                sim.operations.Integrator.methods[0].kT = kT
+                sim.operations.Integrator.methods[0].tau = tau
+                sim.state.thermalize_particle_momenta(
+                    filter=all_particles, kT=kT
+                )
 
                 sim.run(n_steps)
                 if sim.timestep >= self.n_steps[-1]:
@@ -247,7 +249,7 @@ class Simulation:
                     print("Simulation not completed.")
                     done = False
                 hoomd.write.GSD.write(
-                        state=sim.state, mode=wb, filename=restart.gsd
+                    state=sim.state, mode=wb, filename=restart.gsd
                 )
         return done
 
