@@ -1,0 +1,26 @@
+name: planckton-dev
+channels:
+  - jaimergp/label/unsupported-cudatoolkit-shim
+  - conda-forge
+dependencies:
+  - ele
+  - foyer
+  - git
+  - gmso
+  - gsd
+  - hoomd=3.4.0
+  - mbuild
+  - numpy
+  - openbabel
+  - openmm
+  - pip
+  - pre-commit
+  - pytest
+  - pytest-cov
+  - python
+  - rdkit
+  - signac
+  - signac-flow
+  - unyt
+  - pip:
+    - git+https://github.com/rsdefever/antefoyer.git
