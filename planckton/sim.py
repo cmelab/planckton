@@ -5,7 +5,7 @@ import hoomd.data
 # import hoomd.dump
 import hoomd.md
 import unyt as u
-from mbuild.formats.hoomd_simulation import create_hoomd_simulation
+from mbuild.formats.hoomd_forcefield import create_hoomd_ff
 
 from planckton.utils.solvate import set_coeffs
 
@@ -137,50 +137,46 @@ class Simulation:
         device = hoomd.device.auto_select()
         sim = hoomd.Simulation(device=device)
 
-        with sim:
+        # mbuild units are nm, amu
+        snap, hoomd_objects, ref_values = create_hoomd_ff(
+            self.system,
+            auto_scale=True,
+            restart=self.restart,
+            nlist=self.nlist,
+            r_cut=self.r_cut,
+        )
+        snap = hoomd_objects[0]
+
+        if self.target_length is not None:
+            self.target_length /= ref_values.distance
+
+        if self.e_factor != 1:
+            print("Scaling LJ coeffs by e_factor")
             hoomd.util.quiet_status()
-            # mbuild units are nm, amu
-            hoomd_objects, ref_values = create_hoomd_simulation(
-                self.system,
-                auto_scale=True,
-                restart=self.restart,
-                nlist=self.nlist,
-                r_cut=self.r_cut,
-            )
-            self.ref_values = ref_values
-            snap = hoomd_objects[0]
+            # catch all instances of LJ pair
+            ljtypes = [
+                i
+                for i in sim.forces
+                if isinstance(i, hoomd.md.pair.lj)
+                or isinstance(i, hoomd.md.special_pair.lj)
+            ]
+
+            for lj in ljtypes:
+                pair_list = lj.get_metadata()["pair_coeff"].get_metadata()
+                for pair_dict in pair_list:
+                    # Scale the epsilon values by e_factor
+                    try:
+                        a, b, new_dict = set_coeffs(
+                            pair_dict, self.e_factor
+                        )
+                        lj.pair_coeff.set(a, b, **new_dict)
+                    except ValueError:
+                        # if the pair has not been defined,
+                        # it will not have a dictionary object
+                        # instead it will be a string (e.g. "ca-ca")
+                        # and will fail when trying to make the new_dict
+                        pass
             hoomd.util.unquiet_status()
-
-            if self.target_length is not None:
-                self.target_length /= ref_values.distance
-
-            if self.e_factor != 1:
-                print("Scaling LJ coeffs by e_factor")
-                hoomd.util.quiet_status()
-                # catch all instances of LJ pair
-                ljtypes = [
-                    i
-                    for i in sim.forces
-                    if isinstance(i, hoomd.md.pair.lj)
-                    or isinstance(i, hoomd.md.special_pair.lj)
-                ]
-
-                for lj in ljtypes:
-                    pair_list = lj.get_metadata()["pair_coeff"].get_metadata()
-                    for pair_dict in pair_list:
-                        # Scale the epsilon values by e_factor
-                        try:
-                            a, b, new_dict = set_coeffs(
-                                pair_dict, self.e_factor
-                            )
-                            lj.pair_coeff.set(a, b, **new_dict)
-                        except ValueError:
-                            # if the pair has not been defined,
-                            # it will not have a dictionary object
-                            # instead it will be a string (e.g. "ca-ca")
-                            # and will fail when trying to make the new_dict
-                            pass
-                hoomd.util.unquiet_status()
 
             integrator_mode = hoomd.md.integrate.mode_standard(dt=self.dt)
             all_particles = hoomd.group.all()
