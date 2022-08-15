@@ -190,7 +190,7 @@ class Simulation:
             )
 
             gsd_writer, table_file = self._hoomd_writers(
-                    group=all_particles, sim=sim, forcefields=hoomd_objects
+                group=all_particles, sim=sim, forcefields=hoomd_objects
             )
 
             if self.target_length is not None:
@@ -246,12 +246,10 @@ class Simulation:
         else:
             writemode = "w"
         gsd_writer = hoomd.write.GSD(
-                filename="trajectory.gsd",
-                trigger=hoomd.trigger.Periodic(
-                    period=int(self.gsd_write), phase=0
-                ),
-                mode=f"{writemode}b",
-                dynamic=["momentum"]
+            filename="trajectory.gsd",
+            trigger=hoomd.trigger.Periodic(period=int(self.gsd_write), phase=0),
+            mode=f"{writemode}b",
+            dynamic=["momentum"],
         )
         logger = hoomd.logging.Logger(categories=["scalar", "string"])
         logger.add(sim, quantities=["timestep", "tps"])
@@ -263,9 +261,7 @@ class Simulation:
 
         table_file = hoomd.write.Table(
             output=open("trajectory.txt", mode=f"{writemode}", newline="\n"),
-            trigger=hoomd.trigger.Periodic(
-                period=int(self.log_write), phase=0
-            ),
+            trigger=hoomd.trigger.Periodic(period=int(self.log_write), phase=0),
             logger=logger,
             max_header_len=None,
         )
