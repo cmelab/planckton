@@ -8,7 +8,7 @@ dependencies:
   - git
   - gmso
   - gsd
-  - hoomd=3.4.0
+  - hoomd
   - mbuild
   - numpy
   - openbabel
