@@ -173,7 +173,9 @@ class Simulation:
 
             integrator_mode = hoomd.md.Intergrator(dt=self.dt)
             all_particles = hoomd.filter.All()
-            integrator = hoomd.md.methods.NVT(filter=all_particles, kT= self.shrink_kT, tau=self.shrink_tau)
+            integrator = hoomd.md.methods.NVT(
+                filter=all_particles, kT=self.shrink_kT, tau=self.shrink_tau
+            )
 
 
             hoomd.writer.gsd(
