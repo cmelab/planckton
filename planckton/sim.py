@@ -166,9 +166,7 @@ class Simulation:
                 for pair_dict in pair_list:
                     # Scale the epsilon values by e_factor
                     try:
-                        a, b, new_dict = set_coeffs(
-                            pair_dict, self.e_factor
-                        )
+                        a, b, new_dict = set_coeffs(pair_dict, self.e_factor)
                         lj.pair_coeff.set(a, b, **new_dict)
                     except ValueError:
                         # if the pair has not been defined,
