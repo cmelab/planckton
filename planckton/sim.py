@@ -79,7 +79,7 @@ class Simulation:
         Dimensionless temperature to run the shrink step
     shrink_tau : float
         Thermostat coupling period during shrink step
-    shrink_period: int, default=1
+    shrink_period: int, default 1
         Number of steps to run in between box updates.
     target_length : unyt.unyt_quantity
         Target final box length for the shrink step.
