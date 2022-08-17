@@ -20,7 +20,7 @@ DESCRIPTION = "opv simulation package"
 URL = "https://github.com/cmelab/planckton"
 EMAIL = "mikehenry@boisestate.edu"
 AUTHOR = "CME Lab"
-REQUIRES_PYTHON = ">=3.6.0"
+REQUIRES_PYTHON = ">=3.9.0"
 VERSION = None
 
 # What packages are required for this module to be executed?
@@ -111,7 +111,7 @@ setup(
         "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
         "Programming Language :: Python",
         "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.7",
+        "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: Implementation :: CPython",
         "Programming Language :: Python :: Implementation :: PyPy",
     ],
