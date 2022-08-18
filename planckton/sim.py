@@ -163,15 +163,22 @@ class Simulation:
         if self.target_length is not None:
             self.target_length /= ref_values.distance
 
+        integrator = hoomd.md.Integrator(dt=self.dt)
+        all_particles = hoomd.filter.All()
+        integrator_method = hoomd.md.methods.NVT(
+            filter=all_particles, kT=self.shrink_kT, tau=self.shrink_tau
+        )
+        integrator.forces = hoomd_objects
+
         if self.e_factor != 1.0:
             #pass
             print("Scaling LJ coeffs by e_factor")
             # catch all instances of LJ pair
             ljtypes = [
                 i
-                for i in sim.forces
-                if isinstance(i, hoomd.md.pair.lj)
-                or isinstance(i, hoomd.md.special_pair.lj)
+                for i in integrator.forces
+                if isinstance(i, hoomd.md.pair.LJ)
+                or isinstance(i, hoomd.md.special_pair.LJ)
             ]
 
             for lj in ljtypes:
@@ -188,12 +195,6 @@ class Simulation:
                         # and will fail when trying to make the new_dict
                         pass
 
-        integrator = hoomd.md.Integrator(dt=self.dt)
-        all_particles = hoomd.filter.All()
-        integrator_method = hoomd.md.methods.NVT(
-            filter=all_particles, kT=self.shrink_kT, tau=self.shrink_tau
-        )
-        integrator.forces = hoomd_objects
         integrator.methods = [integrator_method]
         sim.operations.add(integrator)
 
