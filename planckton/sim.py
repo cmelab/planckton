@@ -163,7 +163,7 @@ class Simulation:
         if self.target_length is not None:
             self.target_length /= ref_values.distance
 
-        if self.e_factor != 1:
+        if self.e_factor != 1.0:
             pass
             print("Scaling LJ coeffs by e_factor")
             # catch all instances of LJ pair
