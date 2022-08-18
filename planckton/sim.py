@@ -182,7 +182,6 @@ class Simulation:
             ]
 
             for lj in ljtypes:
-                pair_list = lj.get_metadata()["pair_coeff"].get_metadata()
                 for pair_dict in pair_list:
                     # Scale the epsilon values by e_factor
                     try:
