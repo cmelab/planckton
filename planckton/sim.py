@@ -171,7 +171,7 @@ class Simulation:
         integrator.forces = hoomd_objects
 
         if self.e_factor != 1.0:
-            #pass
+            # pass
             print("Scaling LJ coeffs by e_factor")
             # catch all instances of LJ pair
             ljtypes = [
