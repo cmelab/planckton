@@ -65,7 +65,7 @@ class Simulation:
         Number of timesteps to run each simulation block
     dt : float
         Size of simulation timestep in simulation time units
-    e_factor : float
+    e_factor : float, default 1.0
         Scaling parameter for particle interaction strengths
     r_cut : float
         Cutoff radius for potentials
@@ -164,7 +164,7 @@ class Simulation:
             self.target_length /= ref_values.distance
 
         if self.e_factor != 1.0:
-            pass
+            #pass
             print("Scaling LJ coeffs by e_factor")
             # catch all instances of LJ pair
             ljtypes = [
