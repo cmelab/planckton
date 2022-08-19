@@ -160,6 +160,11 @@ class Simulation:
             for pair in lj.params:
                 lj.params[pair]["epsilon"] *= self.e_factor
 
+        if not isinstance(self.nlist, hoomd.md.nlist.Cell):
+            exclusions = hoomd_objects[0].nlist.exclusions
+            hoomd_objects[0].nlist = self.nlist(buffer=0.4)
+            hoomd_objects[0].nlist.exclusions = exclusions
+
         if self.restart:
             sim.create_state_from_gsd(self.restart)
         else:
