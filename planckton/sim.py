@@ -5,8 +5,6 @@ import hoomd
 import unyt as u
 from mbuild.formats.hoomd_forcefield import create_hoomd_forcefield
 
-from planckton.utils.solvate import set_coeffs
-
 
 class Simulation:
     """Convenience class for initializing and running a HOOMD simulation.
