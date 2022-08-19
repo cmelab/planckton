@@ -155,6 +155,11 @@ class Simulation:
         snap, hoomd_objects, ref_values = create_hoomd_forcefield(
             self.system, auto_scale=True, r_cut=self.r_cut
         )
+        if self.e_factor != 1:
+            lj = hoomd_objects[0]
+            for pair in lj.params:
+                lj.params[pair]['epsilon'] *= self.e_factor
+                
         if self.restart:
             sim.create_state_from_gsd(self.restart)
         else:
@@ -169,32 +174,6 @@ class Simulation:
             filter=all_particles, kT=self.shrink_kT, tau=self.shrink_tau
         )
         integrator.forces = hoomd_objects
-
-        if self.e_factor != 1.0:
-            # pass
-            print("Scaling LJ coeffs by e_factor")
-            # catch all instances of LJ pair
-            ljtypes = [
-                i
-                for i in integrator.forces
-                if isinstance(i, hoomd.md.pair.LJ)
-                or isinstance(i, hoomd.md.special_pair.LJ)
-            ]
-
-            for lj in ljtypes:
-                pair_list = lj.get_metadata()["pair_coeff"].get_metadata()
-                for pair_dict in pair_list:
-                    # Scale the epsilon values by e_factor
-                    try:
-                        a, b, new_dict = set_coeffs(pair_dict, self.e_factor)
-                        lj.pair_coeff.set(a, b, **new_dict)
-                    except ValueError:
-                        # if the pair has not been defined,
-                        # it will not have a dictionary object
-                        # instead it will be a string (e.g. "ca-ca")
-                        # and will fail when trying to make the new_dict
-                        pass
-
         integrator.methods = [integrator_method]
         sim.operations.add(integrator)
 
