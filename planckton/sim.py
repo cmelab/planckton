@@ -43,8 +43,8 @@ class Simulation:
         shrink step will be performed.
     restart : str, default None
         Path to gsd file from which to restart the simulation.
-    nlist : str, default "cell"
-        Type of neighborlist to use. Options are "cell", "tree", and "stencil".
+    nlist : str, default "Cell"
+        Type of neighborlist to use. Options are "Cell", "Tree", and Stencil".
         See https://hoomd-blue.readthedocs.io/en/stable/nlist.html and
         https://hoomd-blue.readthedocs.io/en/stable/module-md-nlist.html
     seed: int, default 5
