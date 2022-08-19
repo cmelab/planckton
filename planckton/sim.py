@@ -158,8 +158,8 @@ class Simulation:
         if self.e_factor != 1:
             lj = hoomd_objects[0]
             for pair in lj.params:
-                lj.params[pair]['epsilon'] *= self.e_factor
-                
+                lj.params[pair]["epsilon"] *= self.e_factor
+
         if self.restart:
             sim.create_state_from_gsd(self.restart)
         else:
