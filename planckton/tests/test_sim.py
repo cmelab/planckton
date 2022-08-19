@@ -123,7 +123,7 @@ class TestSimulations(BaseTest):
             log_write=1e2,
             shrink_steps=1e3,
             target_length=packer.L,
-            nlist="tree",
+            nlist="Tree",
         )
 
     def test_temps_ramp(self):

@@ -26,7 +26,6 @@ def test_mixture():
         n_steps=[1e3],
         gsd_write=1e2,
         log_write=1e2,
-        mode="cpu",
         shrink_steps=1e3,
     )
     my_sim.run()
