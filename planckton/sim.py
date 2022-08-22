@@ -43,8 +43,6 @@ class Simulation:
         Path to gsd file from which to restart the simulation.
     nlist : str, default "Cell"
         Type of neighborlist to use. Options are "Cell", "Tree", and Stencil".
-        See https://hoomd-blue.readthedocs.io/en/stable/nlist.html and
-        https://hoomd-blue.readthedocs.io/en/stable/module-md-nlist.html
     seed: int, default 5
         Random seed for hoomd simulation
 
@@ -150,18 +148,22 @@ class Simulation:
         sim = hoomd.Simulation(device=device, seed=self.seed)
 
         # mbuild units are nm, amu
-        snap, hoomd_objects, ref_values = create_hoomd_forcefield(
+        snap, hoomd_forcefield, ref_values = create_hoomd_forcefield(
             self.system, auto_scale=True, r_cut=self.r_cut
         )
+
+        lj = [force for force in hoomd_forcefield if 
+                isinstance(force, hoomd.md.pair.LJ)
+        ][0]
         if self.e_factor != 1:
-            lj = hoomd_objects[0]
+            print(f"Scaling LJ epsilon values for all pairs by {self.e_factor}")
             for pair in lj.params:
                 lj.params[pair]["epsilon"] *= self.e_factor
 
         if not isinstance(self.nlist, hoomd.md.nlist.Cell):
-            exclusions = hoomd_objects[0].nlist.exclusions
-            hoomd_objects[0].nlist = self.nlist(buffer=0.4)
-            hoomd_objects[0].nlist.exclusions = exclusions
+            exclusions = lj.nlist.exclusions
+            lj.nlist = self.nlist(buffer=0.4)
+            lj.nlist.exclusions = exclusions
 
         if self.restart:
             sim.create_state_from_gsd(self.restart)
@@ -176,12 +178,12 @@ class Simulation:
         integrator_method = hoomd.md.methods.NVT(
             filter=all_particles, kT=self.shrink_kT, tau=self.shrink_tau
         )
-        integrator.forces = hoomd_objects
+        integrator.forces = hoomd_forcefield
         integrator.methods = [integrator_method]
         sim.operations.add(integrator)
 
         gsd_writer, table_file = self._hoomd_writers(
-            group=all_particles, sim=sim, forcefields=hoomd_objects
+            group=all_particles, sim=sim, forcefields=hoomd_forcefield
         )
         sim.operations.writers.append(gsd_writer)
         sim.operations.writers.append(table_file)
@@ -189,7 +191,6 @@ class Simulation:
         if self.target_length is not None:
             # Run the shrink step
             final_length = self.target_length.to("Angstrom").value
-            final_box = (self.shrink_steps, final_length)
             box_resize_trigger = hoomd.trigger.Periodic(self.shrink_period)
             ramp = hoomd.variant.Ramp(
                 A=0, B=1, t_start=0, t_ramp=int(self.shrink_steps)
@@ -211,7 +212,6 @@ class Simulation:
                 filter=all_particles, kT=self.shrink_kT
             )
             sim.run(self.shrink_steps, write_at_start=True)
-            self.n_steps = [i + self.shrink_steps for i in self.n_steps]
 
             # Begin temp ramp
             for kT, tau, n_steps in zip(self.kT, self.tau, self.n_steps):
@@ -222,7 +222,7 @@ class Simulation:
                 )
 
                 sim.run(n_steps)
-                if sim.timestep >= self.n_steps[-1]:
+                if sim.timestep >= sum(self.n_steps) + self.shrink_steps:
                     print("Simulation completed")
                     done = True
                 else:
