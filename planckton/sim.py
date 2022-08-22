@@ -152,8 +152,10 @@ class Simulation:
             self.system, auto_scale=True, r_cut=self.r_cut
         )
 
-        lj = [force for force in hoomd_forcefield if 
-                isinstance(force, hoomd.md.pair.LJ)
+        lj = [
+            force
+            for force in hoomd_forcefield
+            if isinstance(force, hoomd.md.pair.LJ)
         ][0]
         if self.e_factor != 1:
             print(f"Scaling LJ epsilon values for all pairs by {self.e_factor}")
