@@ -130,7 +130,10 @@ class Simulation:
         self.shrink_period = shrink_period
         self.n_steps = n_steps
         self.dt = dt
-        self.target_length = target_length
+        if target_length:
+            self.target_length = target_length.to("Angstrom").value
+        else:
+            self.target_length = None
         self.restart = restart
         self.nlist = getattr(hoomd.md.nlist, nlist)
         self.seed = seed
@@ -172,7 +175,7 @@ class Simulation:
         else:
             sim.create_state_from_snapshot(snap)
 
-        if self.target_length is not None:
+        if self.target_length:
             self.target_length /= ref_values.distance
 
         integrator = hoomd.md.Integrator(dt=self.dt)
@@ -192,16 +195,15 @@ class Simulation:
 
         if self.target_length is not None:
             # Run the shrink step
-            final_length = self.target_length.to("Angstrom").value
             box_resize_trigger = hoomd.trigger.Periodic(self.shrink_period)
             ramp = hoomd.variant.Ramp(
                 A=0, B=1, t_start=0, t_ramp=int(self.shrink_steps)
             )
             initial_box = sim.state.box
             final_box = hoomd.Box(
-                Lx=final_length,
-                Ly=final_length,
-                Lz=final_length,
+                Lx=self.target_length,
+                Ly=self.target_length,
+                Lz=self.target_length,
             )
             box_resize = hoomd.update.BoxResize(
                 box1=initial_box,
